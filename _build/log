@@ -1,9 +1,9 @@
 # dune build
 # OCAMLPARAM: unset
 # Shared cache: disabled
-# Workspace root: /Users/ethanbaker/Desktop/monopoly
-# Auto-detected concurrency: 8
-$ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs/n7yh6mxx1jl2g11d7tm3trf40000gn/T/dune_5bc031_output
+# Workspace root: /home/billpark/cs3110/gproject/3110-group-project
+# Auto-detected concurrency: 20
+$ /home/billpark/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /tmp/dune_cc44f3_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -12,69 +12,70 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #  ; for_host = None
 #  ; fdo_target_exe = None
 #  ; build_dir = In_build_dir "default"
-#  ; ocaml_bin = External "/Users/ethanbaker/.opam/cs3110-2023fa/bin"
-#  ; ocaml = Ok External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocaml"
-#  ; ocamlc = External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt"
+#  ; ocaml_bin = External "/home/billpark/.opam/cs3110-2023fa/bin"
+#  ; ocaml = Ok External "/home/billpark/.opam/cs3110-2023fa/bin/ocaml"
+#  ; ocamlc = External "/home/billpark/.opam/cs3110-2023fa/bin/ocamlc.opt"
 #  ; ocamlopt =
-#      Ok External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt"
+#      Ok External "/home/billpark/.opam/cs3110-2023fa/bin/ocamlopt.opt"
 #  ; ocamldep =
-#      Ok External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt"
+#      Ok External "/home/billpark/.opam/cs3110-2023fa/bin/ocamldep.opt"
 #  ; ocamlmklib =
-#      Ok External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlmklib.opt"
+#      Ok External "/home/billpark/.opam/cs3110-2023fa/bin/ocamlmklib.opt"
 #  ; env =
 #      map
 #        { "DUNE_OCAML_HARDCODED" :
-#            "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml:/Users/ethanbaker/.opam/cs3110-2023fa/lib"
-#        ; "DUNE_OCAML_STDLIB" :
-#            "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
-#        ; "DUNE_SOURCEROOT" : "/Users/ethanbaker/Desktop/monopoly"
-#        ; "INSIDE_DUNE" : "/Users/ethanbaker/Desktop/monopoly/_build/default"
-#        ; "MANPATH" :
-#            "/Users/ethanbaker/Desktop/monopoly/_build/install/default/man"
+#            "/home/billpark/.opam/cs3110-2023fa/lib/ocaml:/home/billpark/.opam/cs3110-2023fa/lib"
+#        ; "DUNE_OCAML_STDLIB" : "/home/billpark/.opam/cs3110-2023fa/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" :
+#            "/home/billpark/cs3110/gproject/3110-group-project"
+#        ; "INSIDE_DUNE" :
+#            "/home/billpark/cs3110/gproject/3110-group-project/_build/default"
 #        ; "OCAMLFIND_IGNORE_DUPS_IN" :
-#            "/Users/ethanbaker/Desktop/monopoly/_build/install/default/lib"
+#            "/home/billpark/cs3110/gproject/3110-group-project/_build/install/default/lib"
 #        ; "OCAMLPATH" :
-#            "/Users/ethanbaker/Desktop/monopoly/_build/install/default/lib"
+#            "/home/billpark/cs3110/gproject/3110-group-project/_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
-#            "/Users/ethanbaker/Desktop/monopoly/_build/install/default/lib/toplevel"
+#            "/home/billpark/cs3110/gproject/3110-group-project/_build/install/default/lib/toplevel"
 #        ; "OCAML_COLOR" : "always"
 #        ; "OPAMCOLOR" : "always"
 #        }
 #  ; findlib_paths =
-#      [ External "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
-#      ; External "/Users/ethanbaker/.opam/cs3110-2023fa/lib"
+#      [ External "/home/billpark/.opam/cs3110-2023fa/lib/ocaml"
+#      ; External "/home/billpark/.opam/cs3110-2023fa/lib"
 #      ]
 #  ; natdynlink_supported = true
 #  ; supports_shared_libraries = true
 #  ; ocaml_config =
 #      { version = "5.0.0"
 #      ; standard_library_default =
-#          "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
-#      ; standard_library = "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
+#          "/home/billpark/.opam/cs3110-2023fa/lib/ocaml"
+#      ; standard_library = "/home/billpark/.opam/cs3110-2023fa/lib/ocaml"
 #      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
 #      ; ccomp_type = "cc"
-#      ; c_compiler = "cc"
+#      ; c_compiler = "gcc"
 #      ; ocamlc_cflags =
-#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread" ]
+#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread"; "-fPIC" ]
 #      ; ocamlc_cppflags = [ "-D_FILE_OFFSET_BITS=64" ]
 #      ; ocamlopt_cflags =
-#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread" ]
+#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread"; "-fPIC" ]
 #      ; ocamlopt_cppflags = [ "-D_FILE_OFFSET_BITS=64" ]
 #      ; bytecomp_c_compiler =
-#          [ "cc"
+#          [ "gcc"
 #          ; "-O2"
 #          ; "-fno-strict-aliasing"
 #          ; "-fwrapv"
 #          ; "-pthread"
+#          ; "-fPIC"
 #          ; "-D_FILE_OFFSET_BITS=64"
 #          ]
 #      ; bytecomp_c_libraries = [ "-lm"; "-lpthread" ]
 #      ; native_c_compiler =
-#          [ "cc"
+#          [ "gcc"
 #          ; "-O2"
 #          ; "-fno-strict-aliasing"
 #          ; "-fwrapv"
 #          ; "-pthread"
+#          ; "-fPIC"
 #          ; "-D_FILE_OFFSET_BITS=64"
 #          ]
 #      ; native_c_libraries = [ "-lm"; "-lpthread" ]
@@ -84,8 +85,8 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #      ; model = "default"
 #      ; int_size = 63
 #      ; word_size = 64
-#      ; system = "macosx"
-#      ; asm = [ "cc"; "-c"; "-Wno-trigraphs" ]
+#      ; system = "linux"
+#      ; asm = [ "as" ]
 #      ; asm_cfi_supported = true
 #      ; with_frame_pointers = false
 #      ; ext_exe = ""
@@ -96,8 +97,8 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #      ; os_type = "Unix"
 #      ; default_executable_name = "a.out"
 #      ; systhread_supported = true
-#      ; host = "x86_64-apple-darwin22.6.0"
-#      ; target = "x86_64-apple-darwin22.6.0"
+#      ; host = "x86_64-pc-linux-gnu"
+#      ; target = "x86_64-pc-linux-gnu"
 #      ; profiling = false
 #      ; flambda = false
 #      ; spacetime = false
@@ -117,26 +118,14 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -bin-annot -I src/.monopoly.objs/byte -no-alias-deps -opaque -o src/.monopoly.objs/byte/monopoly.cmo -c -impl src/monopoly.ml-gen)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/types.ml) > _build/default/src/.monopoly.objs/monopoly__Types.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/utils.ml) > _build/default/src/.monopoly.objs/monopoly__Utils.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/player.ml) > _build/default/src/.monopoly.objs/monopoly__Player.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/main.ml) > _build/default/src/.monopoly.objs/monopoly__Main.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/cards.ml) > _build/default/src/.monopoly.objs/monopoly__Cards.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/board.ml) > _build/default/src/.monopoly.objs/monopoly__Board.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.monopoly.objs/byte -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/byte/monopoly__Types.cmo -c -impl src/types.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.monopoly.objs/byte -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/byte/monopoly__Utils.cmo -c -impl src/utils.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.monopoly.objs/byte -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/byte/monopoly__Player.cmo -c -impl src/player.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.monopoly.objs/byte -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/byte/monopoly__Main.cmo -c -impl src/main.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.monopoly.objs/byte -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/byte/monopoly__Cards.cmo -c -impl src/cards.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.monopoly.objs/byte -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/byte/monopoly__Board.cmo -c -impl src/board.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/monopoly.cma src/.monopoly.objs/byte/monopoly.cmo src/.monopoly.objs/byte/monopoly__Utils.cmo src/.monopoly.objs/byte/monopoly__Types.cmo src/.monopoly.objs/byte/monopoly__Player.cmo src/.monopoly.objs/byte/monopoly__Main.cmo src/.monopoly.objs/byte/monopoly__Cards.cmo src/.monopoly.objs/byte/monopoly__Board.cmo)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.monopoly.objs/byte -I src/.monopoly.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/native/monopoly__Main.cmx -c -impl src/main.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.monopoly.objs/byte -I src/.monopoly.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/native/monopoly__Board.cmx -c -impl src/board.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.monopoly.objs/byte -I src/.monopoly.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/native/monopoly__Cards.cmx -c -impl src/cards.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.monopoly.objs/byte -I src/.monopoly.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/native/monopoly__Types.cmx -c -impl src/types.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.monopoly.objs/byte -I src/.monopoly.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/native/monopoly__Utils.cmx -c -impl src/utils.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.monopoly.objs/byte -I src/.monopoly.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Monopoly -o src/.monopoly.objs/native/monopoly__Player.cmx -c -impl src/player.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -I src/.monopoly.objs/byte -I src/.monopoly.objs/native -intf-suffix .ml-gen -no-alias-deps -opaque -o src/.monopoly.objs/native/monopoly.cmx -c -impl src/monopoly.ml-gen)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/monopoly.cmxa src/.monopoly.objs/native/monopoly.cmx src/.monopoly.objs/native/monopoly__Utils.cmx src/.monopoly.objs/native/monopoly__Types.cmx src/.monopoly.objs/native/monopoly__Player.cmx src/.monopoly.objs/native/monopoly__Main.cmx src/.monopoly.objs/native/monopoly__Cards.cmx src/.monopoly.objs/native/monopoly__Board.cmx)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -shared -linkall -I src -o src/monopoly.cmxs src/monopoly.cmxa)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/utils.ml) > _build/default/src/.group_project.objs/group_project__Utils.impl.d
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -intf src/utils.mli) > _build/default/src/.group_project.objs/group_project__Utils.intf.d
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Utils.cmi -c -intf src/utils.mli)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I test/.main.eobjs/byte -I /home/billpark/.opam/cs3110-2023fa/lib/ocaml/unix -I /home/billpark/.opam/cs3110-2023fa/lib/ounit2 -I /home/billpark/.opam/cs3110-2023fa/lib/ounit2/advanced -I /home/billpark/.opam/cs3110-2023fa/lib/seq -I /home/billpark/.opam/cs3110-2023fa/lib/stdlib-shims -I src/.group_project.objs/byte -no-alias-deps -opaque -o test/.main.eobjs/byte/dune__exe__Main.cmi -c -intf test/main.mli)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Utils.cmo -c -impl src/utils.ml)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/group_project.cma src/.group_project.objs/byte/group_project.cmo src/.group_project.objs/byte/group_project__Utils.cmo src/.group_project.objs/byte/group_project__Player.cmo src/.group_project.objs/byte/group_project__Main.cmo src/.group_project.objs/byte/group_project__Board.cmo)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/native/group_project__Utils.cmx -c -impl src/utils.ml)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I test/.main.eobjs/byte -I test/.main.eobjs/native -I /home/billpark/.opam/cs3110-2023fa/lib/ocaml/unix -I /home/billpark/.opam/cs3110-2023fa/lib/ounit2 -I /home/billpark/.opam/cs3110-2023fa/lib/ounit2/advanced -I /home/billpark/.opam/cs3110-2023fa/lib/seq -I /home/billpark/.opam/cs3110-2023fa/lib/stdlib-shims -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -o test/.main.eobjs/native/dune__exe__Main.cmx -c -impl test/main.ml)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/group_project.cmxa src/.group_project.objs/native/group_project.cmx src/.group_project.objs/native/group_project__Utils.cmx src/.group_project.objs/native/group_project__Player.cmx src/.group_project.objs/native/group_project__Main.cmx src/.group_project.objs/native/group_project__Board.cmx)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -shared -linkall -I src -o src/group_project.cmxs src/group_project.cmxa)
+$ (cd _build/default && /home/billpark/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o test/main.exe src/group_project.cmxa /home/billpark/.opam/cs3110-2023fa/lib/ocaml/unix/unix.cmxa /home/billpark/.opam/cs3110-2023fa/lib/stdlib-shims/stdlib_shims.cmxa /home/billpark/.opam/cs3110-2023fa/lib/ounit2/advanced/oUnitAdvanced.cmxa /home/billpark/.opam/cs3110-2023fa/lib/ounit2/oUnit.cmxa test/.main.eobjs/native/dune__exe__Main.cmx)
