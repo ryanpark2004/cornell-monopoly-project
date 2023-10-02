@@ -1,1 +1,1 @@
-type player = {name : string; money : int}
+type player = { name : string; money : int }
