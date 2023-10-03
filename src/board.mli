@@ -25,7 +25,7 @@ type location = {
     -[color]: The color group of the location (e.g. Red).
     -[base_rent]: The rent charged when no houses are built.
     -[house_rent_multipliers]: A list of rent multipliers for 1 to 5 houses, 
-    where [base_rent] * mutliplier = total rent.
+    where [base_rent] * mutliplier = total rent. Must have len = 5.
     -[build_cost]: The cost to build a house on this location.
     -[num_houses]: The current number of houses built on this location.
     -[mortgage]: The mortgage value of the location.

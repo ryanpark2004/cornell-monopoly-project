@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: /Users/ethanbaker/cs3110/3110-group-project
 # Auto-detected concurrency: 8
-$ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs/n7yh6mxx1jl2g11d7tm3trf40000gn/T/dune_56edc2_output
+$ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs/n7yh6mxx1jl2g11d7tm3trf40000gn/T/dune_c066f2_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -38,8 +38,6 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #            "/Users/ethanbaker/cs3110/3110-group-project/_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
 #            "/Users/ethanbaker/cs3110/3110-group-project/_build/install/default/lib/toplevel"
-#        ; "OCAML_COLOR" : "always"
-#        ; "OPAMCOLOR" : "always"
 #        }
 #  ; findlib_paths =
 #      [ External "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
@@ -118,25 +116,22 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -bin-annot -I src/.group_project.objs/byte -no-alias-deps -opaque -o src/.group_project.objs/byte/group_project.cmo -c -impl src/group_project.ml-gen)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/main.ml) > _build/default/src/.group_project.objs/group_project__Main.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/player.ml) > _build/default/src/.group_project.objs/group_project__Player.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/utils.ml) > _build/default/src/.group_project.objs/group_project__Utils.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -intf src/utils.mli) > _build/default/src/.group_project.objs/group_project__Utils.intf.d
 $ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/board.ml) > _build/default/src/.group_project.objs/group_project__Board.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Main.cmo -c -impl src/main.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Player.cmo -c -impl src/player.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Utils.cmi -c -intf src/utils.mli)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Board.cmo -c -impl src/board.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Utils.cmo -c -impl src/utils.ml)
+$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -intf src/board.mli) > _build/default/src/.group_project.objs/group_project__Board.intf.d
+$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Board.cmi -c -intf src/board.mli)
 $ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I test/.main.eobjs/byte -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml/unix -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2 -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2/advanced -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/seq -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/stdlib-shims -I src/.group_project.objs/byte -no-alias-deps -opaque -o test/.main.eobjs/byte/dune__exe__Main.cmi -c -intf test/main.mli)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/group_project.cma src/.group_project.objs/byte/group_project.cmo src/.group_project.objs/byte/group_project__Utils.cmo src/.group_project.objs/byte/group_project__Player.cmo src/.group_project.objs/byte/group_project__Main.cmo src/.group_project.objs/byte/group_project__Board.cmo)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I test/.main.eobjs/byte -I test/.main.eobjs/native -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml/unix -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2 -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2/advanced -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/seq -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/stdlib-shims -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -o test/.main.eobjs/native/dune__exe__Main.cmx -c -impl test/main.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/native/group_project__Utils.cmx -c -impl src/utils.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml-gen -no-alias-deps -opaque -o src/.group_project.objs/native/group_project.cmx -c -impl src/group_project.ml-gen)
+$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Board.cmo -c -impl src/board.ml)
+> File "src/board.ml", line 1:
+> Error: The implementation src/board.ml
+>        does not match the interface src/.group_project.objs/byte/group_project__Board.cmi:
+>         The value `print_board' is required but not provided
+>        File "src/board.mli", line 109, characters 0-31: Expected declaration
+[2]
 $ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/native/group_project__Board.cmx -c -impl src/board.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/native/group_project__Player.cmx -c -impl src/player.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/native/group_project__Main.cmx -c -impl src/main.ml)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/group_project.cmxa src/.group_project.objs/native/group_project.cmx src/.group_project.objs/native/group_project__Utils.cmx src/.group_project.objs/native/group_project__Player.cmx src/.group_project.objs/native/group_project__Main.cmx src/.group_project.objs/native/group_project__Board.cmx)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -shared -linkall -I src -o src/group_project.cmxs src/group_project.cmxa)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o test/main.exe src/group_project.cmxa /Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml/unix/unix.cmxa /Users/ethanbaker/.opam/cs3110-2023fa/lib/stdlib-shims/stdlib_shims.cmxa /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2/advanced/oUnitAdvanced.cmxa /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2/oUnit.cmxa test/.main.eobjs/native/dune__exe__Main.cmx)
+> File "src/board.ml", line 1:
+> Error: The implementation src/board.ml
+>        does not match the interface src/.group_project.objs/byte/group_project__Board.cmi:
+>         The value `print_board' is required but not provided
+>        File "src/board.mli", line 109, characters 0-31: Expected declaration
+[2]
+$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I test/.main.eobjs/byte -I test/.main.eobjs/native -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml/unix -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2 -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2/advanced -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/seq -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/stdlib-shims -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -o test/.main.eobjs/native/dune__exe__Main.cmx -c -impl test/main.ml)
