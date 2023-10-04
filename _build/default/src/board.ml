@@ -62,3 +62,10 @@ let calculated_rent (prop : property) : int =
       total_rent
   | Tcat_station x -> x.rent (* fix *)
   | Utility x -> ( match x.rent_multipliers with h, t -> h * 1 (* fix *))
+
+let rec print_board board =
+  match board with
+  | [], _ -> ()
+  | h :: t, x ->
+      print_endline h.name;
+      print_board (t, x)

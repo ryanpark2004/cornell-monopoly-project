@@ -1,9 +1,9 @@
 # dune build
 # OCAMLPARAM: unset
 # Shared cache: disabled
-# Workspace root: /Users/ethanbaker/cs3110/3110-group-project
+# Workspace root: /Users/ryanpark/cs3110/3110-group-project
 # Auto-detected concurrency: 8
-$ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs/n7yh6mxx1jl2g11d7tm3trf40000gn/T/dune_c066f2_output
+$ /Users/ryanpark/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/_5/v1byjwx96b9cc5bphhgfnkhm0000gn/T/dune_31af59_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -12,44 +12,44 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #  ; for_host = None
 #  ; fdo_target_exe = None
 #  ; build_dir = In_build_dir "default"
-#  ; ocaml_bin = External "/Users/ethanbaker/.opam/cs3110-2023fa/bin"
-#  ; ocaml = Ok External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocaml"
-#  ; ocamlc = External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt"
+#  ; ocaml_bin = External "/Users/ryanpark/.opam/cs3110-2023fa/bin"
+#  ; ocaml = Ok External "/Users/ryanpark/.opam/cs3110-2023fa/bin/ocaml"
+#  ; ocamlc = External "/Users/ryanpark/.opam/cs3110-2023fa/bin/ocamlc.opt"
 #  ; ocamlopt =
-#      Ok External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt"
+#      Ok External "/Users/ryanpark/.opam/cs3110-2023fa/bin/ocamlopt.opt"
 #  ; ocamldep =
-#      Ok External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt"
+#      Ok External "/Users/ryanpark/.opam/cs3110-2023fa/bin/ocamldep.opt"
 #  ; ocamlmklib =
-#      Ok External "/Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlmklib.opt"
+#      Ok External "/Users/ryanpark/.opam/cs3110-2023fa/bin/ocamlmklib.opt"
 #  ; env =
 #      map
 #        { "DUNE_OCAML_HARDCODED" :
-#            "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml:/Users/ethanbaker/.opam/cs3110-2023fa/lib"
+#            "/Users/ryanpark/.opam/cs3110-2023fa/lib/ocaml:/Users/ryanpark/.opam/cs3110-2023fa/lib"
 #        ; "DUNE_OCAML_STDLIB" :
-#            "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
-#        ; "DUNE_SOURCEROOT" : "/Users/ethanbaker/cs3110/3110-group-project"
+#            "/Users/ryanpark/.opam/cs3110-2023fa/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" : "/Users/ryanpark/cs3110/3110-group-project"
 #        ; "INSIDE_DUNE" :
-#            "/Users/ethanbaker/cs3110/3110-group-project/_build/default"
-#        ; "MANPATH" :
-#            "/Users/ethanbaker/cs3110/3110-group-project/_build/install/default/man"
+#            "/Users/ryanpark/cs3110/3110-group-project/_build/default"
 #        ; "OCAMLFIND_IGNORE_DUPS_IN" :
-#            "/Users/ethanbaker/cs3110/3110-group-project/_build/install/default/lib"
+#            "/Users/ryanpark/cs3110/3110-group-project/_build/install/default/lib"
 #        ; "OCAMLPATH" :
-#            "/Users/ethanbaker/cs3110/3110-group-project/_build/install/default/lib"
+#            "/Users/ryanpark/cs3110/3110-group-project/_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
-#            "/Users/ethanbaker/cs3110/3110-group-project/_build/install/default/lib/toplevel"
+#            "/Users/ryanpark/cs3110/3110-group-project/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
 #        }
 #  ; findlib_paths =
-#      [ External "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
-#      ; External "/Users/ethanbaker/.opam/cs3110-2023fa/lib"
+#      [ External "/Users/ryanpark/.opam/cs3110-2023fa/lib/ocaml"
+#      ; External "/Users/ryanpark/.opam/cs3110-2023fa/lib"
 #      ]
 #  ; natdynlink_supported = true
 #  ; supports_shared_libraries = true
 #  ; ocaml_config =
 #      { version = "5.0.0"
 #      ; standard_library_default =
-#          "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
-#      ; standard_library = "/Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml"
+#          "/Users/ryanpark/.opam/cs3110-2023fa/lib/ocaml"
+#      ; standard_library = "/Users/ryanpark/.opam/cs3110-2023fa/lib/ocaml"
 #      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
 #      ; ccomp_type = "cc"
 #      ; c_compiler = "cc"
@@ -79,7 +79,7 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #      ; native_c_libraries = [ "-lm"; "-lpthread" ]
 #      ; native_pack_linker = [ "ld"; "-r"; "-o" ]
 #      ; cc_profile = []
-#      ; architecture = "amd64"
+#      ; architecture = "arm64"
 #      ; model = "default"
 #      ; int_size = 63
 #      ; word_size = 64
@@ -95,8 +95,8 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #      ; os_type = "Unix"
 #      ; default_executable_name = "a.out"
 #      ; systhread_supported = true
-#      ; host = "x86_64-apple-darwin22.6.0"
-#      ; target = "x86_64-apple-darwin22.6.0"
+#      ; host = "aarch64-apple-darwin22.2.0"
+#      ; target = "aarch64-apple-darwin22.2.0"
 #      ; profiling = false
 #      ; flambda = false
 #      ; spacetime = false
@@ -116,22 +116,65 @@ $ /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -config > /var/folders/zs
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -impl src/board.ml) > _build/default/src/.group_project.objs/group_project__Board.impl.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamldep.opt -modules -intf src/board.mli) > _build/default/src/.group_project.objs/group_project__Board.intf.d
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Board.cmi -c -intf src/board.mli)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I test/.main.eobjs/byte -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml/unix -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2 -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2/advanced -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/seq -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/stdlib-shims -I src/.group_project.objs/byte -no-alias-deps -opaque -o test/.main.eobjs/byte/dune__exe__Main.cmi -c -intf test/main.mli)
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Board.cmo -c -impl src/board.ml)
+$ (cd _build/default && /Users/ryanpark/.opam/cs3110-2023fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.group_project.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/byte/group_project__Board.cmo -c -impl src/board.ml)
 > File "src/board.ml", line 1:
 > Error: The implementation src/board.ml
 >        does not match the interface src/.group_project.objs/byte/group_project__Board.cmi:
->         The value `print_board' is required but not provided
->        File "src/board.mli", line 109, characters 0-31: Expected declaration
+>         Type declarations do not match:
+>           type tile =
+>               Start
+>             | Property of property
+>             | Tax of int
+>             | Chance
+>             | Chest
+>             | Parking
+>             | Jail
+>         is not included in
+>           type tile =
+>               Start
+>             | Property of property
+>             | Tax
+>             | Chance
+>             | Chest
+>             | Parking
+>             | Jail
+>         Constructors do not match:
+>           Tax of int
+>         is not the same as:
+>           Tax
+>         They have different arities.
+>         File "src/board.mli", lines 79-90, characters 0-8:
+>           Expected declaration
+>         File "src/board.ml", lines 35-42, characters 0-8: Actual declaration
 [2]
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/native/group_project__Board.cmx -c -impl src/board.ml)
+$ (cd _build/default && /Users/ryanpark/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Group_project -o src/.group_project.objs/native/group_project__Board.cmx -c -impl src/board.ml)
 > File "src/board.ml", line 1:
 > Error: The implementation src/board.ml
 >        does not match the interface src/.group_project.objs/byte/group_project__Board.cmi:
->         The value `print_board' is required but not provided
->        File "src/board.mli", line 109, characters 0-31: Expected declaration
+>         Type declarations do not match:
+>           type tile =
+>               Start
+>             | Property of property
+>             | Tax of int
+>             | Chance
+>             | Chest
+>             | Parking
+>             | Jail
+>         is not included in
+>           type tile =
+>               Start
+>             | Property of property
+>             | Tax
+>             | Chance
+>             | Chest
+>             | Parking
+>             | Jail
+>         Constructors do not match:
+>           Tax of int
+>         is not the same as:
+>           Tax
+>         They have different arities.
+>         File "src/board.mli", lines 79-90, characters 0-8:
+>           Expected declaration
+>         File "src/board.ml", lines 35-42, characters 0-8: Actual declaration
 [2]
-$ (cd _build/default && /Users/ethanbaker/.opam/cs3110-2023fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I test/.main.eobjs/byte -I test/.main.eobjs/native -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ocaml/unix -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2 -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/ounit2/advanced -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/seq -I /Users/ethanbaker/.opam/cs3110-2023fa/lib/stdlib-shims -I src/.group_project.objs/byte -I src/.group_project.objs/native -intf-suffix .ml -no-alias-deps -opaque -o test/.main.eobjs/native/dune__exe__Main.cmx -c -impl test/main.ml)
