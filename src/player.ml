@@ -11,7 +11,7 @@ module type PlayerType = sig
   val jail_escape : player -> player
 end
 
-module Player : PlayerType = struct
+module MyPlayer : PlayerType = struct
   type player = {
     name : string;
     money : int;
