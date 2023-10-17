@@ -7,7 +7,13 @@
 (*                                                                        *)
 (*  Author: Ryan Park                                                     *)
 (**************************************************************************)
-type player
+type player = {
+  name : string;
+  money : int;
+  properties : int list;
+  position : int;
+  in_jail : bool;
+}
 (** Type player represents the attributes of a player.
       This includes their name, money, properties owned, their position, and if
       they are in jail**)

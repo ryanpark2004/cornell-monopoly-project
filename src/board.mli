@@ -94,3 +94,6 @@ val calculated_rent : property -> int
     -[tcat_station]: [rent] * 2^n where n is the number of tcat_station 
     properties the player owns.
     -[utility]: [rent] * current dice role value.*)
+
+val to_string : tile -> string
+(**converts a tile to string*)

@@ -6,3 +6,6 @@ val play : state -> unit
 
 val update : state -> state
 (**[update] is the update game state from the old game state*)
+
+val print : state -> unit
+(**[print] prints the current state of the *)
