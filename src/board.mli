@@ -1,4 +1,3 @@
-(**************************************************************************)
 (*                                                                        *)
 (*  Module: board                                                         *)
 (*                                                                        *)
@@ -17,7 +16,6 @@ type location = {
   build_cost : int;
   num_houses : int;
   mortgage : int;
-  owner : Player.player option;
 }
 (** Represents a non-utility and non-TCAT station property on the gameboard. 
     -[name]: The name of the location (e.g. Clocktower).
@@ -28,16 +26,9 @@ type location = {
     where [base_rent] * mutliplier = total rent. Must have len = 5.
     -[build_cost]: The cost to build a house on this location.
     -[num_houses]: The current number of houses built on this location.
-    -[mortgage]: The mortgage value of the location.
-    -[owner]: The current owner of the location, or [None] if unowned.*)
+    -[mortgage]: The mortgage value of the location.*)
 
-type tcat_station = {
-  name : string;
-  price : int;
-  rent : int;
-  mortgage : int;
-  owner : Player.player option;
-}
+type tcat_station = { name : string; price : int; rent : int; mortgage : int }
 (** Represents a TCAT station property on the gameboard, which works similarly 
     to railroad properties in classic Monopoly.
       -[name]: The name of the station (e.g. Ithaca Commons Station).
@@ -45,15 +36,13 @@ type tcat_station = {
       -[rent]: The rent charged when a player owns only one station. Total rent
       is calculated by [rent] * 2^n, where n is the number of TCAT stations 
       owned by the player.
-      -[mortgage]: The mortagage value of the station.
-      -[owner]: The current owner of the station, or [None] if unwoned.*)
+      -[mortgage]: The mortagage value of the station.*)
 
 type utility = {
   name : string;
   price : int;
   rent_multipliers : int * int;
   mortgage : int;
-  owner : Player.player option;
 }
 (** Represents a utility property on the gameboard.
     -[name]: The name of the utility (e.g. Cornell Water Turbine).
@@ -81,7 +70,7 @@ type tile =
       (** A start tile, where the players start and collect $200 when passing 
           through it each round.*)
   | Property of property  (** A standard property tile. *)
-  | Tax  (** A tile which requires the player to pay a tax.*)
+  | Tax of int  (** A tile which requires the player to pay a tax.*)
   | Chance  (** A tile which allows the player to pick a chance card.*)
   | Chest  (** A tile which allows the player to pick a community chest card.*)
   | Parking
@@ -91,7 +80,7 @@ type tile =
       (** A tile which sends players to jail, where they must wait or pay 
       their way out to continue playing.*)
 
-type board = tile list * Player.player list
+type board = tile list
 (** Represents the overall game board, which keeps track of all tile and 
     player status.*)
 
@@ -105,8 +94,3 @@ val calculated_rent : property -> int
     -[tcat_station]: [rent] * 2^n where n is the number of tcat_station 
     properties the player owns.
     -[utility]: [rent] * current dice role value.*)
-
-val print_board : board -> unit
-(** Prints a simplified version of the game board out to the CLI to allow 
-    players to view its status in between turns. Displays tile locations, player
-     locations, player balances, and built developments.*)
