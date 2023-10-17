@@ -7,3 +7,8 @@ val rollDice : unit -> int
 
 val pullChance : unit -> chances
 (**[pullChance] is a randomly selected chance variant*)
+
+val tile_action : Board.tile -> Player.player -> Player.player
+(**[tile_action] defines the different effects each tile has when 
+    a player lands on them. Returns the new player after everything has 
+    changed*)

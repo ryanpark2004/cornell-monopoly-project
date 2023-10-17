@@ -84,9 +84,6 @@ type board = tile list
 (** Represents the overall game board, which keeps track of all tile and 
     player status.*)
 
-val action : tile -> unit
-(** Defines what happens when the player lands on tiles of differing types.*)
-
 val calculated_rent : property -> int
 (** Calculates the rent due to visiting players based off of specifics for 
     the different property types. 
