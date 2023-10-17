@@ -35,16 +35,6 @@ type tile =
 
 type board = tile list
 
-let action tile = if tile = tile then failwith "Unimplemented"
-(* match tile with
-   | Start -> None
-   | Property _ -> None
-   | Tax _ -> None
-   | Chance -> None
-   | Chest -> None
-   | Parking -> None
-   | Jail -> None *)
-
 let calculated_rent (prop : property) : int =
   match prop with
   | Location x ->
