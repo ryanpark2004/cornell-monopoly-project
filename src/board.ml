@@ -44,3 +44,19 @@ let calculated_rent (prop : property) : int =
       total_rent
   | Tcat_station x -> x.rent (* fix *)
   | Utility x -> ( match x.rent_multipliers with h, _ -> h * 1 (* fix *))
+
+let property_to_string (p : property) : string =
+  match p with
+  | Location l -> l.name
+  | Tcat_station t -> t.name
+  | Utility u -> u.name
+
+let to_string (t : tile) : string =
+  match t with
+  | Start -> "Start"
+  | Property p -> property_to_string p
+  | Tax _ -> "Tax"
+  | Chance -> "Chance"
+  | Chest -> "Chest"
+  | Parking -> "Parking"
+  | Jail -> "Jail"
