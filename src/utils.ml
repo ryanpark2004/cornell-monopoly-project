@@ -40,6 +40,10 @@ let tile_action tile player =
       | LoseMoney x ->
           print_endline ("CHANCE: Unlucky! Pay $" ^ string_of_int x);
           { player with money = player.money - x })
-  | Parking -> player
-  | Jail -> { player with in_jail = true }
+  | Parking ->
+      print_endline "Free Parking";
+      player
+  | Jail ->
+      print_endline "Go to Jail. Do not collect $200.";
+      { player with in_jail = true }
   | _ -> player
