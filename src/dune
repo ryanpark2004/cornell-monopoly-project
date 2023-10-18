@@ -1,2 +1,3 @@
 (library
- (name group_project))
+ (name monopoly)
+ (public_name Monopoly))
