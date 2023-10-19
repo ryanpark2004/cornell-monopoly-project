@@ -94,3 +94,6 @@ val calculated_rent : property -> int
 
 val to_string : tile -> string
 (**converts a tile to string*)
+
+val new_board : board
+(**A fresh new board*)

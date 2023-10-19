@@ -45,3 +45,6 @@ val jail_send : player -> player
 val jail_escape : player -> player
 (** The function jaiL_escape allows the player to exit jail. The function
       will raise invalid_arg if the player is not in jail. **)
+
+val move_player : player -> int -> player
+(**Returns a new player with updated position*)

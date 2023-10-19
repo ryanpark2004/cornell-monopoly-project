@@ -35,6 +35,8 @@ type tile =
 
 type board = tile list
 
+let new_board : board = [ Start; Chance; Jail ]
+
 let calculated_rent (prop : property) : int =
   match prop with
   | Location x ->

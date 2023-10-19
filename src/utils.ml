@@ -8,8 +8,8 @@ let chance_list =
     [ ToStart; ToJail; GainMoney 40; LoseMoney 20; GainMoney 100; LoseMoney 50 ]
   )
 
-let dice_bound = 6
-let rollDice () : int = Random.int dice_bound
+let dice_bound = 1
+let rollDice () : int = Random.int dice_bound + 1
 
 let pullChance () =
   let length, lst = chance_list in

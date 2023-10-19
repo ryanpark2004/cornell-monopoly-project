@@ -31,3 +31,5 @@ let jail_send player = { player with in_jail = true; position = 15 }
 let jail_escape player =
   if player.in_jail then { player with in_jail = false }
   else invalid_arg "Player is not in jail"
+
+let move_player player n = { player with position = player.position + n }
