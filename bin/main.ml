@@ -2,7 +2,6 @@ open Monopoly
 open Board
 open Player
 open Utils
-open Printf
 
 (*******************************Helpers**************************************)
 type state = {
@@ -24,9 +23,9 @@ let initialize_players (s : state) : state =
   let num_players = int_of_string (read_line ()) in
   if num_players <= 0 || num_players > 4 then invalid_arg "Too many players"
   else
-    let rec helper n acc =
+    let rec helper n =
       match n with
-      | 0 -> acc
+      | 0 -> []
       | x ->
           let () = print_endline ("Name of player " ^ string_of_int x ^ ":") in
           let player_name = read_line () in
@@ -35,84 +34,104 @@ let initialize_players (s : state) : state =
             invalid_arg "Name is too long"
           else
             let player = create_player player_name in
-            helper (n - 1) (player :: acc)
+            player :: helper (n - 1)
     in
     {
       board = s.board;
-      players = helper num_players [];
+      players = helper num_players;
       max_run = s.max_run;
       current_run = s.current_run;
     }
 
 (******************************************************************************)
 
-(*********************************THE LOOP*************************************)
-let rec play (n : int) = failwith "unimplemneted"
-
-(**[update_player] is a new player whose status is updated using the
-    "dummy player" [info]. This serves as an helper function for
-    updated_players. 
-    Soft Requirement: [name] is the name of [p], otherwise [p] is returned*)
-let update_player (name : string) (info : player) (p : player) : player =
-  if get_name p = name then
-    let new_player =
-      {
-        name = p.name;
-        money = p.money + info.money;
-        properties = p.properties @ info.properties;
-        position = p.position + info.position;
-        in_jail = info.in_jail;
-      }
-    in
-    new_player
-  else p
-
-(**[update_players] is a [plst] except that player [p] is updated based on 
-some [info]. [info] is a "dummy player" that contains the new informations 
-based on the actions taken by the player [p]*)
-let updated_players (s : state) (p : player) (info : player) : state =
-  let new_plst = List.map (update_player (get_name p) info) s.players in
-  { s with players = new_plst }
-
-(**[perform_action] returns a "dummy player" that stores all the information 
-about the player's actions. In other words, it is the change that is to be 
-applied to the player. This function is to be used in conjunction with 
-update_players
-
-As of 10/18/2023, this function only moves the player with a random dice*)
-let perform_action (p : player) : player =
-  let n = rollDice () in
-  { p with money = 0; properties = []; position = n; in_jail = false }
-
-let update (s : state) : state = failwith "unimplemented"
-
-(******************************************************************************)
-
 (******************************** PRINTS **************************************)
-
-(*TODO: modify [p] to player list so that the resultant string list contains all
-  tiles with player names next to them.*)
-let rec attach_player (tlst : tile list) (p : player) : string list =
-  let player_tile = string_of_int p.position in
-  match tlst with
-  | [] -> []
+(*
+let rec print_board (b : board) : unit =
+  match b with
+  | [] -> print_endline ""
   | h :: t ->
-      let this_tile = to_string h in
-      if this_tile = player_tile then
-        let combined = this_tile ^ "---" ^ p.name in
-        combined :: attach_player t p
-      else attach_player t p
+      let tile, _ = h in
+      printf "%s \n" (to_string tile);
+      print_board t
+*)
 
-(*TODO: modify [p] in [print] to accommodate all players*)
-let print state =
-  let b = state.board in
-  let p =
-    match state.players with
-    | [ x ] -> x
-    | h :: _ -> h
-    | _ -> invalid_arg "no players"
+let rec check_occupancy (tl : tile * int) (plst : player list) : player option =
+  match plst with
+  | [] -> None
+  | h :: t ->
+      let tile, pos = tl in
+      if h.position = pos then Some h else check_occupancy tl t
+
+let rec pretty_board (b : board) (plst : player list) :
+    (tile * player option) list =
+  match b with
+  | [] -> []
+  | h :: t -> (
+      let occupancy = check_occupancy h plst in
+      let tl, pos = h in
+      match occupancy with
+      | None -> (tl, None) :: pretty_board t plst
+      | Some p -> (tl, Some p) :: pretty_board t plst)
+
+let print_state (s : state) : unit =
+  let pb = pretty_board s.board s.players in
+  let rec print_pb (pb : (tile * player option) list) : unit =
+    match pb with
+    | [] -> print_endline "---------------\n"
+    | h :: t ->
+        (let tile, player = h in
+         match player with
+         | None -> print_endline (to_string tile)
+         | Some p -> print_endline (to_string tile ^ " --- " ^ p.name));
+        print_pb t
   in
-  let strings = attach_player b p in
-  List.iter (printf "%s \n") strings
+  print_pb pb
+(******************************************************************************)
+
+(*********************************THE LOOP*************************************)
+
+(**[action] is a dummy player that contains all the changes to be applied to the actual player
+    As of now, the action only contains changes in player position*)
+let action : player =
+  let n = rollDice () in
+  print_endline ("Rolled dice: " ^ string_of_int n);
+  { name = "info"; money = 0; properties = []; position = n; in_jail = false }
+
+(**[update_player] is the new player whose fields have changed using [info]*)
+let update_player (p : player) (info : player) : player =
+  {
+    p with
+    money = p.money + info.money;
+    properties = p.properties @ info.properties;
+    position = p.position + info.position;
+    in_jail = info.in_jail;
+  }
+
+(**[single_turn] is an updated state after every player performed an action *)
+let single_turn (s : state) : state =
+  let rec helper (plst : player list) : player list =
+    match plst with
+    | [] ->
+        print_endline ("Turn #" ^ string_of_int s.current_run ^ " ended");
+        []
+    | h :: t -> update_player h action :: helper t
+  in
+  { s with players = helper s.players; current_run = s.current_run + 1 }
 
 (******************************************************************************)
+(********************************MAIN APP**************************************)
+(*eval -> print loop*)
+let rec loop (s : state) (eval : state -> state) : unit =
+  print_string "> ";
+  let input = read_line () in
+  match input with
+  | _ ->
+      let s2 = s |> eval in
+      print_state s2;
+      loop s2 eval
+
+let () =
+  print_endline "\n\n Welcome to Monopoly. \n";
+  let start = initialize_players new_state in
+  loop start single_turn
