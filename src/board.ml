@@ -10,7 +10,12 @@ type location = {
   mortgage : int;
 }
 
-type tcat_station = { name : string; price : int; rent : int; mortgage : int }
+type tcat_station = {
+  name : string;
+  price : int;
+  rent : int;
+  mortgage : int;
+}
 
 type utility = {
   name : string;
@@ -33,9 +38,13 @@ type tile =
   | Parking
   | Jail
 
-type board = tile list
+type board = (tile * int) list
+(**[board] is a list of tiles, marked by a number that represents order*)
 
-let new_board : board = [ Start; Chance; Jail ]
+let new_board : board =
+  [
+    (Start, 1); (Chance, 2); (Jail, 3); (Parking, 4); (Parking, 5); (Parking, 6);
+  ]
 
 let calculated_rent (prop : property) : int =
   match prop with
@@ -45,7 +54,9 @@ let calculated_rent (prop : property) : int =
       in
       total_rent
   | Tcat_station x -> x.rent (* fix *)
-  | Utility x -> ( match x.rent_multipliers with h, _ -> h * 1 (* fix *))
+  | Utility x -> (
+      match x.rent_multipliers with
+      | h, _ -> h * 1 (* fix *))
 
 let property_to_string (p : property) : string =
   match p with

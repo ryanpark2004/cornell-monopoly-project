@@ -46,47 +46,38 @@ let initialize_players (s : state) : state =
 (******************************************************************************)
 
 (******************************** PRINTS **************************************)
-(*
-let rec print_board (b : board) : unit =
-  match b with
-  | [] -> print_endline ""
-  | h :: t ->
-      let tile, _ = h in
-      printf "%s \n" (to_string tile);
-      print_board t
-*)
 
-let rec check_occupancy (tl : tile * int) (plst : player list) : player option =
-  match plst with
-  | [] -> None
-  | h :: t ->
-      let tile, pos = tl in
-      if h.position = pos then Some h else check_occupancy tl t
+let occupants (tl : tile * int) (plst : player list) : tile * player list =
+  let tile, pos = tl in
+  let rec helper (plst2 : player list) : player list =
+    match plst2 with
+    | [] -> []
+    | h :: t -> if pos = h.position then h :: helper t else helper t
+  in
+  (tile, helper plst)
 
-let rec pretty_board (b : board) (plst : player list) :
-    (tile * player option) list =
+(**[pretty_board] is a board where each tile is associated with all the players standing on it*)
+let rec pretty_board (plst : player list) (b : board) :
+    (tile * player list) list =
+  (*for each tile, check what players are standing on it*)
   match b with
   | [] -> []
-  | h :: t -> (
-      let occupancy = check_occupancy h plst in
-      let tl, pos = h in
-      match occupancy with
-      | None -> (tl, None) :: pretty_board t plst
-      | Some p -> (tl, Some p) :: pretty_board t plst)
+  | h :: t -> occupants h plst :: pretty_board plst t
 
-let print_state (s : state) : unit =
-  let pb = pretty_board s.board s.players in
-  let rec print_pb (pb : (tile * player option) list) : unit =
-    match pb with
-    | [] -> print_endline "---------------\n"
-    | h :: t ->
-        (let tile, player = h in
-         match player with
-         | None -> print_endline (to_string tile)
-         | Some p -> print_endline (to_string tile ^ " --- " ^ p.name));
-        print_pb t
-  in
-  print_pb pb
+let rec print_board (pb : (tile * player list) list) : unit =
+  match pb with
+  | [] -> print_endline "------------------\n"
+  | h :: t ->
+      let tile, plst = h in
+      let name_list = List.map get_name plst in
+      print_string (to_string tile);
+      if not (name_list = []) then print_string "---" else print_string "";
+      List.iter print_string name_list;
+      print_endline "\n";
+      print_board t
+
+let print_state (s : state) = s.board |> pretty_board s.players |> print_board
+
 (******************************************************************************)
 
 (*********************************THE LOOP*************************************)

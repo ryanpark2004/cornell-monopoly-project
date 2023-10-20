@@ -28,7 +28,12 @@ type location = {
     -[num_houses]: The current number of houses built on this location.
     -[mortgage]: The mortgage value of the location.*)
 
-type tcat_station = { name : string; price : int; rent : int; mortgage : int }
+type tcat_station = {
+  name : string;
+  price : int;
+  rent : int;
+  mortgage : int;
+}
 (** Represents a TCAT station property on the gameboard, which works similarly 
     to railroad properties in classic Monopoly.
       -[name]: The name of the station (e.g. Ithaca Commons Station).
@@ -80,7 +85,7 @@ type tile =
       (** A tile which sends players to jail, where they must wait or pay 
       their way out to continue playing.*)
 
-type board = tile list
+type board = (tile * int) list
 (** Represents the overall game board, which keeps track of all tile and 
     player status.*)
 

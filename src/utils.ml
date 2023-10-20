@@ -1,7 +1,11 @@
 open Player
 open Board
 
-type chances = ToStart | ToJail | GainMoney of int | LoseMoney of int
+type chances =
+  | ToStart
+  | ToJail
+  | GainMoney of int
+  | LoseMoney of int
 
 let chance_list =
   ( 6,
@@ -9,7 +13,7 @@ let chance_list =
   )
 
 let dice_bound = 1
-let rollDice () : int = Random.int dice_bound + 1
+let rollDice () : int = 1 + Random.int dice_bound
 
 let pullChance () =
   let length, lst = chance_list in

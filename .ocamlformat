@@ -2,4 +2,3 @@ profile = conventional
 break-cases = fit-or-vertical
 exp-grouping = preserve
 type-decl = sparse
-wrap-comments = true
