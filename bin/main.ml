@@ -106,21 +106,27 @@ let single_turn (s : state) : state =
     | [] ->
         print_endline ("Turn #" ^ string_of_int s.current_run ^ " ended");
         []
-    | h :: t -> update_player h action :: helper t
+    | h :: t ->
+        let change = action in
+        let new_player = update_player h change in
+        new_player :: helper t
   in
   { s with players = helper s.players; current_run = s.current_run + 1 }
 
-(******************************************************************************)
-(********************************MAIN APP**************************************)
 (*eval -> print loop*)
 let rec loop (s : state) (eval : state -> state) : unit =
-  print_string "> ";
-  let input = read_line () in
-  match input with
-  | _ ->
-      let s2 = s |> eval in
-      print_state s2;
-      loop s2 eval
+  if s.current_run > s.max_run then print_endline "Max run reached"
+  else begin
+    print_string "Press Enter > ";
+    let input = read_line () in
+    match input with
+    | _ ->
+        let s2 = s |> eval in
+        print_state s2;
+        loop s2 eval
+  end
+(******************************************************************************)
+(********************************MAIN APP**************************************)
 
 let () =
   print_endline "\n\n Welcome to Monopoly. \n";
