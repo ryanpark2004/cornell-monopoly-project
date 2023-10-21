@@ -67,12 +67,19 @@ let rec pretty_board (plst : player list) (b : board) :
 let rec print_board (pb : (tile * player list) list) : unit =
   match pb with
   | [] -> print_endline "------------------\n"
-  | h :: t ->
-      let tile, plst = h in
-      let name_list = List.map get_name plst in
+  | (h1, h2) :: t ->
+      let tile, plst = (h1, h2) in
       print_string (to_string tile);
-      if not (name_list = []) then print_string "---" else print_string "";
-      List.iter print_string name_list;
+      if not (h2 = []) then print_string "---" else print_string "";
+      let rec print_players name_list =
+        match name_list with
+        | [] -> ()
+        | h :: t ->
+            print_string h.name;
+            print_string ("($" ^ string_of_int h.money ^ ")");
+            print_players t
+      in
+      print_players h2;
       print_endline "\n";
       print_board t
 
@@ -115,15 +122,17 @@ let single_turn (s : state) : state =
 
 (*eval -> print loop*)
 let rec loop (s : state) (eval : state -> state) : unit =
-  if s.current_run > s.max_run then print_endline "Max run reached"
+  if s.current_run > s.max_run then
+    print_endline "Max run reached. Thanks for playing!"
   else begin
-    print_string "Press Enter > ";
+    print_string "Press Enter To Roll the Dice > ";
     let input = read_line () in
     match input with
-    | _ ->
+    | "" ->
         let s2 = s |> eval in
         print_state s2;
         loop s2 eval
+    | _ -> print_string "Exiting game. Thanks for playing!"
   end
 (******************************************************************************)
 (********************************MAIN APP**************************************)
