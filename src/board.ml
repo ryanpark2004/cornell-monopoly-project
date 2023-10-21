@@ -42,9 +42,7 @@ type board = (tile * int) list
 (**[board] is a list of tiles, marked by a number that represents order*)
 
 let new_board : board =
-  [
-    (Start, 1); (Chance, 2); (Jail, 3); (Parking, 4); (Parking, 5); (Parking, 6);
-  ]
+  [ (Start, 1); (Chance, 2); (Tax 50, 3); (Parking, 4); (Jail, 5); (Chest, 6) ]
 
 let calculated_rent (prop : property) : int =
   match prop with
@@ -66,10 +64,10 @@ let property_to_string (p : property) : string =
 
 let to_string (t : tile) : string =
   match t with
-  | Start -> "Go"
-  | Property p -> property_to_string p
-  | Tax _ -> "Tax"
-  | Chance -> "Chance"
-  | Chest -> "Chest"
-  | Parking -> "Parking"
-  | Jail -> "Jail"
+  | Start -> "\027[32mGo\027[0m"
+  | Property p -> "\027[33m" ^ property_to_string p ^ "\027[0m"
+  | Tax _ -> "\027[38;5;214mTax\027[0m"
+  | Chance -> "\027[35mChance\027[0m"
+  | Chest -> "\027[34mChest\027[0m"
+  | Parking -> "\027[36mFree Parking\027[0m"
+  | Jail -> "\027[31mJail\027[0m"

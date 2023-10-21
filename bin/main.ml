@@ -68,7 +68,7 @@ let rec pretty_board (plst : player list) (b : board) :
 
 let rec print_board (pb : (tile * player list) list) : unit =
   match pb with
-  | [] -> print_endline "----------------------------\n"
+  | [] -> print_endline "-----------------------------\n"
   | (h1, h2) :: t ->
       let tile, plst = (h1, h2) in
       print_string ("| " ^ to_string tile);
@@ -146,7 +146,20 @@ let rec loop (s : state) (eval : state -> state) : unit =
 (********************************MAIN APP**************************************)
 
 let () =
-  print_endline "*** Welcome to Monopoly. *** \n";
+  print_endline
+    "\n\n\n\027[32m         ___                      _ _               ";
+  print_endline "        / __\\___  _ __ _ __   ___| | |              ";
+  print_endline "       / /  / _ \\| '__| '_ \\ / _ \\ | |              ";
+  print_endline "      / /__| (_) | |  | | | |  __/ | |              ";
+  print_endline "      \\____/\\___/|_|  |_| |_|\\___|_|_|              ";
+  print_endline "                                              ";
+  print_endline "                                      _       ";
+  print_endline "  /\\/\\   ___  _ __   ___  _ __   ___ | |_   _ ";
+  print_endline " /    \\ / _ \\| '_ \\ / _ \\| '_ \\ / _ \\| | | | |";
+  print_endline "/ /\\/\\ \\ (_) | | | | (_) | |_) | (_) | | |_| |";
+  print_endline "\\/    \\/\\___/|_| |_|\\___/| .__/ \\___/|_|\\__, |";
+  print_endline "                         |_|            |___/ \027[0m\n\n\n";
+
   Random.self_init ();
   let start = initialize_players new_state in
   loop start single_turn
