@@ -12,11 +12,11 @@ type player = {
   money : int;
   properties : int list;
   position : int;
-  in_jail : bool;
+  in_jail : int;
 }
 (** Type player represents the attributes of a player.
-      This includes their name, money, properties owned, their position, and if
-      they are in jail**)
+      This includes their name, money, properties owned, their position, and 
+      the amount of time where they are in jail**)
 
 val create_player : string -> player
 (** The function create_player initializes a player with a given name 

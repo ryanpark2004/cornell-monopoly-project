@@ -83,7 +83,7 @@ let rec print_board (pb : (tile * player list) list) : unit =
         | [] -> ()
         | h :: t ->
             print_string h.name;
-            if h.in_jail then print_string " \027[31m[IN JAIL]\027[0m";
+            if h.in_jail > 0 then print_string " \027[31m[IN JAIL]\027[0m";
             print_string (" ($" ^ string_of_int h.money ^ ")");
             print_players t
       in
@@ -107,7 +107,7 @@ let print_state (s : state) =
 let action player : player =
   let n = rollDice () in
   print_endline ("You rolled a " ^ string_of_int n ^ "!\n");
-  { name = "info"; money = 0; properties = []; position = n; in_jail = false }
+  { name = "info"; money = 0; properties = []; position = n; in_jail = 0 }
 
 (**[update_player] is the new player whose fields have changed using [info]*)
 let update_player (p : player) (info : player) : player =
@@ -120,7 +120,7 @@ let update_player (p : player) (info : player) : player =
        else p.money + info.money);
     properties = p.properties @ info.properties;
     position = (p.position + info.position) mod 6;
-    in_jail = info.in_jail;
+    in_jail = p.in_jail + info.in_jail;
   }
 
 (**[single_turn] is an updated state after every player performed an action *)
@@ -132,13 +132,29 @@ let single_turn (s : state) : state =
           ("Turn #" ^ string_of_int (s.current_run + 1) ^ " ended. \n");
         []
     | h :: t ->
-        let change = action h in
-        let changed_player = update_player h change in
-        let new_player =
-          match List.nth s.board changed_player.position with
-          | tile, n -> tile_action tile changed_player
-        in
-        new_player :: helper t
+        if h.in_jail = 0 then
+          let change = action h in
+          let changed_player = update_player h change in
+          let new_player =
+            match List.nth s.board changed_player.position with
+            | tile, n -> tile_action tile changed_player
+          in
+          new_player :: helper t
+        else (
+          print_string
+            "\n\
+             The dice was not rolled as you are still in jail. \n\
+             Enter [Y] if you would like to pay $100 to get out early > ";
+          let input = read_line () in
+          match input with
+          | "y" | "Y" ->
+              print_endline
+                "\n\
+                 You paid your way out of jail and can continue with your turn.";
+              helper ({ h with money = h.money - 100; in_jail = 0 } :: t)
+          | _ ->
+              print_endline "\nYou did not pay and are still in jail.";
+              { h with in_jail = h.in_jail - 1 } :: helper t)
   in
   { s with players = helper s.players; current_run = s.current_run + 1 }
 
@@ -147,7 +163,7 @@ let rec loop (s : state) (eval : state -> state) : unit =
   if s.current_run > s.max_run then
     print_endline "Max run reached. Thanks for playing!"
   else begin
-    print_string "\nPress [ENTER] to roll the dice > ";
+    print_string "\nPress [ENTER] to roll the dice or continue playing> ";
     let input = read_line () in
     match input with
     | "" ->
