@@ -6,7 +6,10 @@ val rollDice : unit -> int
 (**[rollDice] is a random integer from 0(inclusive) to bound(exclusive)*)
 
 val pullChance : unit -> chances
-(**[pullChance] is a randomly selected chance variant*)
+(**[pullChance] is a randomly selected chance variant.*)
+
+val pullChest : unit -> chances
+(**[pullChance] is a randomly selected community chest variant.*)
 
 val tile_action : Board.tile -> Player.player -> Player.player
 (**[tile_action] defines the different effects each tile has when 

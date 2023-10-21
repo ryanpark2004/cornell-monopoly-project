@@ -20,8 +20,11 @@ let new_state : state =
      player must be nonempty and 10 character long or less*)
 let initialize_players (s : state) : state =
   print_string "How many players? > ";
-  let num_players = int_of_string (read_line ()) in
-  if num_players <= 0 || num_players > 4 then invalid_arg "Too many players"
+  let num_players = try int_of_string (read_line ()) with _ -> 0 in
+  if num_players <= 0 || num_players > 1 then begin
+    print_endline "Invalid player amount (Max 1).";
+    exit 0
+  end
   else
     let rec helper n =
       match n with
@@ -32,8 +35,10 @@ let initialize_players (s : state) : state =
           in
           let player_name = read_line () in
           let name_length = String.length player_name in
-          if name_length <= 0 || name_length > 10 then
-            invalid_arg "Name is too long"
+          if name_length <= 0 || name_length > 10 then begin
+            print_endline "Invalid name (0 < Length <= 10).";
+            exit 0
+          end
           else
             let player = create_player player_name in
             player :: helper (n - 1)
@@ -78,6 +83,7 @@ let rec print_board (pb : (tile * player list) list) : unit =
         | [] -> ()
         | h :: t ->
             print_string h.name;
+            if h.in_jail then print_string " \027[31m[IN JAIL]\027[0m";
             print_string (" ($" ^ string_of_int h.money ^ ")");
             print_players t
       in
@@ -107,7 +113,11 @@ let action player : player =
 let update_player (p : player) (info : player) : player =
   {
     p with
-    money = p.money + info.money;
+    money =
+      (if p.position + info.position >= 6 then (
+         print_endline "Passed Go: Collect $200";
+         p.money + info.money + 200)
+       else p.money + info.money);
     properties = p.properties @ info.properties;
     position = (p.position + info.position) mod 6;
     in_jail = info.in_jail;
@@ -123,7 +133,11 @@ let single_turn (s : state) : state =
         []
     | h :: t ->
         let change = action h in
-        let new_player = update_player h change in
+        let changed_player = update_player h change in
+        let new_player =
+          match List.nth s.board changed_player.position with
+          | tile, n -> tile_action tile changed_player
+        in
         new_player :: helper t
   in
   { s with players = helper s.players; current_run = s.current_run + 1 }
@@ -158,8 +172,11 @@ let () =
   print_endline " /    \\ / _ \\| '_ \\ / _ \\| '_ \\ / _ \\| | | | |";
   print_endline "/ /\\/\\ \\ (_) | | | | (_) | |_) | (_) | | |_| |";
   print_endline "\\/    \\/\\___/|_| |_|\\___/| .__/ \\___/|_|\\__, |";
-  print_endline "                         |_|            |___/ \027[0m\n\n\n";
-
+  print_endline "                         |_|            |___/ \027[0m\n\n";
+  print_endline
+    "Welcome to Cornell Monopoly! \n\
+     For more details about how to play, look at the README.md file.\n\
+     To begin playing, answer the prompts below.\n\n";
   Random.self_init ();
   let start = initialize_players new_state in
   loop start single_turn

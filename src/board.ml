@@ -66,7 +66,7 @@ let to_string (t : tile) : string =
   match t with
   | Start -> "\027[32mGo\027[0m"
   | Property p -> "\027[33m" ^ property_to_string p ^ "\027[0m"
-  | Tax _ -> "\027[38;5;214mTax\027[0m"
+  | Tax x -> "\027[38;5;214mTax ($" ^ string_of_int x ^ ")\027[0m"
   | Chance -> "\027[35mChance\027[0m"
   | Chest -> "\027[34mChest\027[0m"
   | Parking -> "\027[36mFree Parking\027[0m"
