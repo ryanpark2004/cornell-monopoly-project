@@ -12,7 +12,7 @@ let chance_list =
     [ ToStart; ToJail; GainMoney 40; LoseMoney 20; GainMoney 100; LoseMoney 50 ]
   )
 
-let dice_bound = 1
+let dice_bound = 6
 let rollDice () : int = 1 + Random.int dice_bound
 
 let pullChance () =

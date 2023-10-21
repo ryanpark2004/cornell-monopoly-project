@@ -52,7 +52,7 @@ let occupants (tl : tile * int) (plst : player list) : tile * player list =
   let rec helper (plst2 : player list) : player list =
     match plst2 with
     | [] -> []
-    | h :: t -> if pos = h.position then h :: helper t else helper t
+    | h :: t -> if pos = h.position + 1 then h :: helper t else helper t
   in
   (tile, helper plst)
 
@@ -70,13 +70,13 @@ let rec print_board (pb : (tile * player list) list) : unit =
   | (h1, h2) :: t ->
       let tile, plst = (h1, h2) in
       print_string (to_string tile);
-      if not (h2 = []) then print_string "---" else print_string "";
+      if not (h2 = []) then print_string " --- " else print_string "";
       let rec print_players name_list =
         match name_list with
         | [] -> ()
         | h :: t ->
             print_string h.name;
-            print_string ("($" ^ string_of_int h.money ^ ")");
+            print_string (" ($" ^ string_of_int h.money ^ ")");
             print_players t
       in
       print_players h2;
@@ -91,20 +91,24 @@ let print_state (s : state) = s.board |> pretty_board s.players |> print_board
 
 (**[action] is a dummy player that contains all the changes to be applied to the actual player
     As of now, the action only contains changes in player position*)
-let action : player =
+let action player : player =
   let n = rollDice () in
   print_endline ("Rolled dice: " ^ string_of_int n);
   { name = "info"; money = 0; properties = []; position = n; in_jail = false }
 
 (**[update_player] is the new player whose fields have changed using [info]*)
 let update_player (p : player) (info : player) : player =
-  {
-    p with
-    money = p.money + info.money;
-    properties = p.properties @ info.properties;
-    position = p.position + info.position;
-    in_jail = info.in_jail;
-  }
+  let p =
+    {
+      p with
+      money = p.money + info.money;
+      properties = p.properties @ info.properties;
+      position = (p.position + info.position) mod 6;
+      in_jail = info.in_jail;
+    }
+  in
+  print_int p.position;
+  p
 
 (**[single_turn] is an updated state after every player performed an action *)
 let single_turn (s : state) : state =
@@ -114,7 +118,7 @@ let single_turn (s : state) : state =
         print_endline ("Turn #" ^ string_of_int s.current_run ^ " ended");
         []
     | h :: t ->
-        let change = action in
+        let change = action h in
         let new_player = update_player h change in
         new_player :: helper t
   in
@@ -138,6 +142,7 @@ let rec loop (s : state) (eval : state -> state) : unit =
 (********************************MAIN APP**************************************)
 
 let () =
-  print_endline "\n\n Welcome to Monopoly. \n";
+  print_endline "*** Welcome to Monopoly. *** \n";
+  Random.self_init ();
   let start = initialize_players new_state in
   loop start single_turn

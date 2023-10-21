@@ -66,7 +66,7 @@ let property_to_string (p : property) : string =
 
 let to_string (t : tile) : string =
   match t with
-  | Start -> "Start"
+  | Start -> "Go"
   | Property p -> property_to_string p
   | Tax _ -> "Tax"
   | Chance -> "Chance"
