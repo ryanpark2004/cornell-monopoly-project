@@ -85,6 +85,7 @@ let print_state (s : state) = s.board |> pretty_board s.players |> print_board
 (**[action] is a dummy player that contains all the changes to be applied to the actual player
     As of now, the action only contains changes in player position*)
 let action : player =
+  print_string "hi";
   let n = rollDice () in
   print_endline ("Rolled dice: " ^ string_of_int n);
   { name = "info"; money = 0; properties = []; position = n; in_jail = false }
