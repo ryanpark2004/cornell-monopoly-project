@@ -21,8 +21,8 @@ let new_state : state =
 let initialize_players (s : state) : state =
   print_string "How many players? > ";
   let num_players = try int_of_string (read_line ()) with _ -> 0 in
-  if num_players <= 0 || num_players > 1 then begin
-    print_endline "Invalid player amount (Max 1).";
+  if num_players <= 0 || num_players > 4 then begin
+    print_endline "Invalid player amount (Max 4).";
     exit 0
   end
   else
@@ -63,7 +63,8 @@ let occupants (tl : tile * int) (plst : player list) : tile * player list =
   in
   (tile, helper plst)
 
-(**[pretty_board] is a board where each tile is associated with all the players standing on it*)
+(**[pretty_board] is a board where each tile is associated with all the players 
+    standing on it*)
 let rec pretty_board (plst : player list) (b : board) :
     (tile * player list) list =
   (*for each tile, check what players are standing on it*)
@@ -75,7 +76,7 @@ let rec print_board (pb : (tile * player list) list) : unit =
   match pb with
   | [] -> print_endline "-----------------------------\n"
   | (h1, h2) :: t ->
-      let tile, plst = (h1, h2) in
+      let tile, _ = (h1, h2) in
       print_string ("| " ^ to_string tile);
       if not (h2 = []) then print_string " --- " else print_string "";
       let rec print_players name_list =
@@ -102,15 +103,16 @@ let print_state (s : state) =
 
 (*********************************THE LOOP*************************************)
 
-(**[action] is a dummy player that contains all the changes to be applied to the actual player
-    As of now, the action only contains changes in player position*)
-let action player : player =
-  let n = rollDice () in
-  print_endline ("You rolled a " ^ string_of_int n ^ "!\n");
-  { name = "info"; money = 0; properties = []; position = n; in_jail = 0 }
+type info = {
+  mutable money : int;
+  mutable properties : int list;
+  mutable position : int;
+  mutable in_jail : int;
+}
+(**[info] is a record that has same fields as [player] but is mutable.*)
 
 (**[update_player] is the new player whose fields have changed using [info]*)
-let update_player (p : player) (info : player) : player =
+let update_player (p : player) (info : info) : player =
   {
     p with
     money =
@@ -123,55 +125,80 @@ let update_player (p : player) (info : player) : player =
     in_jail = p.in_jail + info.in_jail;
   }
 
-(**[single_turn] is an updated state after every player performed an action *)
-let single_turn (s : state) : state =
-  let rec helper (plst : player list) : player list =
-    match plst with
-    | [] ->
-        print_endline
-          ("Turn #" ^ string_of_int (s.current_run + 1) ^ " ended. \n");
-        []
-    | h :: t ->
-        if h.in_jail = 0 then
-          let change = action h in
-          let changed_player = update_player h change in
-          let new_player =
-            match List.nth s.board changed_player.position with
-            | tile, n -> tile_action tile changed_player
-          in
-          new_player :: helper t
-        else (
-          print_string
-            "\n\
-             The dice was not rolled as you are still in jail. \n\
-             Enter [Y] if you would like to pay $100 to get out early > ";
-          let input = read_line () in
-          match input with
-          | "y" | "Y" ->
-              print_endline
-                "\n\
-                 You paid your way out of jail and can continue with your turn.";
-              helper ({ h with money = h.money - 100; in_jail = 0 } :: t)
-          | _ ->
-              print_endline "\nYou did not pay and are still in jail.";
-              { h with in_jail = h.in_jail - 1 } :: helper t)
+(**[normal_turn] returns an [info] of change based on decisions made in a usual 
+    turn*)
+let normal_turn (player : player) : info =
+  let player_info : info =
+    {
+      money = player.money;
+      properties = player.properties;
+      position = player.position;
+      in_jail = player.in_jail;
+    }
   in
-  { s with players = helper s.players; current_run = s.current_run + 1 }
+  print_string "\nPress [ENTER] to roll the dice > ";
+  match read_line () with
+  | _ ->
+      let n = rollDice () in
+      Printf.printf "You rolled %d" n;
+      player_info.position <- player_info.position + n;
+      player_info (*add more actions here*)
 
-(*eval -> print loop*)
-let rec loop (s : state) (eval : state -> state) : unit =
+(**[jailed_turn] returns an [info] based on the decisions the jailed
+   player makes*)
+let jailed_turn (player : player) : info =
+  let player_info : info =
+    {
+      money = player.money;
+      properties = player.properties;
+      position = player.position;
+      in_jail = player.in_jail;
+    }
+  in
+  Printf.printf
+    "The player is in jail. Turns remaining: %d. Press [Y] to pay $300 and \
+     roll dice"
+    (player_info.in_jail - 1);
+  match read_line () with
+  | "Y" ->
+      player_info.money <- player_info.money - 300;
+      player_info.in_jail <- 0;
+      let updated = update_player player player_info in
+      normal_turn updated
+  | _ ->
+      player_info.in_jail <- player_info.in_jail - 1;
+      player_info
+
+(**[turn] combines [normal_turn] and [jailed_turn] by checking
+    the [p]'s [in_jail] count*)
+let turn (p : player) : player =
+  let info = if p.in_jail > 0 then jailed_turn p else normal_turn p in
+  update_player p info
+
+(**[loop] is the main game loop.
+  * First, it checks if the game reached max number of runs.
+  * If not, then it runs a secondary loop [sub_loop], iterating
+  * over the player list [plst]. *)
+let rec loop (s : state) : unit =
   if s.current_run > s.max_run then
     print_endline "Max run reached. Thanks for playing!"
-  else begin
-    print_string "\nPress [ENTER] to roll the dice or continue playing> ";
-    let input = read_line () in
-    match input with
-    | "" ->
-        let s2 = s |> eval in
-        print_state s2;
-        loop s2 eval
-    | _ -> print_string "Exiting game. Thanks for playing!"
-  end
+  else
+    let rec sub_loop (plst : player list) =
+      match plst with
+      | [] ->
+          Printf.printf "Run %d/%d ended." s.current_run s.max_run;
+          loop { s with current_run = s.current_run + 1 }
+      | h :: t ->
+          Printf.printf "Player %s's turn." h.name;
+          let new_plst =
+            List.map (fun x -> if x.name = h.name then turn h else x) s.players
+          in
+          let new_state = { s with players = new_plst } in
+          print_state new_state;
+          sub_loop t
+    in
+    sub_loop s.players
+
 (******************************************************************************)
 (********************************MAIN APP**************************************)
 
@@ -195,4 +222,4 @@ let () =
      To begin playing, answer the prompts below.\n\n";
   Random.self_init ();
   let start = initialize_players new_state in
-  loop start single_turn
+  loop start
