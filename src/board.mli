@@ -102,3 +102,6 @@ val to_string : tile -> string
 
 val new_board : board
 (**A fresh new board*)
+
+val pos_of_tile : tile -> int
+(**Returns the integer position of the tile. Starts at 0*)

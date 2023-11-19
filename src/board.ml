@@ -41,8 +41,23 @@ type tile =
 type board = (tile * int) list
 (**[board] is a list of tiles, marked by a number that represents order*)
 
+let tlist : tile list = [ Start; Chance; Jail ]
+
 let new_board : board =
-  [ (Start, 1); (Chance, 2); (Tax 50, 3); (Parking, 4); (Jail, 5); (Chest, 6) ]
+  let rec indices (n : int) (lst : tile list) : int list =
+    match lst with
+    | [] -> []
+    | _ :: t -> n :: indices (n + 1) t
+  in
+  List.combine tlist (indices 0 tlist)
+
+let pos_of_tile (t : tile) : int =
+  let rec helper (lst : board) (t : tile) : int =
+    match lst with
+    | [] -> failwith "no such tile exists on this board"
+    | (tile, idx) :: tl -> if tile = t then idx else helper tl t
+  in
+  helper new_board t
 
 let calculated_rent (prop : property) : int =
   match prop with

@@ -45,86 +45,80 @@ let initialize_players (s : state) : state =
     in
     { s with players = helper num_players [] }
 
-(*
-      match n with
-      | 0 -> []
-      | x ->
-          let () =
-            print_string ("\nName of Player " ^ string_of_int x ^ " > ")
-          in
-          let player_name = read_line () in
-          let name_length = String.length player_name in
-          if name_length <= 0 || name_length > 10 then begin
-            print_endline "Invalid name (0 < Length <= 10).";
-            exit 0
-          end
-          else if 
-            already_in player_name then Printf.printf "%s already exists" player_name; 
-          exit 0
-          else
-            let player = create_player player_name in
-            player :: helper (n - 1)
-    in
-    {
-      board = s.board;
-      players = helper num_players;
-      max_run = s.max_run;
-      current_run = s.current_run;
-    }
-*)
 (******************************************************************************)
 
 (******************************** PRINTS **************************************)
 
-let occupants (tl : tile * int) (plst : player list) : tile * player list =
-  let tile, pos = tl in
-  let rec helper (plst2 : player list) : player list =
-    match plst2 with
-    | [] -> []
-    | h :: t -> if pos = h.position + 1 then h :: helper t else helper t
+(**[occupants] is a list of players occupying tile [t] on current state [s]. Returns [None] is no player on [t]*)
+let occupants (s : state) (t : tile) : player list option =
+  match List.filter (fun p -> p.position = pos_of_tile t) s.players with
+  | [] -> None
+  | h :: t -> Some (h :: t)
+
+type pretty_tile = {
+  tile : tile;
+  pos : int;
+  plst : player list option;
+}
+
+(**[pretty_board] is a list of pretty_tile in given state [s]*)
+let pretty_board (s : state) : pretty_tile list =
+  List.map (fun (t, n) -> { tile = t; pos = n; plst = occupants s t }) s.board
+
+(**[print_board] prints the board in these steps:
+  * 1. generate pretty_board
+  * 2. iterate through pretty board and convert occupants into string
+  * 3. for each iteration, print |tile --- names*)
+let print_board (s : state) : unit =
+  let concat (plst : player list option) : string =
+    match plst with
+    | None -> ""
+    | Some lst ->
+        List.map (fun p -> p.name ^ ", ") lst |> List.fold_left ( ^ ) ""
   in
-  (tile, helper plst)
+  print_endline "\n------------------------\n";
+  List.iter
+    (fun pt ->
+      Printf.printf "| %s --- %s\n" (to_string pt.tile) (concat pt.plst))
+    (pretty_board s)
 
-(**[pretty_board] is a board where each tile is associated with all the players 
-    standing on it*)
-let rec pretty_board (plst : player list) (b : board) :
-    (tile * player list) list =
-  (*for each tile, check what players are standing on it*)
-  match b with
-  | [] -> []
-  | h :: t -> occupants h plst :: pretty_board plst t
+(**[print_status] prints the current status of the players. It displays
+  * their money and properties.*)
+let print_status (s : state) : unit =
+  print_endline "\n-------STATUS-------\n";
+  List.iter (fun p -> Printf.printf "|%s  $%d\n" p.name p.money) s.players
 
-let rec print_board (pb : (tile * player list) list) : unit =
-  match pb with
-  | [] -> print_endline "-----------------------------\n"
-  | (h1, h2) :: t ->
-      let tile, _ = (h1, h2) in
-      print_string ("| " ^ to_string tile);
-      if not (h2 = []) then print_string " --- " else print_string "";
-      let rec print_players name_list =
-        match name_list with
-        | [] -> ()
-        | h :: t ->
-            print_string h.name;
-            if h.in_jail > 0 then print_string " \027[31m[IN JAIL]\027[0m";
-            print_string (" ($" ^ string_of_int h.money ^ ")");
-            print_players t
-      in
-      print_players h2;
-      print_endline "\n|";
-      print_board t
+(* match b with
+     | [] -> print_endline "-----------------------------\n"
+     | (h1, h2) :: t ->
+         let tile, _ = (h1, h2) in
+         print_string ("| " ^ to_string tile);
+         if not (h2 = []) then print_string " --- " else print_string "";
+         let rec print_players name_list =
+           match name_list with
+           | [] -> ()
+           | h :: t ->
+               print_string h.name;
+               if h.in_jail > 0 then print_string " \027[31m[IN JAIL]\027[0m";
+               print_string (" ($" ^ string_of_int h.money ^ ")");
+               print_players t
+         in
+         print_players h2;
+         print_endline "\n|";
+         print_board t
 
-let print_board_frame pb =
-  print_endline "------- UPDATED BOARD ------- \n|";
-  print_board pb
+   let print_board_frame pb =
+     print_endline "------- UPDATED BOARD ------- \n|";
+     print_board pb *)
 
 let print_state (s : state) =
-  s.board |> pretty_board s.players |> print_board_frame
+  print_board s;
+  print_status s
 
 (******************************************************************************)
 
 (*********************************THE LOOP*************************************)
-let debug = true
+let debug = false
 
 let print_player p =
   if not debug then p
@@ -143,14 +137,15 @@ type info = {
 
 (**[update_player] is the new player whose fields have changed using [info]*)
 let update_player (p : player) (info : info) : player =
+  let new_pos = (p.position + info.position) mod 6 in
   {
     p with
     money = p.money + info.money;
     properties = p.properties @ info.properties;
-    position = (p.position + info.position) mod 6;
+    position = new_pos;
     in_jail =
-      (if (p.position + info.position) mod 6 = 4 then 3
-       else p.in_jail + info.in_jail);
+      (if p.in_jail <= 0 && new_pos = 4 then 3 else p.in_jail + info.in_jail);
+    (*if player was not in jail*)
   }
 
 (**[normal_turn] returns an [info] of change based on decisions made in a usual 
