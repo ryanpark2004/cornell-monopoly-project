@@ -76,17 +76,26 @@ let print_board (s : state) : unit =
     | Some lst ->
         List.map (fun p -> p.name ^ ", ") lst |> List.fold_left ( ^ ) ""
   in
+  let iter_helper (pt : pretty_tile) : unit =
+    match pt.plst with
+    | None -> Printf.printf "| %s \n" (to_string pt.tile)
+    | Some _ ->
+        Printf.printf "| %s --- %s \n" (to_string pt.tile) (concat pt.plst)
+  in
+
   print_endline "\n------------------------\n";
-  List.iter
-    (fun pt ->
-      Printf.printf "| %s --- %s\n" (to_string pt.tile) (concat pt.plst))
-    (pretty_board s)
+  List.iter iter_helper (pretty_board s)
 
 (**[print_status] prints the current status of the players. It displays
   * their money and properties.*)
 let print_status (s : state) : unit =
   print_endline "\n-------STATUS-------\n";
-  List.iter (fun p -> Printf.printf "|%s  $%d\n" p.name p.money) s.players
+  let iter_helper (p : player) : unit =
+    if p.in_jail > 0 then
+      Printf.printf "|%s   $%d   %d" p.name p.money p.in_jail
+    else Printf.printf "|%s   $%d" p.name p.money
+  in
+  List.iter iter_helper s.players
 
 (* match b with
      | [] -> print_endline "-----------------------------\n"
