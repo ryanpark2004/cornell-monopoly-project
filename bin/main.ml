@@ -12,7 +12,7 @@ type state = {
 }
 
 let new_state : state =
-  { board = Board.new_board; players = []; max_run = 9; current_run = 0 }
+  { board = Board.new_board; players = []; max_run = 10; current_run = 1 }
 
 let name_to_players (nlst : string list) : player list =
   List.map (fun n -> create_player n) nlst
@@ -32,7 +32,7 @@ let initialize_players (s : state) : state =
     let rec helper (n : int) (acc : string list) : player list =
       if n = 0 then name_to_players acc
       else begin
-        Printf.printf "\n Name of Player %d: " n;
+        Printf.printf "\nName of Player %d: " (num_players - n + 1);
         let name = read_line () in
         if String.length name <= 0 || String.length name > 10 then (
           print_endline "\nInvalid name (0 < length <= 10)";
@@ -73,8 +73,7 @@ let print_board (s : state) : unit =
   let concat (plst : player list option) : string =
     match plst with
     | None -> ""
-    | Some lst ->
-        List.map (fun p -> p.name ^ ", ") lst |> List.fold_left ( ^ ) ""
+    | Some lst -> String.concat ", " (List.map (fun p -> p.name) lst)
   in
   let iter_helper (pt : pretty_tile) : unit =
     match pt.plst with
@@ -83,42 +82,21 @@ let print_board (s : state) : unit =
         Printf.printf "| %s --- %s \n" (to_string pt.tile) (concat pt.plst)
   in
 
-  print_endline "\n------------------------\n";
+  print_endline "\n\n------------BOARD-----------";
   List.iter iter_helper (pretty_board s)
 
 (**[print_status] prints the current status of the players. It displays
   * their money and properties.*)
 let print_status (s : state) : unit =
-  print_endline "\n-------STATUS-------\n";
+  print_endline "\n-----------STATUS-----------";
   let iter_helper (p : player) : unit =
     if p.in_jail > 0 then
-      Printf.printf "|%s   $%d   %d" p.name p.money p.in_jail
-    else Printf.printf "|%s   $%d" p.name p.money
+      Printf.printf "| %s  \027[32m $%d \027[0m \027[31m%d \027[0m" p.name
+        p.money p.in_jail
+    else Printf.printf "| %s  \027[32m $%d \027[0m" p.name p.money
   in
-  List.iter iter_helper s.players
-
-(* match b with
-     | [] -> print_endline "-----------------------------\n"
-     | (h1, h2) :: t ->
-         let tile, _ = (h1, h2) in
-         print_string ("| " ^ to_string tile);
-         if not (h2 = []) then print_string " --- " else print_string "";
-         let rec print_players name_list =
-           match name_list with
-           | [] -> ()
-           | h :: t ->
-               print_string h.name;
-               if h.in_jail > 0 then print_string " \027[31m[IN JAIL]\027[0m";
-               print_string (" ($" ^ string_of_int h.money ^ ")");
-               print_players t
-         in
-         print_players h2;
-         print_endline "\n|";
-         print_board t
-
-   let print_board_frame pb =
-     print_endline "------- UPDATED BOARD ------- \n|";
-     print_board pb *)
+  List.iter iter_helper s.players;
+  print_string "| \n"
 
 let print_state (s : state) =
   print_board s;
@@ -146,27 +124,42 @@ type info = {
 
 (**[update_player] is the new player whose fields have changed using [info]*)
 let update_player (p : player) (info : info) : player =
-  let new_pos = (p.position + info.position) mod 6 in
-  {
-    p with
-    money = p.money + info.money;
-    properties = p.properties @ info.properties;
-    position = new_pos;
-    in_jail =
-      (if p.in_jail <= 0 && new_pos = 4 then 3 else p.in_jail + info.in_jail);
+  let new_pos = (p.position + info.position) mod length new_state.board in
+  let new_plr =
+    {
+      p with
+      money = p.money + info.money;
+      properties = p.properties @ info.properties;
+      position = new_pos;
+      in_jail = p.in_jail - 1;
+    }
     (*if player was not in jail*)
-  }
+  in
+  tile_action (tile_of_pos new_state.board new_plr.position) new_plr
 
 (**[normal_turn] returns an [info] of change based on decisions made in a usual 
     turn*)
-let normal_turn (player : player) : info =
-  print_string "\nPress [ENTER] to roll the dice > ";
+let rec normal_turn (player : player) : info =
+  print_string
+    "\n\
+     Press [ENTER] to roll the dice, Press [I] to view detailed player \
+     information,\n\
+     or Press [Q] to quit. > ";
   match read_line () with
-  | _ ->
+  | "" ->
       let n = rollDice () in
-      Printf.printf "\n%s rolled %d" player.name n;
+      Printf.printf "\n%s rolled a %d!\n" player.name n;
       { money = 0; properties = []; position = n; in_jail = 0 }
-(*add more actions here*)
+  | "i" | "I" ->
+      print_endline "***INSERT PLAYER INFO HERE***";
+      normal_turn player
+  | "q" | "Q" -> begin
+      print_endline "Quitting...";
+      exit 0
+    end
+  | _ ->
+      print_endline "Invalid input: Please press [ENTER], [I], or [Q]";
+      normal_turn player
 
 (**[jailed_turn] returns an [info] based on the decisions the jailed
    player makes*)
@@ -174,12 +167,12 @@ let jailed_turn (player : player) : info =
   Printf.printf
     "\n\
      The player is in jail. Turns remaining: %d. \n\
-     Press [Y] to pay $300 and roll dice" (player.in_jail - 1);
+     Press [Y] to pay $100 and roll dice > " (player.in_jail - 1);
   match read_line () with
   | "Y" ->
       let new_info =
         {
-          money = -300;
+          money = -100;
           properties = [];
           position = 0;
           in_jail = -1 * player.in_jail;

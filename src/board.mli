@@ -89,6 +89,10 @@ type board = (tile * int) list
 (** Represents the overall game board, which keeps track of all tile and 
     player status.*)
 
+val length : board -> int
+(** Calculates the length of the current game board. 
+    An empty board has length 0.*)
+
 val calculated_rent : property -> int
 (** Calculates the rent due to visiting players based off of specifics for 
     the different property types. 
@@ -105,3 +109,6 @@ val new_board : board
 
 val pos_of_tile : tile -> int
 (**Returns the integer position of the tile. Starts at 0*)
+
+val tile_of_pos : board -> int -> tile
+(**Returns the tile at the position n in the inputted board.*)

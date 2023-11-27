@@ -11,9 +11,6 @@ let create_player (title : string) : player =
 
 let get_name player = player.name
 
-let move_player player steps =
-  { player with position = player.position + steps }
-
 let buy_property player rent : player =
   if player.money >= rent then
     {
