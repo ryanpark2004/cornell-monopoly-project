@@ -5,17 +5,17 @@ open Utils
 
 (*******************************Helpers**************************************)
 type state = {
-  mutable board : board;
-  mutable players : player list;
+  board : board;
+  players : player ref list; (*players are mutated only during transactions*)
   max_run : int;
   current_run : int;
 }
 
 let new_state : state =
-  { board = Board.new_board; players = []; max_run = 5; current_run = 0 }
+  { board = Board.new_board; players = []; max_run = 10; current_run = 1 }
 
-let name_to_players (nlst : string list) : player list =
-  List.map (fun n -> create_player n) nlst
+let name_to_players (nlst : string list) : player ref list =
+  List.map (fun n -> ref (create_player n)) nlst
 
 (**[add_players] is a new state with new players added. 
     The number of players must be less than or equal to 4,
@@ -29,10 +29,10 @@ let initialize_players (s : state) : state =
     exit 0
   end
   else
-    let rec helper (n : int) (acc : string list) : player list =
+    let rec helper (n : int) (acc : string list) : player ref list =
       if n = 0 then name_to_players acc
       else begin
-        Printf.printf "\n Name of Player %d: " n;
+        Printf.printf "\nName of Player %d: " (num_players - n + 1);
         let name = read_line () in
         if String.length name <= 0 || String.length name > 10 then (
           print_endline "\nInvalid name (0 < length <= 10)";
@@ -48,11 +48,14 @@ let initialize_players (s : state) : state =
 
 (******************************** PRINTS **************************************)
 
+(*Takes out the contents of the reference lists*)
+let deref lst = List.map (fun p -> !p) lst
+
 (**[occupants] is a list of players occupying tile [t] on current state [s]. Returns [None] is no player on [t]*)
 let occupants (s : state) (t : tile) : player list option =
-  match List.filter (fun p -> p.position = pos_of_tile t) s.players with
+  match List.filter (fun p -> !p.position = pos_of_tile t) s.players with
   | [] -> None
-  | h :: t -> Some (h :: t)
+  | lst -> Some (deref lst)
 
 type pretty_tile = {
   tile : tile;
@@ -72,8 +75,7 @@ let print_board (s : state) : unit =
   let concat (plst : player list option) : string =
     match plst with
     | None -> ""
-    | Some lst ->
-        List.map (fun p -> p.name ^ ", ") lst |> List.fold_left ( ^ ) ""
+    | Some lst -> String.concat ", " (List.map (fun p -> p.name) lst)
   in
   let iter_helper (pt : pretty_tile) : unit =
     match pt.plst with
@@ -81,21 +83,23 @@ let print_board (s : state) : unit =
     | Some _ ->
         Printf.printf "| %s --- %s \n" (to_string pt.tile) (concat pt.plst)
   in
-  print_endline "\n----------BOARD--------\n";
+  print_endline "\n\n------------BOARD-----------";
   List.iter iter_helper (pretty_board s)
 
 (**[print_status] prints the current status of the players. It displays
   * their money and properties.*)
 let print_status (s : state) : unit =
+  print_endline "\n-----------STATUS-----------";
   let iter_helper (p : player) : unit =
     if p.in_jail > 0 then
-      Printf.printf "|%s   $%d   %d \n" p.name p.money p.in_jail
-    else Printf.printf "|%s   $%d \n" p.name p.money
+      Printf.printf "| %s  \027[32m $%d \027[0m \027[31m%d \027[0m" p.name
+        p.money p.in_jail
+    else Printf.printf "| %s  \027[32m $%d \027[0m" p.name p.money
   in
-  print_endline "\n-------STATUS-------\n";
-  List.iter iter_helper s.players
+  List.iter iter_helper (deref s.players);
+  print_string "| \n"
 
-let print_state (s : state) : unit =
+let print_state (s : state) =
   print_board s;
   print_status s
 

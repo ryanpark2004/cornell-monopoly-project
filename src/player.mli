@@ -25,10 +25,6 @@ val create_player : string -> player
 val get_name : player -> string
 (** Returns the name of the specified player.**)
 
-val move_player : player -> int -> player
-(** The function move_player moves a player a certain amount of steps based
-      on the roll of the dice.**)
-
 val buy_property : player -> int -> player
 (** The function buy_property checks to see if a player can buy a property
        If so, the amount of money is subtracted from their account and the 
