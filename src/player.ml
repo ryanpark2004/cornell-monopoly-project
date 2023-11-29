@@ -3,10 +3,11 @@ type player = {
   money : int;
   properties : int list;
   position : int;
+  in_jail : int;
 }
 
 let create_player (name : string) : player =
-  { name; money = 5000; properties = []; position = 0 }
+  { name; money = 5000; properties = []; position = 0; in_jail = 0 }
 
 let get_name player = player.name
 

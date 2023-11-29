@@ -35,12 +35,5 @@ val receive_money : player -> int -> player
 (** The function receive_money adds any amount of money earned or subtracted
        from their account. **)
 
-val jail_send : player -> player
-(** The function jail_send sends the player to jail. **)
-
-val jail_escape : player -> player
-(** The function jaiL_escape allows the player to exit jail. The function
-      will raise invalid_arg if the player is not in jail. **)
-
 val move_player : player -> int -> player
 (**Returns a new player with updated position*)

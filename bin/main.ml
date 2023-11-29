@@ -1,7 +1,6 @@
 open Monopoly
 open Board
 open Player
-open Utils
 
 (*******************************Helpers**************************************)
 type state = {
@@ -106,7 +105,6 @@ let print_state (s : state) =
 (******************************************************************************)
 (*********************************THE LOOP*************************************)
 
-let loop = failwith "unimplemented"
 (******************************************************************************)
 (********************************MAIN APP**************************************)
 
@@ -130,4 +128,4 @@ let () =
      To begin playing, answer the prompts below.\n\n";
   Random.self_init ();
   let start = initialize_players new_state in
-  loop start
+  main_loop start
