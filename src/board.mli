@@ -105,3 +105,6 @@ val new_board : board
 
 val pos_of_tile : tile -> int
 (**Returns the integer position of the tile. Starts at 0*)
+
+val board_size : int
+(**size of the board*)

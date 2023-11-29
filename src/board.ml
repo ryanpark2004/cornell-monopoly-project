@@ -51,6 +51,8 @@ let new_board : board =
   in
   List.combine tlist (indices 0 tlist)
 
+let board_size = List.length new_board
+
 let pos_of_tile (t : tile) : int =
   let rec helper (lst : board) (t : tile) : int =
     match lst with
