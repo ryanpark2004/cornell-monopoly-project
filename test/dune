@@ -1,3 +1,8 @@
 (test
  (name main)
  (libraries Monopoly ounit2))
+
+(env
+ (dev
+  (flags
+   (:standard -warn-error -A))))

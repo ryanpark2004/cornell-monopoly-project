@@ -1,3 +1,5 @@
+open Exceptions
+
 (* board.ml *)
 type location = {
   name : string;
@@ -59,14 +61,14 @@ let rec length (b : board) : int =
 let pos_of_tile (t : tile) : int =
   let rec helper (lst : board) (t : tile) : int =
     match lst with
-    | [] -> failwith "no such tile exists on this board"
+    | [] -> raise No_Such_Tile
     | (tile, idx) :: tl -> if tile = t then idx else helper tl t
   in
   helper new_board t
 
 let rec tile_of_pos (b : board) (n : int) : tile =
   match b with
-  | [] -> failwith "No such tile exists on this board."
+  | [] -> raise (Invalid_argument "the given position is invalid")
   | (tile, n') :: t -> if n = n' then tile else tile_of_pos t n
 
 let calculated_rent (prop : property) : int =

@@ -111,4 +111,5 @@ val pos_of_tile : tile -> int
 (**Returns the integer position of the tile. Starts at 0*)
 
 val tile_of_pos : board -> int -> tile
-(**Returns the tile at the position n in the inputted board.*)
+(**Returns the tile at the position n in the inputted board. Raises Invalid_Tile exception
+    when tiles does not exist at the position.*)
