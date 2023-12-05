@@ -1,11 +1,12 @@
 open Monopoly
 open Board
 open Player
+open Utils
 
 (*******************************Helpers**************************************)
 type state = {
   board : board;
-  players : player ref list; (*players are mutated only during transactions*)
+  players : player list;
   max_run : int;
   current_run : int;
 }
@@ -13,8 +14,8 @@ type state = {
 let new_state : state =
   { board = Board.new_board; players = []; max_run = 10; current_run = 1 }
 
-let name_to_players (nlst : string list) : player ref list =
-  List.map (fun n -> ref (create_player n)) nlst
+let name_to_players (nlst : string list) : player list =
+  List.map (fun n -> create_player n) nlst
 
 (**[add_players] is a new state with new players added. 
     The number of players must be less than or equal to 4,
@@ -28,7 +29,7 @@ let initialize_players (s : state) : state =
     exit 0
   end
   else
-    let rec helper (n : int) (acc : string list) : player ref list =
+    let rec helper (n : int) (acc : string list) : player list =
       if n = 0 then name_to_players acc
       else begin
         Printf.printf "\nName of Player %d: " (num_players - n + 1);
@@ -52,9 +53,9 @@ let deref lst = List.map (fun p -> !p) lst
 
 (**[occupants] is a list of players occupying tile [t] on current state [s]. Returns [None] is no player on [t]*)
 let occupants (s : state) (t : tile) : player list option =
-  match List.filter (fun p -> !p.position = pos_of_tile t) s.players with
+  match List.filter (fun p -> p.position = pos_of_tile t) s.players with
   | [] -> None
-  | lst -> Some (deref lst)
+  | lst -> Some lst
 
 type pretty_tile = {
   tile : tile;
@@ -95,7 +96,7 @@ let print_status (s : state) : unit =
         p.money p.in_jail
     else Printf.printf "| %s  \027[32m $%d \027[0m" p.name p.money
   in
-  List.iter iter_helper (deref s.players);
+  List.iter iter_helper s.players;
   print_string "| \n"
 
 let print_state (s : state) =
@@ -105,8 +106,17 @@ let print_state (s : state) =
 
 (******************************************************************************)
 (*********************************THE LOOP*************************************)
+let move (p : player) : player =
+  let n = rollDice () in
+  Printf.printf "%s rolled %i" p.name n;
+  move_player p n
 
-let main_loop = failwith "TODO"
+let turn (p : player) =
+  let moved = move p in
+  let tile = tile_of_pos new_board moved.position in
+  tile_action tile moved
+
+let round (players : player list) : player list = List.map turn players
 
 (******************************************************************************)
 (********************************MAIN APP**************************************)
