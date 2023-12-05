@@ -1,4 +1,5 @@
 open Exceptions
+open Printf
 
 (* board.ml *)
 type location = {
@@ -68,7 +69,8 @@ let pos_of_tile (t : tile) : int =
 
 let rec tile_of_pos (b : board) (n : int) : tile =
   match b with
-  | [] -> raise (Invalid_argument "the given position is invalid")
+  | [] ->
+      raise (Invalid_argument (Printf.sprintf "%i is an invalid position" n))
   | (tile, n') :: t -> if n = n' then tile else tile_of_pos t n
 
 let calculated_rent (prop : property) : int =

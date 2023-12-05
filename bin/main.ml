@@ -101,22 +101,31 @@ let print_status (s : state) : unit =
 
 let print_state (s : state) =
   print_board s;
-  print_status s;
-  failwith "Unimplemented"
+  print_status s
 
 (******************************************************************************)
 (*********************************THE LOOP*************************************)
-let move (p : player) : player =
-  let n = rollDice () in
-  Printf.printf "%s rolled %i" p.name n;
-  move_player p n
+let roll (p : player) : player =
+  Printf.printf "%s's turn: hit [Enter] to roll dice\n" p.name;
+  match read_line () with
+  | _ ->
+      let n = rollDice () in
+      Printf.printf "%s rolled %i\n" p.name n;
+      move_player p n
 
 let turn (p : player) =
-  let moved = move p in
-  let tile = tile_of_pos new_board moved.position in
-  tile_action tile moved
+  let rolled = roll p in
+  let tile = tile_of_pos new_board rolled.position in
+  tile_action tile rolled
 
 let round (players : player list) : player list = List.map turn players
+
+let rec loop (s : state) : unit =
+  if s.current_run > s.max_run then end_loop
+  else
+    loop { s with players = round s.players; current_run = s.current_run + 1 }
+
+and end_loop = print_endline "Thank you for playing"
 
 (******************************************************************************)
 (********************************MAIN APP**************************************)
@@ -141,4 +150,4 @@ let () =
      To begin playing, answer the prompts below.\n\n";
   Random.self_init ();
   let start = initialize_players new_state in
-  failwith "Unimplemented"
+  loop start
