@@ -1,5 +1,6 @@
 open Player
 open Board
+open Exceptions
 
 type chances =
   | ToStart
@@ -72,4 +73,4 @@ let tile_action tile player =
     | Jail ->
         print_endline "Go to Jail.";
         { player with in_jail = 3 }
-    | _ -> player
+    | _ -> raise No_Such_Tile

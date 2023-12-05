@@ -1,3 +1,6 @@
+open Exceptions
+open Printf
+
 type player = {
   name : string;
   money : int;
@@ -18,7 +21,10 @@ let buy_property player rent : player =
       money = player.money - rent;
       properties = player.position :: player.properties;
     }
-  else invalid_arg "Player does not have sufficient funds"
+  else
+    raise
+      (Not_Enough_Money
+         (Printf.sprintf "Needed %i but owns %i" rent player.money))
 
 let receive_money player (bonus : int) : player =
   { player with money = player.money + bonus }
