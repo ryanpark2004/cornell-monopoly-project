@@ -100,7 +100,8 @@ let print_status (s : state) : unit =
 
 let print_state (s : state) =
   print_board s;
-  print_status s
+  print_status s;
+  failwith "Unimplemented"
 
 (******************************************************************************)
 (*********************************THE LOOP*************************************)
@@ -128,4 +129,4 @@ let () =
      To begin playing, answer the prompts below.\n\n";
   Random.self_init ();
   let start = initialize_players new_state in
-  main_loop start
+  failwith "Unimplemented"
