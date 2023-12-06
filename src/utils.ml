@@ -7,41 +7,41 @@ type chances =
   | ToJail
   | GainMoney of int
   | LoseMoney of int
+(*
+   module HashedProperty : Hashtbl.HashedType with type t = property = struct
+     type t = property
 
-module HashedProperty : Hashtbl.HashedType with type t = property = struct
-  type t = property
+     let equal p1 p2 = String.equal (property_to_string p1) (property_to_string p2)
+     let hash p1 = String.hash (property_to_string p1)
+   end
 
-  let equal p1 p2 = String.equal (property_to_string p1) (property_to_string p2)
-  let hash p1 = String.hash (property_to_string p1)
-end
+   module PropertyManager = Hashtbl.Make (HashedProperty)
 
-module PropertyManager = Hashtbl.Make (HashedProperty)
+   let properties = PropertyManager.create (length new_board)
 
-let properties = PropertyManager.create (length new_board)
+   let owner (prop : property) : player option =
+     PropertyManager.find_opt properties prop
 
-let owner (prop : property) : player option =
-  PropertyManager.find_opt properties prop
+   let claim_property loc buyer =
+     Printf.printf "You landed on %s. Buy:[B] with %i | Skip:[Enter]"
+       (property_to_string loc) (calculated_rent loc);
+     match read_line () with
+     | "B" ->
+         PropertyManager.add properties loc buyer;
+         (*Warning: PropertyManager captures this specific version of buyer.
+          * This needs to be fixed*)
+         [ buy_property loc buyer ]
+     | _ -> [ buyer ]
 
-let claim_property loc buyer =
-  Printf.printf "You landed on %s. Buy:[B] with %i | Skip:[Enter]"
-    (property_to_string loc) (calculated_rent loc);
-  match read_line () with
-  | "B" ->
-      PropertyManager.add properties loc buyer;
-      (*Warning: PropertyManager captures this specific version of buyer. 
-       * This needs to be fixed*)
-      [ buy_property loc buyer ]
-  | _ -> [ buyer ]
-
-let rec purchase (loc : property) (buyer : player) (seller : player) =
-  let rent = calculated_rent loc in
-  Printf.printf "You landed on %s. Currently owned by %s."
-    (property_to_string loc) seller.name;
-  Printf.printf "Buy: [B] with %i | Skip: [Enter]" rent;
-  match read_line () with
-  | "B" ->
-      [ buy_property loc buyer; { seller with money = seller.money + rent } ]
-  | _ -> [ buyer ]
+   let rec purchase (loc : property) (buyer : player) (seller : player) =
+     let rent = calculated_rent loc in
+     Printf.printf "You landed on %s. Currently owned by %s."
+       (property_to_string loc) seller.name;
+     Printf.printf "Buy: [B] with %i | Skip: [Enter]" rent;
+     match read_line () with
+     | "B" ->
+         [ buy_property loc buyer; { seller with money = seller.money + rent } ]
+     | _ -> [ buyer ] *)
 
 let chance_list =
   ( 6,
@@ -64,7 +64,7 @@ let pullChest () =
   let n = Random.int length in
   List.nth lst n
 
-let tile_action tile player : player list =
+let rec tile_action tile player plist : player list =
   if player.in_jail > 0 then [ player ]
   else
     match tile with
@@ -108,8 +108,40 @@ let tile_action tile player : player list =
     | Jail ->
         print_endline "Go to Jail.";
         [ { player with in_jail = 3 } ]
-    | Property loc -> (
-        match owner loc with
-        | Some seller -> purchase loc player seller
-        | None -> claim_property loc player)
+    | Property prop -> property_action prop player plist
     | _ -> raise No_Such_Tile
+
+and owner_opt (prop : property) (plist : player list) : player option =
+  match plist with
+  | [] -> None
+  | h :: t -> if List.mem prop h.properties then Some h else owner_opt prop t
+
+and pay_rent prop buyer (seller : player) =
+  let rent = calculated_rent prop in
+  let new_buyer = { buyer with money = buyer.money - rent } in
+  let new_seller = { seller with money = seller.money + rent } in
+  if buyer = seller then print_endline "You landed on your own property!"
+  else
+    Printf.printf "You landed on %s owned by %s. You paid %i"
+      (property_to_string prop) seller.name rent;
+  [ new_buyer; new_seller ]
+
+and property_action (prop : property) (player : player) (plist : player list) :
+    player list =
+  match owner_opt prop plist with
+  | None -> ask_buy prop player
+  | Some s -> pay_rent prop player s
+
+and ask_buy (prop : property) player =
+  Printf.printf "You landed on %s. Buy:[B]  | Skip: [Enter]"
+    (property_to_string prop);
+  match read_line () with
+  | "B" | "b" ->
+      [
+        {
+          player with
+          properties = prop :: player.properties;
+          money = player.money - calculated_rent prop;
+        };
+      ]
+  | _ -> [ player ]

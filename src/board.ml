@@ -49,11 +49,9 @@ type board = (tile * int) list
 let tlist : tile list =
   [
     Start;
-    Tax 50;
-    Chance;
-    (* Property (Location locations.(0));
-       Property (Location locations.(1));
-       Property (Location locations.(2)); *)
+    (* Tax 50;
+       Chance; *)
+    Property (Location locations.(0));
     Parking;
     Chest;
     Tax 20;

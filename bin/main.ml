@@ -143,8 +143,13 @@ let rec roll (p : player) : player =
 
 (**[replace] replaces the instance of [p] in [lst] with [p]
   This is used to update the state of the game each turn as opposed to each round.*)
-let replace (lst : player list) (p : player) =
+let replace_once (lst : player list) (p : player) =
   List.map (fun e -> if e.name = p.name then p else e) lst
+(*
+   let rec replace_all (lst : player list) (pl : player list) =
+     match pl with
+     | [] -> lst
+     | h :: t -> replace_all (replace_once lst h) t *)
 
 (**[turn] returns a player after rolling dice and performing an action.
     It also mutates the state to reflect the change.
@@ -155,13 +160,16 @@ let rec turn (s : state) (p : player) : player =
   else begin
     let rolled = roll p in
     let tile = tile_of_pos new_board rolled.position in
-    let new_p = tile_action tile rolled in
-    match new_p with
+    let plst = tile_action tile rolled s.players in
+    match plst with
     | [ p ] ->
-        let replaced = replace s.players p in
-        s.players <- replaced;
-        p
-    | _ -> failwith "Unreachable"
+        s.players <- replace_once s.players p;
+        List.hd plst
+    | [ p1; p2 ] ->
+        s.players <- replace_once s.players p1;
+        s.players <- replace_once s.players p2;
+        List.hd plst
+    | _ -> failwith "asdsad"
   end
 
 and jailed_turn (s : state) (p : player) : player =
