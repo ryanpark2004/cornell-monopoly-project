@@ -1,0 +1,31 @@
+---
+# Members of your group.
+group:
+  - name: Ryan Park
+    netid: ryp3
+  - name: Ethan Baker
+    netid: cp638
+  - name: Bill Park
+    netid: cp638
+# Your PM.
+pm:
+  name: Anissa Dallmann
+  netid: ad792
+# Set to false if you don't want your gallery entry to be public.
+publish: true
+# Pithy title
+title: “Cornell Monopoly”
+# OK if this is a Cornell Github link, but public gallery viewers won't be 
+# able to see it.
+git-repo: "git@github.coecis.cornell.edu:eeb73/3110-group-project.git"
+# If you have no demo screencast, replace the url string with an empty string ""
+demo-video-url: “”
+# Write a short, attention-grabbing description of your project.
+desc: >
+  Cornell Monopoly is an interactive, colorful game that brings your favorite 
+  Cornell locations to the Monopoly world! Filled with the places that you know
+  and love on campus, Cornell Monopoly allows you to have fun on the go! 
+  Choose how many people you will go on this adventure with, make funny names 
+  for everyone, and get ready to roll the dice. As you travel around the board,
+  be prepared to encounter some surprises along the way!
+...
