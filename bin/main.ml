@@ -6,7 +6,7 @@ open Utils
 (*******************************Helpers**************************************)
 type state = {
   board : board;
-  players : player list;
+  mutable players : player list;
   max_run : int;
   current_run : int;
 }
@@ -99,7 +99,7 @@ let print_status (s : state) : unit =
   List.iter iter_helper s.players;
   print_string "| \n"
 
-let print_state (s : state) =
+let print_state (s : state) : unit =
   print_board s;
   print_status s
 
@@ -113,19 +113,27 @@ let roll (p : player) : player =
       Printf.printf "%s rolled %i\n" p.name n;
       move_player p n
 
-let turn (p : player) =
+(*Before each turn, the state is printed. After each turn, state is updated*)
+
+let replace (lst : player list) (p : player) =
+  List.map (fun e -> if e.name = p.name then p else e) lst
+
+let turn (s : state) (p : player) : player =
+  print_state s;
   let rolled = roll p in
   let tile = tile_of_pos new_board rolled.position in
-  tile_action tile rolled
+  let new_p = tile_action tile rolled in
+  let replaced = replace s.players new_p in
+  s.players <- replaced;
+  new_p
 
-let round (players : player list) : player list = List.map turn players
+let rec round (s : state) : player list = List.map (turn s) s.players
 
 let rec loop (s : state) : unit =
   if s.current_run > s.max_run then end_loop
-  else
-    loop { s with players = round s.players; current_run = s.current_run + 1 }
+  else loop { s with players = round s; current_run = s.current_run + 1 }
 
-and end_loop = print_endline "Thank you for playing"
+and end_loop = print_endline "\n\nThank you for playing"
 
 (******************************************************************************)
 (********************************MAIN APP**************************************)
