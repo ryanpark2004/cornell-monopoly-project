@@ -85,11 +85,6 @@ let rec tile_of_pos (b : board) (n : int) : tile =
       raise (Invalid_argument (Printf.sprintf "%i is an invalid position" n))
   | (tile, n') :: t -> if n = n' then tile else tile_of_pos t n
 
-let calculated_rent (prop : property) : int =
-  match prop with
-  | Location x -> x.price
-  | _ -> failwith "Unimplemented"
-
 let property_to_string (p : property) : string =
   match p with
   | Location l -> l.name

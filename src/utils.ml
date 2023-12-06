@@ -116,8 +116,8 @@ and owner_opt (prop : property) (plist : player list) : player option =
   | [] -> None
   | h :: t -> if List.mem prop h.properties then Some h else owner_opt prop t
 
-and pay_rent prop buyer (seller : player) =
-  let rent = calculated_rent prop in
+and pay_rent prop buyer (seller : player) plist =
+  let rent = calculated_rent prop plist in
   let new_buyer = { buyer with money = buyer.money - rent } in
   let new_seller = { seller with money = seller.money + rent } in
   if buyer = seller then print_endline "You landed on your own property!"
@@ -129,10 +129,10 @@ and pay_rent prop buyer (seller : player) =
 and property_action (prop : property) (player : player) (plist : player list) :
     player list =
   match owner_opt prop plist with
-  | None -> ask_buy prop player
-  | Some s -> pay_rent prop player s
+  | None -> ask_buy prop player plist
+  | Some s -> pay_rent prop player s plist
 
-and ask_buy (prop : property) player =
+and ask_buy (prop : property) player plist =
   Printf.printf "You landed on %s. Buy:[B]  | Skip: [Enter]"
     (property_to_string prop);
   match read_line () with
@@ -141,7 +141,16 @@ and ask_buy (prop : property) player =
         {
           player with
           properties = prop :: player.properties;
-          money = player.money - calculated_rent prop;
+          money = player.money - calculated_rent prop plist;
         };
       ]
   | _ -> [ player ]
+
+and calculated_rent (prop : property) (plist : player list) : int =
+  match prop with
+  | Location x -> x.price
+  | Tcat_station t -> tcat_rent t plist
+  | Utility u -> utility_rent u plist
+
+and tcat_rent tcat (plist : player list) : int = failwith "todo"
+and utility_rent util plist = failwith "todo"
