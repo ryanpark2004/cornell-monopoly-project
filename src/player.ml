@@ -15,7 +15,8 @@ let create_player (name : string) : player =
 
 let get_name player = player.name
 
-let buy_property player rent : player =
+let buy_property prop player : player =
+  let rent = calculated_rent prop in
   if player.money >= rent then
     {
       player with

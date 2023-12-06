@@ -8,6 +8,39 @@ type chances =
   | GainMoney of int
   | LoseMoney of int
 
+module HashedProperty : Hashtbl.HashedType with type t = property = struct
+  type t = property
+
+  let equal p1 p2 = String.equal (property_to_string p1) (property_to_string p2)
+  let hash p1 = String.hash (property_to_string p1)
+end
+
+module PropertyManager = Hashtbl.Make (HashedProperty)
+
+let properties = PropertyManager.create (length new_board)
+
+let owner (prop : property) : player option =
+  PropertyManager.find_opt properties prop
+
+let claim_property loc buyer =
+  Printf.printf "You landed on %s. Buy:[B] with %i | Skip:[Enter]"
+    (property_to_string loc) (calculated_rent loc);
+  match read_line () with
+  | "B" ->
+      PropertyManager.add properties loc buyer;
+      buy_property loc buyer
+  | _ -> buyer
+
+let rec purchase (loc : property) (buyer : player) (seller : player) =
+  Printf.printf "You landed on %s. Currently owned by %s."
+    (property_to_string loc) seller.name;
+  Printf.printf "Buy: [B] with %i | Skip: [Enter]" (calculated_rent loc);
+  match read_line () with
+  | "B" ->
+      PropertyManager.replace properties loc buyer;
+      buy_property loc buyer
+  | _ -> buyer
+
 let chance_list =
   ( 6,
     [ ToStart; ToJail; GainMoney 40; LoseMoney 20; GainMoney 100; LoseMoney 50 ]
@@ -48,7 +81,7 @@ let tile_action tile player =
             { player with position = 0; money = player.money + 200 }
         | ToJail ->
             print_endline "CHANCE: Go directly to Jail. Do not collect $200.";
-            { player with in_jail = 3; position = 4 }
+            { player with in_jail = 3; position = pos_of_tile Jail }
         | GainMoney x ->
             print_endline ("CHANCE: You are lucky! Collect $" ^ string_of_int x);
             { player with money = player.money + x }
@@ -73,4 +106,8 @@ let tile_action tile player =
     | Jail ->
         print_endline "Go to Jail.";
         { player with in_jail = 3 }
+    | Property loc -> (
+        match owner loc with
+        | Some seller -> purchase loc player seller
+        | None -> claim_property loc player)
     | _ -> raise No_Such_Tile

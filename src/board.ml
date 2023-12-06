@@ -5,12 +5,6 @@ open Printf
 type location = {
   name : string;
   price : int;
-  color : string;
-  base_rent : int;
-  house_rent_multipliers : int list;
-  build_cost : int;
-  num_houses : int;
-  mortgage : int;
 }
 
 type tcat_station = {
@@ -41,10 +35,30 @@ type tile =
   | Parking
   | Jail
 
+let locations =
+  Array.of_list
+    [
+      { name = "Prop A"; price = 100 };
+      { name = "Prop B"; price = 100 };
+      { name = "Prop C"; price = 100 };
+    ]
+
 type board = (tile * int) list
 (**[board] is a list of tiles, marked by a number that represents order*)
 
-let tlist : tile list = [ Start; Tax 50; Chance; Parking; Chest; Tax 20; Jail ]
+let tlist : tile list =
+  [
+    Start;
+    Tax 50;
+    Chance;
+    Property (Location locations.(0));
+    Property (Location locations.(1));
+    Property (Location locations.(2));
+    Parking;
+    Chest;
+    Tax 20;
+    Jail;
+  ]
 
 let new_board : board =
   let rec indices (n : int) (lst : tile list) : int list =
@@ -75,15 +89,8 @@ let rec tile_of_pos (b : board) (n : int) : tile =
 
 let calculated_rent (prop : property) : int =
   match prop with
-  | Location x ->
-      let total_rent =
-        x.base_rent * List.nth x.house_rent_multipliers x.num_houses
-      in
-      total_rent
-  | Tcat_station x -> x.rent (* fix *)
-  | Utility x -> (
-      match x.rent_multipliers with
-      | h, _ -> h * 1 (* fix *))
+  | Location x -> x.price
+  | _ -> failwith "Unimplemented"
 
 let property_to_string (p : property) : string =
   match p with

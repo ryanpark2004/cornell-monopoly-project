@@ -1,3 +1,5 @@
+open Board
+
 (**************************************************************************)
 (*                                                                        *)
 (*  Module: Player                                                        *)
@@ -5,7 +7,7 @@
 (*  Description: This module provides basic functionality for the player  *)
 (*    and any associated functions with the player                        *)
 (*                                                                        *)
-(*  Author: Ryan Park                                                     *)
+(*  Author: Ryan, Bill, Ethan                                             *)
 (**************************************************************************)
 type player = {
   name : string;
@@ -25,7 +27,7 @@ val create_player : string -> player
 val get_name : player -> string
 (** Returns the name of the specified player.**)
 
-val buy_property : player -> int -> player
+val buy_property : property -> player -> player
 (** The function buy_property checks to see if a player can buy a property
        If so, the amount of money is subtracted from their account and the 
        property is added to the players account. If not, an invalid_arg

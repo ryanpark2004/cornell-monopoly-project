@@ -21,12 +21,12 @@ let name_to_players (nlst : string list) : player list =
     The number of players must be less than or equal to 4,
      or invalid argument exception is raised. The name of each 
      player must be nonempty and 10 character long or less*)
-let initialize_players (s : state) : state =
+let rec initialize_players (s : state) : state =
   print_string "How many players? > ";
   let num_players = try int_of_string (read_line ()) with _ -> 0 in
   if num_players <= 0 || num_players > 4 then begin
     print_endline "Invalid player amount (Max 4).";
-    exit 0
+    initialize_players s
   end
   else
     let rec helper (n : int) (acc : string list) : player list =
@@ -120,6 +120,9 @@ let roll (p : player) : player =
 let replace (lst : player list) (p : player) =
   List.map (fun e -> if e.name = p.name then p else e) lst
 
+(**[turn] returns a player after rolling dice and performing an action.
+    It also mutates the state to reflect the change.
+    a jailed player goes through [jailed_turn] instead.*)
 let rec turn (s : state) (p : player) : player =
   print_state s;
   if p.in_jail > 0 then jailed_turn s p
@@ -142,7 +145,7 @@ and jailed_turn (s : state) (p : player) : player =
       Printf.printf "Invalid input \n";
       jailed_turn s p
 
-let rec round (s : state) : player list = List.map (turn s) s.players
+let round (s : state) : player list = List.map (turn s) s.players
 
 let rec loop (s : state) : unit =
   if s.current_run > s.max_run then begin

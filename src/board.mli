@@ -10,12 +10,6 @@
 type location = {
   name : string;
   price : int;
-  color : string;
-  base_rent : int;
-  house_rent_multipliers : int list;
-  build_cost : int;
-  num_houses : int;
-  mortgage : int;
 }
 (** Represents a non-utility and non-TCAT station property on the gameboard. 
     -[name]: The name of the location (e.g. Clocktower).
@@ -113,3 +107,5 @@ val pos_of_tile : tile -> int
 val tile_of_pos : board -> int -> tile
 (**Returns the tile at the position n in the inputted board. Raises Invalid_Tile exception
     when tiles does not exist at the position.*)
+
+val property_to_string : property -> string
