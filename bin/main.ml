@@ -87,7 +87,13 @@ let print_board (s : state) : unit =
   let concat (plst : player list option) : string =
     match plst with
     | None -> ""
-    | Some lst -> String.concat ", " (List.map (fun p -> p.name) lst)
+    | Some lst ->
+        String.concat ", "
+          (List.map
+             (fun p ->
+               p.name
+               ^ if p.in_jail > 0 then " \027[31m[IN JAIL]\027[0m" else "")
+             lst)
   in
   let iter_helper (pt : pretty_tile) : unit =
     match pt.plst with
@@ -118,7 +124,7 @@ let print_state (s : state) : unit =
 (******************************************************************************)
 (*********************************THE LOOP*************************************)
 let rec roll (p : player) : player =
-  Printf.printf "%s's turn: roll: [Enter] | [I]: info | [Q]: quit\n" p.name;
+  Printf.printf "%s's turn: [Enter] : Roll | [I]: Info | [Q]: Quit\n" p.name;
   match read_line () with
   | "" ->
       let n = rollDice () in
@@ -126,11 +132,11 @@ let rec roll (p : player) : player =
       move_player p n
   | "I" | "i" -> failwith "Todo"
   | "Q" | "q" -> begin
-      print_endline "Quitting";
+      print_endline "Quitting...";
       exit 0
     end
   | _ ->
-      print_endline "invalid input";
+      print_endline "Invalid Input";
       roll p
 
 (*Before each turn, the state is printed. After each turn, state is updated*)
@@ -160,10 +166,10 @@ let rec turn (s : state) (p : player) : player =
 
 and jailed_turn (s : state) (p : player) : player =
   Printf.printf "%s is in jail. Remaining turns: %i/%i\n" p.name p.in_jail 3;
-  Printf.printf "Press [Y] to pay $200 and roll the dice. [N] to stay in jail";
+  Printf.printf "Press [Y] to pay $200 and roll the dice. [N] to stay in jail: ";
   match read_line () with
-  | "Y" -> turn s { p with money = p.money - 200; in_jail = 0 }
-  | "N" -> { p with in_jail = p.in_jail - 1 }
+  | "Y" | "y" -> turn s { p with money = p.money - 200; in_jail = 0 }
+  | "N" | "n" -> { p with in_jail = p.in_jail - 1 }
   | _ ->
       Printf.printf "Invalid input \n";
       jailed_turn s p
