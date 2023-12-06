@@ -117,13 +117,21 @@ let print_state (s : state) : unit =
 
 (******************************************************************************)
 (*********************************THE LOOP*************************************)
-let roll (p : player) : player =
-  Printf.printf "%s's turn: hit [Enter] to roll dice\n" p.name;
+let rec roll (p : player) : player =
+  Printf.printf "%s's turn: roll: [Enter] | [I]: info | [Q]: quit\n" p.name;
   match read_line () with
-  | _ ->
+  | "" ->
       let n = rollDice () in
       Printf.printf "%s rolled %i\n" p.name n;
       move_player p n
+  | "I" | "i" -> failwith "Todo"
+  | "Q" | "q" -> begin
+      print_endline "Quitting";
+      exit 0
+    end
+  | _ ->
+      print_endline "invalid input";
+      roll p
 
 (*Before each turn, the state is printed. After each turn, state is updated*)
 
