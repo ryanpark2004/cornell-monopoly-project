@@ -12,7 +12,7 @@ type state = {
 }
 
 let new_state : state =
-  { board = Board.new_board; players = []; max_run = 10; current_run = 1 }
+  { board = Board.new_board; players = []; max_run = 20; current_run = 1 }
 
 let name_to_players (nlst : string list) : player list =
   List.map (fun n -> create_player n) nlst
@@ -115,25 +115,44 @@ let roll (p : player) : player =
 
 (*Before each turn, the state is printed. After each turn, state is updated*)
 
+(**[replace] replaces the instance of [p] in [lst] with [p]
+  This is used to update the state of the game each turn as opposed to each round.*)
 let replace (lst : player list) (p : player) =
   List.map (fun e -> if e.name = p.name then p else e) lst
 
-let turn (s : state) (p : player) : player =
+let rec turn (s : state) (p : player) : player =
   print_state s;
-  let rolled = roll p in
-  let tile = tile_of_pos new_board rolled.position in
-  let new_p = tile_action tile rolled in
-  let replaced = replace s.players new_p in
-  s.players <- replaced;
-  new_p
+  if p.in_jail > 0 then jailed_turn s p
+  else begin
+    let rolled = roll p in
+    let tile = tile_of_pos new_board rolled.position in
+    let new_p = tile_action tile rolled in
+    let replaced = replace s.players new_p in
+    s.players <- replaced;
+    new_p
+  end
+
+and jailed_turn (s : state) (p : player) : player =
+  Printf.printf "%s is in jail. Remaining turns: %i/%i\n" p.name p.in_jail 3;
+  Printf.printf "Press [Y] to pay $200 and roll the dice. [N] to stay in jail";
+  match read_line () with
+  | "Y" -> turn s { p with money = p.money - 200; in_jail = 0 }
+  | "N" -> { p with in_jail = p.in_jail - 1 }
+  | _ ->
+      Printf.printf "Invalid input \n";
+      jailed_turn s p
 
 let rec round (s : state) : player list = List.map (turn s) s.players
 
 let rec loop (s : state) : unit =
-  if s.current_run > s.max_run then end_loop
-  else loop { s with players = round s; current_run = s.current_run + 1 }
-
-and end_loop = print_endline "\n\nThank you for playing"
+  if s.current_run > s.max_run then begin
+    print_state s;
+    Printf.printf "\n\n Thank you for playing!\n\n"
+  end
+  else begin
+    Printf.printf "\n\nRun #%i / %i" s.current_run s.max_run;
+    loop { s with players = round s; current_run = s.current_run + 1 }
+  end
 
 (******************************************************************************)
 (********************************MAIN APP**************************************)

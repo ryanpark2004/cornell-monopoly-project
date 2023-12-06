@@ -1,5 +1,6 @@
 open Exceptions
 open Printf
+open Board
 
 type player = {
   name : string;
@@ -30,4 +31,4 @@ let receive_money player (bonus : int) : player =
   { player with money = player.money + bonus }
 
 let move_player (player : player) (n : int) : player =
-  { player with position = player.position + n }
+  { player with position = (player.position + n) mod length new_board }
