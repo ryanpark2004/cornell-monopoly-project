@@ -3,7 +3,6 @@ open Board
 open Player
 open Utils
 
-(*******************************Helpers**************************************)
 type state = {
   board : board;
   mutable players : player list;
@@ -14,6 +13,19 @@ type state = {
 let new_state : state =
   { board = Board.new_board; players = []; max_run = 20; current_run = 1 }
 
+(***************************Debug********************************************)
+
+let debug = true
+
+let print_player (p : player) : unit =
+  Printf.printf "Name: %s | Money: %i\n" p.name p.money
+
+let print_players (s : state) : unit =
+  if debug = true then List.iter print_player s.players else ()
+
+(****************************************************************************)
+
+(*******************************Helpers**************************************)
 let name_to_players (nlst : string list) : player list =
   List.map (fun n -> create_player n) nlst
 
@@ -130,9 +142,12 @@ let rec turn (s : state) (p : player) : player =
     let rolled = roll p in
     let tile = tile_of_pos new_board rolled.position in
     let new_p = tile_action tile rolled in
-    let replaced = replace s.players new_p in
-    s.players <- replaced;
-    new_p
+    match new_p with
+    | [ p ] ->
+        let replaced = replace s.players p in
+        s.players <- replaced;
+        p
+    | _ -> failwith "Unreachable"
   end
 
 and jailed_turn (s : state) (p : player) : player =

@@ -4,8 +4,8 @@ open Board
 
 type player = {
   name : string;
-  money : int;
-  properties : int list;
+  mutable money : int;
+  mutable properties : int list;
   position : int;
   in_jail : int;
 }
@@ -17,12 +17,7 @@ let get_name player = player.name
 
 let buy_property prop player : player =
   let rent = calculated_rent prop in
-  if player.money >= rent then
-    {
-      player with
-      money = player.money - rent;
-      properties = player.position :: player.properties;
-    }
+  if player.money >= rent then { player with money = player.money - rent }
   else
     raise
       (Not_Enough_Money

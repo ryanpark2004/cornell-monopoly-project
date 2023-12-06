@@ -28,18 +28,19 @@ let claim_property loc buyer =
   match read_line () with
   | "B" ->
       PropertyManager.add properties loc buyer;
-      buy_property loc buyer
-  | _ -> buyer
+      (*Warning: PropertyManager captures this specific version of buyer. 
+       * This means that it is unaffected by any trades that it is involved in*)
+      [ buy_property loc buyer ]
+  | _ -> [ buyer ]
 
 let rec purchase (loc : property) (buyer : player) (seller : player) =
+  let rent = calculated_rent loc in
   Printf.printf "You landed on %s. Currently owned by %s."
     (property_to_string loc) seller.name;
-  Printf.printf "Buy: [B] with %i | Skip: [Enter]" (calculated_rent loc);
+  Printf.printf "Buy: [B] with %i | Skip: [Enter]" rent;
   match read_line () with
-  | "B" ->
-      PropertyManager.replace properties loc buyer;
-      buy_property loc buyer
-  | _ -> buyer
+  | "B" -> failwith "Unimplemented"
+  | _ -> [ buyer ]
 
 let chance_list =
   ( 6,
@@ -62,32 +63,32 @@ let pullChest () =
   let n = Random.int length in
   List.nth lst n
 
-let tile_action tile player =
-  if player.in_jail > 0 then player
+let tile_action tile player : player list =
+  if player.in_jail > 0 then [ player ]
   else
     match tile with
     | Start ->
         print_endline "You landed back on Go";
-        player
+        [ player ]
     | Tax x ->
         print_endline ("Oh No! You were taxed $" ^ string_of_int x);
-        { player with money = player.money - x }
+        [ { player with money = player.money - x } ]
     | Chance -> (
         print_endline "You pulled a chance card!";
         let card = pullChance () in
         match card with
         | ToStart ->
             print_endline "CHANCE: Advance to Go, Collect $200";
-            { player with position = 0; money = player.money + 200 }
+            [ { player with position = 0; money = player.money + 200 } ]
         | ToJail ->
             print_endline "CHANCE: Go directly to Jail. Do not collect $200.";
-            { player with in_jail = 3; position = pos_of_tile Jail }
+            [ { player with in_jail = 3; position = pos_of_tile Jail } ]
         | GainMoney x ->
             print_endline ("CHANCE: You are lucky! Collect $" ^ string_of_int x);
-            { player with money = player.money + x }
+            [ { player with money = player.money + x } ]
         | LoseMoney x ->
             print_endline ("CHANCE: Unlucky! Pay $" ^ string_of_int x);
-            { player with money = player.money - x })
+            [ { player with money = player.money - x } ])
     | Chest -> (
         print_endline "You pulled a Community Chest card!";
         let card = pullChest () in
@@ -95,17 +96,17 @@ let tile_action tile player =
         | GainMoney x ->
             print_endline
               ("COMMUNITY CHEST: You are lucky! Collect $" ^ string_of_int x);
-            { player with money = player.money + x }
+            [ { player with money = player.money + x } ]
         | LoseMoney x ->
             print_endline ("COMMUNITY CHEST: Unlucky! Pay $" ^ string_of_int x);
-            { player with money = player.money - x }
-        | _ -> player)
+            [ { player with money = player.money - x } ]
+        | _ -> [ player ])
     | Parking ->
         print_endline "Free Parking";
-        player
+        [ player ]
     | Jail ->
         print_endline "Go to Jail.";
-        { player with in_jail = 3 }
+        [ { player with in_jail = 3 } ]
     | Property loc -> (
         match owner loc with
         | Some seller -> purchase loc player seller

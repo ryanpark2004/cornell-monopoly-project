@@ -11,8 +11,8 @@ open Board
 (**************************************************************************)
 type player = {
   name : string;
-  money : int;
-  properties : int list;
+  mutable money : int;
+  mutable properties : int list;
   position : int;
   in_jail : int;
 }
