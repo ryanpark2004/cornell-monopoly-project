@@ -29,7 +29,7 @@ let claim_property loc buyer =
   | "B" ->
       PropertyManager.add properties loc buyer;
       (*Warning: PropertyManager captures this specific version of buyer. 
-       * This means that it is unaffected by any trades that it is involved in*)
+       * This needs to be fixed*)
       [ buy_property loc buyer ]
   | _ -> [ buyer ]
 
@@ -39,7 +39,8 @@ let rec purchase (loc : property) (buyer : player) (seller : player) =
     (property_to_string loc) seller.name;
   Printf.printf "Buy: [B] with %i | Skip: [Enter]" rent;
   match read_line () with
-  | "B" -> failwith "Unimplemented"
+  | "B" ->
+      [ buy_property loc buyer; { seller with money = seller.money + rent } ]
   | _ -> [ buyer ]
 
 let chance_list =
