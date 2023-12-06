@@ -49,11 +49,9 @@ type board = (tile * int) list
 let tlist : tile list =
   [
     Start;
-    Tax 50;
-    Chance;
-    (* Property (Location locations.(0));
-       Property (Location locations.(1));
-       Property (Location locations.(2)); *)
+    (* Tax 50;
+       Chance; *)
+    Property (Location locations.(0));
     Parking;
     Chest;
     Tax 20;
@@ -86,11 +84,6 @@ let rec tile_of_pos (b : board) (n : int) : tile =
   | [] ->
       raise (Invalid_argument (Printf.sprintf "%i is an invalid position" n))
   | (tile, n') :: t -> if n = n' then tile else tile_of_pos t n
-
-let calculated_rent (prop : property) : int =
-  match prop with
-  | Location x -> x.price
-  | _ -> failwith "Unimplemented"
 
 let property_to_string (p : property) : string =
   match p with

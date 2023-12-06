@@ -18,7 +18,7 @@ let new_state : state =
 let debug = true
 
 let print_player (p : player) : unit =
-  Printf.printf "Name: %s | Money: %i\n" p.name p.money
+  Printf.printf "\nName: %s | Money: %i\n" p.name p.money
 
 let print_players (s : state) : unit =
   if debug = true then List.iter print_player s.players else ()
@@ -143,25 +143,30 @@ let rec roll (p : player) : player =
 
 (**[replace] replaces the instance of [p] in [lst] with [p]
   This is used to update the state of the game each turn as opposed to each round.*)
-let replace (lst : player list) (p : player) =
+let replace_once (lst : player list) (p : player) =
   List.map (fun e -> if e.name = p.name then p else e) lst
+
+let rec replace_all (lst : player list) (pl : player list) =
+  match pl with
+  | [] -> lst
+  | h :: t -> replace_all (replace_once lst h) t
 
 (**[turn] returns a player after rolling dice and performing an action.
     It also mutates the state to reflect the change.
     a jailed player goes through [jailed_turn] instead.*)
 let rec turn (s : state) (p : player) : player =
-  print_state s;
   if p.in_jail > 0 then jailed_turn s p
   else begin
     let rolled = roll p in
     let tile = tile_of_pos new_board rolled.position in
-    let new_p = tile_action tile rolled in
-    match new_p with
-    | [ p ] ->
-        let replaced = replace s.players p in
-        s.players <- replaced;
-        p
-    | _ -> failwith "Unreachable"
+    let plst = tile_action tile rolled s.players in
+    print_endline "\nBEFORE:\n";
+    print_players s;
+    s.players <- replace_all s.players plst;
+    print_endline "\nAfter:\n";
+    print_players s;
+    print_state s;
+    List.hd plst
   end
 
 and jailed_turn (s : state) (p : player) : player =
@@ -209,4 +214,5 @@ let () =
      To begin playing, answer the prompts below.\n\n";
   Random.self_init ();
   let start = initialize_players new_state in
+  print_state start;
   loop start

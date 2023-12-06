@@ -5,7 +5,7 @@ open Board
 type player = {
   name : string;
   mutable money : int;
-  mutable properties : int list;
+  mutable properties : property list;
   position : int;
   in_jail : int;
 }
