@@ -13,7 +13,9 @@ val pullChance : unit -> chances
 val pullChest : unit -> chances
 (**[pullChance] is a randomly selected community chest variant.*)
 
-val tile_action : tile -> player -> player list -> player list
+val tile_action : tile -> player -> player list -> int -> player list
 (**[tile_action] defines the different effects each tile has when 
     a player lands on them. Returns the new player after everything has 
     changed*)
+
+val calculated_rent : property -> player list -> int ->int 

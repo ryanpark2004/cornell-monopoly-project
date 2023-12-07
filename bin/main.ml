@@ -123,21 +123,60 @@ let print_state (s : state) : unit =
 
 (******************************************************************************)
 (*********************************THE LOOP*************************************)
-let rec roll (p : player) : player =
-  Printf.printf "%s's turn: [Enter] : Roll | [I]: Info | [Q]: Quit\n" p.name;
+let rec roll s (p : player) n =
+  Printf.printf
+    "%s's turn: Press [Enter] to roll the dice, Press [I] for more information,\n\
+     or Press [Q] to quit> " p.name;
   match read_line () with
   | "" ->
-      let n = rollDice () in
       Printf.printf "%s rolled %i\n" p.name n;
       move_player p n
-  | "I" | "i" -> failwith "Todo"
+  | "I" | "i" ->
+      print_endline (get_detailed_information s);
+      roll s p n
   | "Q" | "q" -> begin
       print_endline "Quitting...";
       exit 0
     end
   | _ ->
       print_endline "Invalid Input";
-      roll p
+      roll s p n
+
+and get_detailed_information state =
+  let intro =
+    "\n------------------------DETAILED INFORMATION------------------------"
+  in
+  let rec player_info acc plist =
+    match plist with
+    | [] -> acc
+    | h :: t ->
+        player_info
+          (acc ^ "| " ^ h.name ^ " - \027[32mBalance: $" ^ string_of_int h.money
+         ^ "\027[0m, \027[31mJail Status: " ^ string_of_int h.in_jail
+         ^ " turns\027[0m \n     "
+          ^ n_spaces (String.length h.name) ""
+          ^ "\027[33mProperties: " ^ list_props h.properties "" ^ "\027[0m\n\n"
+          )
+          t
+  in
+  intro ^ "\n" ^ player_info "" state.players
+
+and list_props p acc =
+  match p with
+  | [] -> if acc = "" then "None" else acc
+  | h :: t ->
+      let name =
+        match h with
+        | Location l -> l.name
+        | Tcat_station t -> t.name
+        | Utility u -> u.util_name
+      in
+      list_props t (if acc = "" then name else acc ^ ", " ^ name)
+
+and n_spaces n acc =
+  match n with
+  | 0 -> acc
+  | _ -> n_spaces (n - 1) (acc ^ " ")
 
 (*Before each turn, the state is printed. After each turn, state is updated*)
 
@@ -157,21 +196,19 @@ let rec replace_all (lst : player list) (pl : player list) =
 let rec turn (s : state) (p : player) : player =
   if p.in_jail > 0 then jailed_turn s p
   else begin
-    let rolled = roll p in
+    let n = rollDice () in
+    let rolled = roll s p n in
     let tile = tile_of_pos new_board rolled.position in
-    let plst = tile_action tile rolled s.players in
-    print_endline "\nBEFORE:\n";
-    print_players s;
+    let plst = tile_action tile rolled s.players n in
     s.players <- replace_all s.players plst;
-    print_endline "\nAfter:\n";
-    print_players s;
     print_state s;
     List.hd plst
   end
 
 and jailed_turn (s : state) (p : player) : player =
   Printf.printf "%s is in jail. Remaining turns: %i/%i\n" p.name p.in_jail 3;
-  Printf.printf "Press [Y] to pay $200 and roll the dice. [N] to stay in jail: ";
+  Printf.printf
+    "Press [Y] to pay $200 and roll the dice, or press [N] to stay in jail> ";
   match read_line () with
   | "Y" | "y" -> turn s { p with money = p.money - 200; in_jail = 0 }
   | "N" | "n" -> { p with in_jail = p.in_jail - 1 }
@@ -187,7 +224,7 @@ let rec loop (s : state) : unit =
     Printf.printf "\n\n Thank you for playing!\n\n"
   end
   else begin
-    Printf.printf "\n\nRun #%i / %i" s.current_run s.max_run;
+    Printf.printf "\n\nRound #%i / %i\n" s.current_run s.max_run;
     loop { s with players = round s; current_run = s.current_run + 1 }
   end
 

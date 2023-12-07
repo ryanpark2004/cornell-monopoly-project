@@ -5,19 +5,19 @@ open Printf
 type location = {
   name : string;
   price : int;
+  rent : int;
+  mortgage : int;
 }
 
 type tcat_station = {
   name : string;
   price : int;
-  rent : int;
   mortgage : int;
 }
 
 type utility = {
-  name : string;
+  util_name : string;
   price : int;
-  rent_multipliers : int * int;
   mortgage : int;
 }
 
@@ -38,9 +38,78 @@ type tile =
 let locations =
   Array.of_list
     [
-      { name = "Prop A"; price = 100 };
-      { name = "Prop B"; price = 100 };
-      { name = "Prop C"; price = 100 };
+      {
+        name = "\027[38;5;137mHigh Rise 5 [!]\027[0m";
+        price = 40;
+        rent = 8;
+        mortgage = 20;
+      };
+      {
+        name = "\027[38;5;137mThe Gothics [!]\027[0m";
+        price = 50;
+        rent = 12;
+        mortgage = 25;
+      };
+      {
+        name = "\027[38;5;22mOkenshields [!!]\027[0m";
+        price = 120;
+        rent = 30;
+        mortgage = 60;
+      };
+      {
+        name = "\027[38;5;22mMorrison [!!]\027[0m";
+        price = 140;
+        rent = 40;
+        mortgage = 70;
+      };
+      {
+        name = "\027[38;5;93mDuffield Hall [!!!]\027[0m";
+        price = 280;
+        rent = 85;
+        mortgage = 140;
+      };
+      {
+        name = "\027[38;5;93mStatler Hotel [!!!]\027[0m";
+        price = 300;
+        rent = 100;
+        mortgage = 150;
+      };
+      {
+        name = "\027[38;5;214mMann Library [!!!!]\027[0m";
+        price = 400;
+        rent = 140;
+        mortgage = 200;
+      };
+      {
+        name = "\027[38;5;214mThe Clocktower [!!!!]\027[0m";
+        price = 450;
+        rent = 200;
+        mortgage = 200;
+      };
+    ]
+
+let stations =
+  Array.of_list
+    [
+      { name = "Commons Station [🚌]"; price = 200; mortgage = 100 };
+      { name = "Collegetown Station [🚌]"; price = 200; mortgage = 100 };
+      { name = "North Campus Station [🚌]"; price = 200; mortgage = 100 };
+      { name = "Central Station [🚌]"; price = 200; mortgage = 100 };
+    ]
+
+let utilities =
+  Array.of_list
+    [
+      {
+        util_name = "\027[38;5;250mCornell Hydroelectric [🚰]\027[0m";
+        price = 150;
+        mortgage = 50;
+      };
+      {
+        util_name = "\027[38;5;250mEduroam Station [🚰]\027[0m";
+        price = 170;
+        mortgage = 85;
+      };
     ]
 
 type board = (tile * int) list
@@ -49,13 +118,29 @@ type board = (tile * int) list
 let tlist : tile list =
   [
     Start;
-    (* Tax 50;
-       Chance; *)
     Property (Location locations.(0));
-    Parking;
+    Chance;
+    Property (Tcat_station stations.(0));
+    Property (Location locations.(1));
     Chest;
-    Tax 20;
+    Parking;
+    Property (Utility utilities.(0));
+    Tax 80;
+    Property (Tcat_station stations.(1));
+    Property (Location locations.(2));
+    Property (Location locations.(3));
     Jail;
+    Chance;
+    Property (Location locations.(4));
+    Property (Tcat_station stations.(2));
+    Property (Location locations.(5));
+    Chest;
+    Parking;
+    Property (Utility utilities.(1));
+    Tax 150;
+    Property (Tcat_station stations.(3));
+    Property (Location locations.(6));
+    Property (Location locations.(7));
   ]
 
 let new_board : board =
@@ -89,13 +174,13 @@ let property_to_string (p : property) : string =
   match p with
   | Location l -> l.name
   | Tcat_station t -> t.name
-  | Utility u -> u.name
+  | Utility u -> u.util_name
 
 let to_string (t : tile) : string =
   match t with
   | Start -> "\027[32mGo\027[0m"
   | Property p -> "\027[33m" ^ property_to_string p ^ "\027[0m"
-  | Tax x -> "\027[38;5;214mTax ($" ^ string_of_int x ^ ")\027[0m"
+  | Tax x -> "\027[38;5;202mTax ($" ^ string_of_int x ^ ")\027[0m"
   | Chance -> "\027[35mChance\027[0m"
   | Chest -> "\027[34mChest\027[0m"
   | Parking -> "\027[36mFree Parking\027[0m"

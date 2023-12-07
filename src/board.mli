@@ -10,6 +10,8 @@
 type location = {
   name : string;
   price : int;
+  rent : int;
+  mortgage : int;
 }
 (** Represents a non-utility and non-TCAT station property on the gameboard. 
     -[name]: The name of the location (e.g. Clocktower).
@@ -25,22 +27,17 @@ type location = {
 type tcat_station = {
   name : string;
   price : int;
-  rent : int;
   mortgage : int;
 }
 (** Represents a TCAT station property on the gameboard, which works similarly 
     to railroad properties in classic Monopoly.
       -[name]: The name of the station (e.g. Ithaca Commons Station).
       -[price]: The purchase price of the station.
-      -[rent]: The rent charged when a player owns only one station. Total rent
-      is calculated by [rent] * 2^n, where n is the number of TCAT stations 
-      owned by the player.
       -[mortgage]: The mortagage value of the station.*)
 
 type utility = {
-  name : string;
+  util_name : string;
   price : int;
-  rent_multipliers : int * int;
   mortgage : int;
 }
 (** Represents a utility property on the gameboard.
@@ -86,14 +83,6 @@ type board = (tile * int) list
 val length : board -> int
 (** Calculates the length of the current game board. 
     An empty board has length 0.*)
-
-val calculated_rent : property -> int
-(** Calculates the rent due to visiting players based off of specifics for 
-    the different property types. 
-    -[location]: [base rent] * current house multiplier.
-    -[tcat_station]: [rent] * 2^n where n is the number of tcat_station 
-    properties the player owns.
-    -[utility]: [rent] * current dice role value.*)
 
 val to_string : tile -> string
 (**converts a tile to string*)

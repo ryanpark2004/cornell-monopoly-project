@@ -7,41 +7,6 @@ type chances =
   | ToJail
   | GainMoney of int
   | LoseMoney of int
-(*
-   module HashedProperty : Hashtbl.HashedType with type t = property = struct
-     type t = property
-
-     let equal p1 p2 = String.equal (property_to_string p1) (property_to_string p2)
-     let hash p1 = String.hash (property_to_string p1)
-   end
-
-   module PropertyManager = Hashtbl.Make (HashedProperty)
-
-   let properties = PropertyManager.create (length new_board)
-
-   let owner (prop : property) : player option =
-     PropertyManager.find_opt properties prop
-
-   let claim_property loc buyer =
-     Printf.printf "You landed on %s. Buy:[B] with %i | Skip:[Enter]"
-       (property_to_string loc) (calculated_rent loc);
-     match read_line () with
-     | "B" ->
-         PropertyManager.add properties loc buyer;
-         (*Warning: PropertyManager captures this specific version of buyer.
-          * This needs to be fixed*)
-         [ buy_property loc buyer ]
-     | _ -> [ buyer ]
-
-   let rec purchase (loc : property) (buyer : player) (seller : player) =
-     let rent = calculated_rent loc in
-     Printf.printf "You landed on %s. Currently owned by %s."
-       (property_to_string loc) seller.name;
-     Printf.printf "Buy: [B] with %i | Skip: [Enter]" rent;
-     match read_line () with
-     | "B" ->
-         [ buy_property loc buyer; { seller with money = seller.money + rent } ]
-     | _ -> [ buyer ] *)
 
 let chance_list =
   ( 6,
@@ -64,7 +29,7 @@ let pullChest () =
   let n = Random.int length in
   List.nth lst n
 
-let rec tile_action tile player plist : player list =
+let rec tile_action tile player plist n : player list =
   if player.in_jail > 0 then [ player ]
   else
     match tile with
@@ -108,16 +73,15 @@ let rec tile_action tile player plist : player list =
     | Jail ->
         print_endline "Go to Jail.";
         [ { player with in_jail = 3 } ]
-    | Property prop -> property_action prop player plist
-    | _ -> raise No_Such_Tile
+    | Property prop -> property_action prop player plist n
 
 and owner_opt (prop : property) (plist : player list) : player option =
   match plist with
   | [] -> None
   | h :: t -> if List.mem prop h.properties then Some h else owner_opt prop t
 
-and pay_rent prop buyer (seller : player) plist =
-  let rent = calculated_rent prop plist in
+and pay_rent prop buyer (seller : player) plist n =
+  let rent = calculated_rent prop plist n in
   let new_buyer = { buyer with money = buyer.money - rent } in
   let new_seller = { seller with money = seller.money + rent } in
   if buyer = seller then print_endline "You landed on your own property!"
@@ -126,14 +90,14 @@ and pay_rent prop buyer (seller : player) plist =
       (property_to_string prop) seller.name rent;
   [ new_buyer; new_seller ]
 
-and property_action (prop : property) (player : player) (plist : player list) :
-    player list =
+and property_action (prop : property) (player : player) (plist : player list) n
+    : player list =
   match owner_opt prop plist with
-  | None -> ask_buy prop player plist
-  | Some s -> pay_rent prop player s plist
+  | None -> ask_buy prop player plist n
+  | Some s -> pay_rent prop player s plist n
 
-and ask_buy (prop : property) player plist =
-  Printf.printf "You landed on %s. Buy:[B]  | Skip: [Enter]"
+and ask_buy (prop : property) player plist n =
+  Printf.printf "You landed on %s. Press [B] to buy, or Press [ENTER] to skip> "
     (property_to_string prop);
   match read_line () with
   | "B" | "b" ->
@@ -141,16 +105,50 @@ and ask_buy (prop : property) player plist =
         {
           player with
           properties = prop :: player.properties;
-          money = player.money - calculated_rent prop plist;
+          money =
+            (player.money
+            -
+            match prop with
+            | Location x -> x.price
+            | Tcat_station x -> x.price
+            | Utility x -> x.price);
         };
       ]
   | _ -> [ player ]
 
-and calculated_rent (prop : property) (plist : player list) : int =
+and calculated_rent (prop : property) (plist : player list) n : int =
   match prop with
-  | Location x -> x.price
+  | Location x -> x.rent
   | Tcat_station t -> tcat_rent t plist
-  | Utility u -> utility_rent u plist
+  | Utility u -> utility_rent u plist n
 
-and tcat_rent tcat (plist : player list) : int = failwith "todo"
-and utility_rent util plist = failwith "todo"
+and tcat_rent tcat (plist : player list) : int =
+  let rec find_owner tcat plist =
+    match plist with
+    | [] -> failwith "no owners"
+    | h :: t ->
+        if List.mem (Tcat_station tcat) h.properties then h
+        else find_owner tcat t
+  in
+  let rec num_stations acc props =
+    match props with
+    | [] -> acc
+    | Tcat_station h :: t -> num_stations (acc + 1) t
+    | _ :: t -> num_stations acc t
+  in
+  50 * num_stations 0 (find_owner tcat plist).properties
+
+and utility_rent util plist n =
+  let rec find_owner util plist =
+    match plist with
+    | [] -> failwith "no owners"
+    | h :: t ->
+        if List.mem (Utility util) h.properties then h else find_owner util t
+  in
+  let rec num_utils acc props =
+    match props with
+    | [] -> acc
+    | Utility u :: t -> num_utils (acc + 1) t
+    | _ :: t -> num_utils acc t
+  in
+  n * 4 * num_utils 0 (find_owner util plist).properties

@@ -27,12 +27,6 @@ val create_player : string -> player
 val get_name : player -> string
 (** Returns the name of the specified player.**)
 
-val buy_property : property -> player -> player
-(** The function buy_property checks to see if a player can buy a property
-       If so, the amount of money is subtracted from their account and the 
-       property is added to the players account. If not, an invalid_arg
-       is raised. **)
-
 val receive_money : player -> int -> player
 (** The function receive_money adds any amount of money earned or subtracted
        from their account. **)
