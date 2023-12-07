@@ -1,5 +1,4 @@
 open Exceptions
-open Printf
 
 (* board.ml *)
 type location = {

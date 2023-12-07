@@ -1,6 +1,5 @@
 open Player
 open Board
-open Exceptions
 
 type chances =
   | ToStart

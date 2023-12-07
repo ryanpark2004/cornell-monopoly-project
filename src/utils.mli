@@ -18,4 +18,3 @@ val tile_action : tile -> player -> player list -> int -> player list
     a player lands on them. Returns the new player after everything has 
     changed*)
 
-val calculated_rent : property -> player list -> int ->int 

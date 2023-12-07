@@ -88,13 +88,14 @@ val to_string : tile -> string
 (**converts a tile to string*)
 
 val new_board : board
-(**A fresh new board*)
+(**A fresh new board *)
 
 val pos_of_tile : tile -> int
-(**Returns the integer position of the tile. Starts at 0*)
+(** Returns the integer position of the tile. Starts at 0 *)
 
 val tile_of_pos : board -> int -> tile
 (**Returns the tile at the position n in the inputted board. Raises Invalid_Tile exception
     when tiles does not exist at the position.*)
 
 val property_to_string : property -> string
+(* Converts a property to a string. *)

@@ -1,5 +1,3 @@
-open Exceptions
-open Printf
 open Board
 
 type player = {
