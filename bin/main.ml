@@ -3,6 +3,8 @@ open Board
 open Player
 open Utils
 
+(** This is the main description!!!*)
+
 type state = {
   board : board;
   mutable players : player list;

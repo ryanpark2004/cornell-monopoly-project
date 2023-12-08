@@ -28,14 +28,19 @@ type chances =
   | GainMoney of int
   | LoseMoney of int
 
+(* A list of the chance cards in the current deck. Each card has
+   equal chance of being pulled.*)
 let chance_list =
   ( 6,
     [ ToStart; ToJail; GainMoney 40; LoseMoney 20; GainMoney 100; LoseMoney 50 ]
   )
 
+(* A list of community chest cards in the current deck. Each card has equal
+   chance of being pulled. *)
 let chest_list =
   (5, [ GainMoney 30; LoseMoney 100; GainMoney 150; LoseMoney 25; GainMoney 50 ])
 
+(* *)
 let dice_bound = 6
 let rollDice () : int = 1 + Random.int dice_bound + Random.int dice_bound + 1
 
@@ -111,7 +116,7 @@ let rec tile_action tile player plist n : player list =
         | _ -> [ player ])
     | Parking _ -> (
         print_endline
-          "You landed on Free Parking. \nPress anything to continue >";
+          "You landed on Free Parking.\nPress anything to continue >";
         match read_line () with
         | _ -> [ player ])
     | Jail _ -> (
@@ -143,10 +148,10 @@ and pay_rent prop buyer (seller : player) plist n =
 and property_action (prop : property) (player : player) (plist : player list) n
     : player list =
   match owner_opt prop plist with
-  | None -> ask_buy prop player plist n
+  | None -> ask_buy prop player
   | Some s -> pay_rent prop player s plist n
 
-and ask_buy (prop : property) player plist n =
+and ask_buy (prop : property) player =
   let check =
     match prop with
     | Location l -> player.money >= l.price
@@ -182,7 +187,7 @@ and ask_buy (prop : property) player plist n =
   else (
     Printf.printf
       "You landed on %s. You don't have enough money to buy it.\n\
-      \ Press anything to continue > " (property_to_string prop);
+       Press anything to continue > " (property_to_string prop);
     match read_line () with
     | _ -> [ player ])
 
@@ -203,7 +208,7 @@ and tcat_rent tcat (plist : player list) : int =
   let rec num_stations acc props =
     match props with
     | [] -> acc
-    | Tcat_station h :: t -> num_stations (acc + 1) t
+    | Tcat_station _ :: t -> num_stations (acc + 1) t
     | _ :: t -> num_stations acc t
   in
   50 * num_stations 0 (find_owner tcat plist).properties
