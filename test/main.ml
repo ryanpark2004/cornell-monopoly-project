@@ -240,6 +240,33 @@ let player_suite =
 let dice_bound = 3
 let rollDice () : int = 1 + Random.int dice_bound
 
+let test_location : location =
+  { name = "test loc"; price = 100; rent = 0; mortgage = 100 }
+
+let test_mortgage_board =
+  [ Start 0; Property (Location test_location); Tax 100 ]
+
+let test_mortgage_player =
+  {
+    name = "test_mort_player_in";
+    money = 100;
+    properties = [ Location test_location ];
+    position = 0;
+    in_jail = 0;
+  }
+
+let test_mortgage_player_out =
+  {
+    name = "test_mort_player_out";
+    money = 0;
+    properties = [ Location test_location ];
+    position = 0;
+    in_jail = 0;
+  }
+
+let mortgage_test name out plyr plyrs =
+  name >:: fun _ -> assert_equal out (check_broke plyr plyrs)
+
 let utils_suite =
   [
     (*Utility Test Cases: roll_move  *)

@@ -15,3 +15,5 @@ exception No_Such_Tile
 exception Not_Enough_Money of string
 (** Raises an exception when the player attempts to buy a property, gets taxed, 
     pays rent, or pays out of jail without suffient funds.*)
+
+exception Unreachable of string

@@ -1,5 +1,26 @@
 open Player
 open Board
+open Exceptions
+
+let debug = false
+
+(**************Debug functions****************)
+let debug_brokenness x : int =
+  if debug then (
+    Printf.printf "\ncalculate_brokenness returned: %i\n" x;
+    x)
+  else x
+
+let debug_selection before after =
+  if debug then (
+    List.iter (Printf.printf "|%s|")
+      ("\nBEFORE:" :: List.map property_to_string before);
+    List.iter (Printf.printf "|%s|")
+      ("\nAFTER: " :: List.map property_to_string after);
+    after)
+  else after
+
+(*********************************************)
 
 type chances =
   | ToStart
@@ -21,7 +42,7 @@ let chest_list =
 
 (* *)
 let dice_bound = 6
-let rollDice () : int = 1 + Random.int dice_bound + (1 + Random.int dice_bound)
+let rollDice () : int = 1 + Random.int dice_bound + Random.int dice_bound + 1
 
 let pullChance () =
   let length, lst = chance_list in
@@ -179,7 +200,7 @@ and calculated_rent (prop : property) (plist : player list) n : int =
 and tcat_rent tcat (plist : player list) : int =
   let rec find_owner tcat plist =
     match plist with
-    | [] -> failwith "no owners"
+    | [] -> raise (Unreachable "utils/tcat_rent received an empty player list")
     | h :: t ->
         if List.mem (Tcat_station tcat) h.properties then h
         else find_owner tcat t
@@ -195,7 +216,8 @@ and tcat_rent tcat (plist : player list) : int =
 and utility_rent util plist n =
   let rec find_owner util plist =
     match plist with
-    | [] -> failwith "no owners"
+    | [] ->
+        raise (Unreachable "utils/utility_rent received an empty player list")
     | h :: t ->
         if List.mem (Utility util) h.properties then h else find_owner util t
   in
@@ -206,3 +228,49 @@ and utility_rent util plist n =
     | _ :: t -> num_utils acc t
   in
   n * 4 * num_utils 0 (find_owner util plist).properties
+
+let rec check_broke (p : player) (players : player list) : player list =
+  if p.money < 0 then mortgage_action p players else players
+
+and calculate_brokeness (p : player) : int = debug_brokenness p.money
+
+and mortgage_action (p : player) (plst : player list) =
+  let deficit = calculate_brokeness p in
+  Printf.printf
+    "\nYou (%s) are broke. You need %i to recover. Select properties to sell\n"
+    p.name deficit;
+  let props = debug_selection p.properties (select_property p.properties []) in
+  if deficit + sum_values props >= 0 then
+    let new_p =
+      {
+        p with
+        properties = remove_props p.properties props;
+        money = p.money + sum_values props;
+      }
+    in
+    List.map (fun (e : player) -> if e.name = p.name then new_p else e) plst
+  else kill_player p plst
+
+and kill_player p plst =
+  Printf.printf "%s could not recover from deficit. RIP" p.name;
+  List.filter (fun (e : player) -> e.name <> p.name) plst
+
+and select_property (props : property list) (acc : property list) :
+    property list =
+  match props with
+  | [] -> acc
+  | h :: t -> (
+      Printf.printf "\nSell %s for %i: [y] | [n]. Current sum: %i\n"
+        (property_to_string h) (property_selling_value h) (sum_values acc);
+      match read_line () with
+      | "Y" | "y" -> select_property t (h :: acc)
+      | "N" | "n" -> select_property t acc
+      | _ -> select_property (h :: t) acc)
+
+and sum_values (props : property list) : int =
+  List.fold_left ( + ) 0 (List.map property_selling_value props)
+
+and remove_props (props : property list) (target : property list) =
+  match props with
+  | [] -> target
+  | h :: t -> remove_props t (List.filter (fun p -> p <> h) target)

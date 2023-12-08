@@ -86,6 +86,9 @@ val tile_of_pos : board -> int -> tile
     Raises Invalid_Tile exception when tiles does not exist at the position.*)
 
 val property_to_string : property -> string
+(* Converts a property to a string. *)
+
+val property_selling_value : property -> int
 (* Converts a property to a string by returning out the name of property. *)
 
 val to_string : tile -> string

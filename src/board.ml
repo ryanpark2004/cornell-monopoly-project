@@ -1,5 +1,7 @@
 open Exceptions
 
+let debug = false
+
 (* board.ml *)
 type location = {
   name : string;
@@ -119,13 +121,16 @@ type board = (tile * int) list
 (* The tile list that is used to create the initial board*)
 let tlist : tile list = [ Start 1; Property (Location locations.(0)) ]
 
+let debug_board = [ Start 0; Property (Location locations.(1)); Tax 1000 ]
+
+let rec indices (n : int) (lst : tile list) : int list =
+  match lst with
+  | [] -> []
+  | _ :: t -> n :: indices (n + 1) t
+
 let new_board : board =
-  let rec indices (n : int) (lst : tile list) : int list =
-    match lst with
-    | [] -> []
-    | _ :: t -> n :: indices (n + 1) t
-  in
-  List.combine tlist (indices 0 tlist)
+  if debug then List.combine debug_board (indices 0 debug_board)
+  else List.combine tlist (indices 0 tlist)
 
 let rec length (b : board) : int =
   match b with
@@ -145,6 +150,12 @@ let rec tile_of_pos (b : board) (n : int) : tile =
   | [] ->
       raise (Invalid_argument (Printf.sprintf "%i is an invalid position" n))
   | (tile, n') :: t -> if n = n' then tile else tile_of_pos t n
+
+let property_selling_value (p : property) : int =
+  match p with
+  | Location l -> l.mortgage
+  | Tcat_station t -> t.mortgage
+  | Utility u -> u.mortgage
 
 let property_to_string (p : property) : string =
   match p with

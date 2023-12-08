@@ -32,7 +32,7 @@ val pullChest : unit -> chances
 val tile_action : tile -> player -> player list -> int -> player list
 (** [tile_action] defines the different effects each tile has when 
     a player lands on them. Returns the new player after everything has 
-    changed. The actions for each type of tile are defined below:
+ changed. The actions for each type of tile are defined below:
     Start: Nothing. Retuns the player as it is
     Tax x: Returns the player with x-less money.
     Chance: Returns the player after adjusting money and positon, based off 
@@ -49,3 +49,8 @@ val pay_rent : property -> player -> player -> player list -> int -> player list
 (** [pay_rent] orchestrates the transaction between the owner and renter on 
     when a rented lands on the owned property. Returns a list of the owner with 
     the added rent money, and the rented without the rent money.*)
+
+val check_broke : player -> player list -> player list
+(**[check_broke] checks if player is broke. Returns the same player list as
+    the argument if the player is not broke. Otherwise, it goes through
+    mortgage process.*)
