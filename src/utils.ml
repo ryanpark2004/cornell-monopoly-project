@@ -15,8 +15,8 @@ let chance_list =
 let chest_list =
   (5, [ GainMoney 30; LoseMoney 100; GainMoney 150; LoseMoney 25; GainMoney 50 ])
 
-let dice_bound = 1
-let rollDice () : int = 1 + Random.int dice_bound
+let dice_bound = 6
+let rollDice () : int = 1 + Random.int dice_bound + (1 + Random.int dice_bound)
 
 let pullChance () =
   let length, lst = chance_list in
@@ -32,46 +32,71 @@ let rec tile_action tile player plist n : player list =
   if player.in_jail > 0 then [ player ]
   else
     match tile with
-    | Start ->
-        print_endline "You landed back on Go";
-        [ player ]
-    | Tax x ->
-        print_endline ("Oh No! You were taxed $" ^ string_of_int x);
-        [ { player with money = player.money - x } ]
-    | Chance -> (
+    | Start _ -> (
+        print_endline "You landed back on Go!\nPress anything to continue > ";
+        match read_line () with
+        | _ -> [ player ])
+    | Tax x -> (
+        print_endline
+          ("Oh No! You were taxed $" ^ string_of_int x
+         ^ ".\nPress anything to continue > ");
+        match read_line () with
+        | _ -> [ { player with money = player.money - x } ])
+    | Chance _ -> (
         print_endline "You pulled a chance card!";
         let card = pullChance () in
         match card with
-        | ToStart ->
-            print_endline "CHANCE: Advance to Go, Collect $200";
-            [ { player with position = 0; money = player.money + 200 } ]
-        | ToJail ->
-            print_endline "CHANCE: Go directly to Jail. Do not collect $200.";
-            [ { player with in_jail = 3; position = pos_of_tile Jail } ]
-        | GainMoney x ->
-            print_endline ("CHANCE: You are lucky! Collect $" ^ string_of_int x);
-            [ { player with money = player.money + x } ]
-        | LoseMoney x ->
-            print_endline ("CHANCE: Unlucky! Pay $" ^ string_of_int x);
-            [ { player with money = player.money - x } ])
-    | Chest -> (
+        | ToStart -> (
+            print_endline
+              "CHANCE: Advance to Go, Collect $200.\n\
+               Press anything to continue > ";
+            match read_line () with
+            | _ -> [ { player with position = 0; money = player.money + 200 } ])
+        | ToJail -> (
+            print_endline
+              "CHANCE: Go directly to Jail. Do not collect $200\n\
+               Press anything to continue > ";
+            match read_line () with
+            | _ ->
+                [ { player with in_jail = 3; position = pos_of_tile (Jail 1) } ]
+            )
+        | GainMoney x -> (
+            print_endline
+              ("CHANCE: You are lucky! Collect $" ^ string_of_int x
+             ^ ".\nPress anything to continue > ");
+            match read_line () with
+            | _ -> [ { player with money = player.money + x } ])
+        | LoseMoney x -> (
+            print_endline
+              ("CHANCE: Unlucky! Pay $" ^ string_of_int x
+             ^ ".\nPress anything to continue > ");
+            match read_line () with
+            | _ -> [ { player with money = player.money - x } ]))
+    | Chest _ -> (
         print_endline "You pulled a Community Chest card!";
         let card = pullChest () in
         match card with
-        | GainMoney x ->
+        | GainMoney x -> (
             print_endline
-              ("COMMUNITY CHEST: You are lucky! Collect $" ^ string_of_int x);
-            [ { player with money = player.money + x } ]
+              ("COMMUNITY CHEST: You are lucky! Collect $" ^ string_of_int x
+             ^ ".\nPress anything to continue > ");
+            match read_line () with
+            | _ -> [ { player with money = player.money + x } ])
         | LoseMoney x ->
-            print_endline ("COMMUNITY CHEST: Unlucky! Pay $" ^ string_of_int x);
+            print_endline
+              ("COMMUNITY CHEST: Unlucky! Pay $" ^ string_of_int x
+             ^ ".\nPress anything to continue > ");
             [ { player with money = player.money - x } ]
         | _ -> [ player ])
-    | Parking ->
-        print_endline "Free Parking";
-        [ player ]
-    | Jail ->
-        print_endline "Go to Jail.";
-        [ { player with in_jail = 3 } ]
+    | Parking _ -> (
+        print_endline
+          "You landed on Free Parking. \nPress anything to continue >";
+        match read_line () with
+        | _ -> [ player ])
+    | Jail _ -> (
+        print_endline "Go to Jail.\nPress anything to continue >";
+        match read_line () with
+        | _ -> [ { player with in_jail = 3 } ])
     | Property prop -> property_action prop player plist n
 
 and owner_opt (prop : property) (plist : player list) : player option =
@@ -83,11 +108,16 @@ and pay_rent prop buyer (seller : player) plist n =
   let rent = calculated_rent prop plist n in
   let new_buyer = { buyer with money = buyer.money - rent } in
   let new_seller = { seller with money = seller.money + rent } in
-  if buyer = seller then print_endline "You landed on your own property!"
+  if buyer = seller then
+    print_endline
+      "You landed on your own property!\nPress anything to continue > "
   else
-    Printf.printf "You landed on %s owned by %s. You paid %i"
-      (property_to_string prop) seller.name rent;
-  [ new_buyer; new_seller ]
+    Printf.printf
+      "You landed on %s owned by %s. You paid $%i.\n\
+      \ Press anything to continue >" (property_to_string prop) seller.name rent;
+
+  match read_line () with
+  | _ -> [ new_buyer; new_seller ]
 
 and property_action (prop : property) (player : player) (plist : player list) n
     : player list =
@@ -96,23 +126,30 @@ and property_action (prop : property) (player : player) (plist : player list) n
   | Some s -> pay_rent prop player s plist n
 
 and ask_buy (prop : property) player plist n =
-  Printf.printf "You landed on %s. Press [B] to buy, or Press [ENTER] to skip> "
+  Printf.printf
+    "You landed on %s. Press [B] to buy, or Press [ENTER] to skip > "
     (property_to_string prop);
   match read_line () with
-  | "B" | "b" ->
-      [
-        {
-          player with
-          properties = prop :: player.properties;
-          money =
-            (player.money
-            -
-            match prop with
-            | Location x -> x.price
-            | Tcat_station x -> x.price
-            | Utility x -> x.price);
-        };
-      ]
+  | "B" | "b" -> (
+      print_endline
+        "\n\
+         You bought the property. Now you can start collecting rent!.\n\
+         Press anything to continue >";
+      match read_line () with
+      | _ ->
+          [
+            {
+              player with
+              properties = prop :: player.properties;
+              money =
+                (player.money
+                -
+                match prop with
+                | Location x -> x.price
+                | Tcat_station x -> x.price
+                | Utility x -> x.price);
+            };
+          ])
   | _ -> [ player ]
 
 and calculated_rent (prop : property) (plist : player list) n : int =

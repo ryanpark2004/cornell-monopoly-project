@@ -15,7 +15,7 @@ let new_state : state =
 
 (***************************Debug********************************************)
 
-let debug = true
+let debug = false
 
 let print_player (p : player) : unit =
   Printf.printf "\nName: %s | Money: %i\n" p.name p.money
@@ -83,7 +83,7 @@ let pretty_board (s : state) : pretty_tile list =
   * 1. generate pretty_board
   * 2. iterate through pretty board and convert occupants into string
   * 3. for each iteration, print |tile --- names*)
-let print_board (s : state) : unit =
+let rec print_board (s : state) : unit =
   let concat (plst : player list option) : string =
     match plst with
     | None -> ""
@@ -97,11 +97,11 @@ let print_board (s : state) : unit =
   in
   let iter_helper (pt : pretty_tile) : unit =
     match pt.plst with
-    | None -> Printf.printf "| %s \n" (to_string pt.tile)
+    | None -> Printf.printf "| %s\n" (to_string pt.tile)
     | Some _ ->
         Printf.printf "| %s --- %s \n" (to_string pt.tile) (concat pt.plst)
   in
-  print_endline "\n\n------------BOARD-----------";
+  print_endline "\n------------BOARD-----------";
   List.iter iter_helper (pretty_board s)
 
 (**[print_status] prints the current status of the players. It displays
@@ -125,11 +125,12 @@ let print_state (s : state) : unit =
 (*********************************THE LOOP*************************************)
 let rec roll s (p : player) n =
   Printf.printf
-    "%s's turn: Press [Enter] to roll the dice, Press [I] for more information,\n\
+    "\n\
+     %s's turn: Press [Enter] to roll the dice, Press [I] for more information,\n\
      or Press [Q] to quit> " p.name;
   match read_line () with
   | "" ->
-      Printf.printf "%s rolled %i\n" p.name n;
+      Printf.printf "\n\n%s rolled a %i!\n" p.name n;
       move_player p n
   | "I" | "i" ->
       print_endline (get_detailed_information s);
@@ -146,20 +147,23 @@ and get_detailed_information state =
   let intro =
     "\n------------------------DETAILED INFORMATION------------------------"
   in
-  let rec player_info acc plist =
+  let rec player_info acc plist full_list =
     match plist with
     | [] -> acc
     | h :: t ->
         player_info
-          (acc ^ "| " ^ h.name ^ " - \027[32mBalance: $" ^ string_of_int h.money
-         ^ "\027[0m, \027[31mJail Status: " ^ string_of_int h.in_jail
-         ^ " turns\027[0m \n     "
+          (acc ^ "| "
+          ^ n_spaces (longest_name full_list 0 - String.length h.name) ""
+          ^ h.name ^ " - \027[32mBalance: $" ^ string_of_int h.money
+          ^ "\027[0m, \027[31mJail Status: " ^ string_of_int h.in_jail
+          ^ " turns\027[0m \n     "
           ^ n_spaces (String.length h.name) ""
+          ^ n_spaces (longest_name full_list 0 - String.length h.name) ""
           ^ "\027[33mProperties: " ^ list_props h.properties "" ^ "\027[0m\n\n"
           )
-          t
+          t full_list
   in
-  intro ^ "\n" ^ player_info "" state.players
+  intro ^ "\n" ^ player_info "" state.players state.players
 
 and list_props p acc =
   match p with
@@ -178,6 +182,12 @@ and n_spaces n acc =
   | 0 -> acc
   | _ -> n_spaces (n - 1) (acc ^ " ")
 
+and longest_name plist acc =
+  match plist with
+  | [] -> acc
+  | h :: t ->
+      if String.length h.name > acc then longest_name t (String.length h.name)
+      else longest_name t acc
 (*Before each turn, the state is printed. After each turn, state is updated*)
 
 (**[replace] replaces the instance of [p] in [lst] with [p]
