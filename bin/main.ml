@@ -285,7 +285,6 @@ let () =
   print_endline "                         |_|            |___/ \027[0m\n\n";
   print_endline
     "Welcome to Cornell Monopoly! \n\
-     For more details about how to play, look at the README.md file.\n\
      To begin playing, answer the prompts below.\n\n";
   Random.self_init ();
   let start = initialize_players new_state in

@@ -213,7 +213,7 @@ let move_player (player : player) (n : int) : player =
 let player_suite =
   [
     (*Player Test Cases: Player Attributes *)
-    ("create_player money check" >:: fun _ -> assert_equal 5000 p1.money);
+    ("create_player money check" >:: fun _ -> assert_equal 1000 p1.money);
     ("create_player jail check" >:: fun _ -> assert_equal 0 p1.in_jail);
     ("create_player properties check" >:: fun _ -> assert_equal [] p1.properties);
     ("create_player position check" >:: fun _ -> assert_equal 0 p1.position);
@@ -221,11 +221,11 @@ let player_suite =
     ("get_name player 1" >:: fun _ -> assert_equal "p1" (get_name p1));
     ("get_name player 2" >:: fun _ -> assert_equal "p2" (get_name p2));
     (*Player Test Cases: receive_money  *)
-    ("receie_money $0" >:: fun _ -> assert_equal 5000 (receive_money p1 0).money);
+    ("receie_money $0" >:: fun _ -> assert_equal 1000 (receive_money p1 0).money);
     ( "receie_money <$0" >:: fun _ ->
-      assert_equal 4900 (receive_money p1 (-100)).money );
+      assert_equal 900 (receive_money p1 (-100)).money );
     ( "receie_money >$0" >:: fun _ ->
-      assert_equal 5500 (receive_money p1 500).money );
+      assert_equal 1500 (receive_money p1 500).money );
     (*Player Test Cases: move_player  *)
     ( "move_player 0 spaces" >:: fun _ ->
       assert_equal 0 (move_player p1 0).position );
