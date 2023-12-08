@@ -2,10 +2,10 @@
 (*  Module: board                                                         *)
 (*                                                                        *)
 (*  Description: This module provides basic functionality for the board   *)
-(*    and its pieces, including properties and tiles.                     *)
+(*  and its pieces, including properties and tiles.                       *)
 (*                                                                        *)
-(*  Author: Ethan Baker                                                   *)
-(*  Last Updated: 10/2/23                                                 *)
+(*  Authors: Ethan Baker, Bill Park, Ryan Park                            *)
+(*  Date: December 10th 2023                                              *)
 (**************************************************************************)
 type location = {
   name : string;
@@ -16,12 +16,7 @@ type location = {
 (** Represents a non-utility and non-TCAT station property on the gameboard. 
     -[name]: The name of the location (e.g. Clocktower).
     -[price]: The purchase price of the location.
-    -[color]: The color group of the location (e.g. Red).
-    -[base_rent]: The rent charged when no houses are built.
-    -[house_rent_multipliers]: A list of rent multipliers for 1 to 5 houses, 
-    where [base_rent] * mutliplier = total rent. Must have len = 5.
-    -[build_cost]: The cost to build a house on this location.
-    -[num_houses]: The current number of houses built on this location.
+    -[rent]: The rent that is charged when another player lands on it.
     -[mortgage]: The mortgage value of the location.*)
 
 type tcat_station = {
@@ -41,14 +36,9 @@ type utility = {
   mortgage : int;
 }
 (** Represents a utility property on the gameboard.
-    -[name]: The name of the utility (e.g. Cornell Water Turbine).
+    -[util_name]: The name of the utility (e.g. Cornell Water Turbine).
     -[price]: The purchase price of the utility.
-    -[rent_multipliers]: The first element is the rent multiplier when the player
-    owns only one utility, and the second is the rent multiplier when the 
-    player owns both utilities. Total rent is calculated by multiplier * 
-    dice roll value.
-    -[mortgage]: The mortgage value of the utility.
-    -[owner]: The current owner of the utility, or [None] if unowned.*)
+    -[mortgage]: The mortgage value of the utility.*)
 
 (** Represents a property tile on the game board. A property can be a standard 
     location, a railroad-like tcat_station, or a utility.*)
@@ -78,25 +68,26 @@ type tile =
       their way out to continue playing.*)
 
 type board = (tile * int) list
-(** Represents the overall game board, which keeps track of all tile and 
-    player status.*)
+(** Represents the overall game board, which keeps track of where tiles are 
+    located.*)
+
+val new_board : board
+(** Creates a new board using a list of tiles.*)
 
 val length : board -> int
 (** Calculates the length of the current game board. 
     An empty board has length 0.*)
 
-val to_string : tile -> string
-(**converts a tile to string*)
-
-val new_board : board
-(**A fresh new board *)
-
 val pos_of_tile : tile -> int
 (** Returns the integer position of the tile. Starts at 0 *)
 
 val tile_of_pos : board -> int -> tile
-(**Returns the tile at the position n in the inputted board. Raises Invalid_Tile exception
-    when tiles does not exist at the position.*)
+(** Returns the tile at the position n in the inputted board. 
+    Raises Invalid_Tile exception when tiles does not exist at the position.*)
 
 val property_to_string : property -> string
-(* Converts a property to a string. *)
+(* Converts a property to a string by returning out the name of property. *)
+
+val to_string : tile -> string
+(** Converts a tile to string, using ASCII codes to change the color of 
+    different tiles.*)

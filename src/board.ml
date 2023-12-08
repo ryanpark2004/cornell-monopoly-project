@@ -34,6 +34,7 @@ type tile =
   | Parking of int
   | Jail of int
 
+(* A list of normal location properties on the board.*)
 let locations =
   Array.of_list
     [
@@ -87,6 +88,7 @@ let locations =
       };
     ]
 
+(* A list of TCAT station properties on the board*)
 let stations =
   Array.of_list
     [
@@ -96,6 +98,7 @@ let stations =
       { name = "Central Station [🚌]"; price = 200; mortgage = 100 };
     ]
 
+(* A list of utility properties on the board. *)
 let utilities =
   Array.of_list
     [
@@ -112,35 +115,9 @@ let utilities =
     ]
 
 type board = (tile * int) list
-(**[board] is a list of tiles, marked by a number that represents order*)
 
-let tlist : tile list =
-  [
-    Start 1;
-    Property (Location locations.(0));
-    Chance 1;
-    Property (Tcat_station stations.(0));
-    Property (Location locations.(1));
-    Chest 1;
-    Parking 1;
-    Property (Utility utilities.(0));
-    Tax 80;
-    Property (Tcat_station stations.(1));
-    Property (Location locations.(2));
-    Property (Location locations.(3));
-    Jail 1;
-    Chance 2;
-    Property (Location locations.(4));
-    Property (Tcat_station stations.(2));
-    Property (Location locations.(5));
-    Chest 2;
-    Parking 2;
-    Property (Utility utilities.(1));
-    Tax 150;
-    Property (Tcat_station stations.(3));
-    Property (Location locations.(6));
-    Property (Location locations.(7));
-  ]
+(* The tile list that is used to create the initial board*)
+let tlist : tile list = [ Start 1; Property (Location locations.(0)) ]
 
 let new_board : board =
   let rec indices (n : int) (lst : tile list) : int list =
