@@ -1,5 +1,7 @@
 open Board
 
+let debug = false
+
 type player = {
   name : string;
   mutable money : int;
@@ -8,8 +10,12 @@ type player = {
   in_jail : int;
 }
 
+let debug_player =
+  { name = "DEBUG"; money = 100; properties = []; position = 0; in_jail = 0 }
+
 let create_player (name : string) : player =
-  { name; money = 5000; properties = []; position = 0; in_jail = 0 }
+  if debug then { debug_player with name = debug_player.name ^ ": " ^ name }
+  else { name; money = 5000; properties = []; position = 0; in_jail = 0 }
 
 let get_name player = player.name
 
