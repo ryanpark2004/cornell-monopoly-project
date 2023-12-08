@@ -139,6 +139,13 @@ let board_suite =
       assert_equal (Parking 1) (tile_of_pos test_board_2 4) );
     ( "tile_of_pos Jail" >:: fun _ ->
       assert_equal (Jail 1) (tile_of_pos test_board_2 5) );
+    (*Board Test Cases: property_selling_value *)
+    ( "property_selling_value Location" >:: fun _ ->
+      assert_equal 20 (property_selling_value (Location locations.(0))) );
+    ( "property_selling_value Station" >:: fun _ ->
+      assert_equal 100 (property_selling_value (Tcat_station stations.(0))) );
+    ( "property_selling_value Utility" >:: fun _ ->
+      assert_equal 50 (property_selling_value (Utility utilities.(0))) );
     (*Board Test Cases: property_to_string *)
     ( "property_to_string Location" >:: fun _ ->
       assert_equal
@@ -233,40 +240,29 @@ let player_suite =
 (********************************************************************
      (* Uitility Test Cases *)
  ********************************************************************)
-let jail_p1 =
-  { name = "Player1"; money = 500; position = 0; in_jail = 1; properties = [] }
-
-let new_p2 =
-  { name = "Player2"; money = 500; position = 3; in_jail = 0; properties = [] }
-
-let players = [ jail_p1; new_p2 ]
 
 let test_location : location =
+  { name = "test loc"; price = 100; rent = 0; mortgage = 100 }
+
+let test_location2 : location =
   { name = "test loc"; price = 100; rent = 0; mortgage = 100 }
 
 let test_mortgage_board =
   [ Start 0; Property (Location test_location); Tax 100 ]
 
-let test_mortgage_player =
+let jail_p1 =
+  { name = "Player1"; money = 500; position = 0; in_jail = 1; properties = [] }
+
+let new_p2 =
   {
-    name = "test_mort_player_in";
-    money = 100;
-    properties = [ Location test_location ];
-    position = 0;
+    name = "Player2";
+    money = 500;
+    position = 3;
     in_jail = 0;
+    properties = [ Location test_location ];
   }
 
-let test_mortgage_player_out =
-  {
-    name = "test_mort_player_out";
-    money = 0;
-    properties = [ Location test_location ];
-    position = 0;
-    in_jail = 0;
-  }
-
-let mortgage_test name out plyr plyrs =
-  name >:: fun _ -> assert_equal out (check_broke plyr plyrs)
+let players = [ jail_p1; new_p2 ]
 
 let utils_suite =
   [
@@ -306,6 +302,11 @@ let utils_suite =
           };
         ]
         (tile_action (Jail 0) new_p2 players 0 true) );
+    (*Utility Test Cases: owner_opt  *)
+    ( "owner_opt Player has Property" >:: fun _ ->
+      assert_equal (Some new_p2) (owner_opt (Location test_location) players) );
+    ( "owner_opt No Player has property" >:: fun _ ->
+      assert_equal None (owner_opt (Location test_location2) players) );
   ]
 
 (********************************************************)
