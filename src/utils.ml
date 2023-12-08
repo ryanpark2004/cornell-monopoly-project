@@ -122,10 +122,10 @@ and pay_rent prop buyer (seller : player) plist n =
 and property_action (prop : property) (player : player) (plist : player list) n
     : player list =
   match owner_opt prop plist with
-  | None -> ask_buy prop player plist n
+  | None -> ask_buy prop player
   | Some s -> pay_rent prop player s plist n
 
-and ask_buy (prop : property) player plist n =
+and ask_buy (prop : property) player =
   let check =
     match prop with
     | Location l -> player.money >= l.price
@@ -182,7 +182,7 @@ and tcat_rent tcat (plist : player list) : int =
   let rec num_stations acc props =
     match props with
     | [] -> acc
-    | Tcat_station h :: t -> num_stations (acc + 1) t
+    | Tcat_station _ :: t -> num_stations (acc + 1) t
     | _ :: t -> num_stations acc t
   in
   50 * num_stations 0 (find_owner tcat plist).properties

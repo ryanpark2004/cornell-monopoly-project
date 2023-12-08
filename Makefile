@@ -12,3 +12,6 @@ play:
 
 utop:
 	OCAMLRUNPARAM=b dune utop src
+
+doc: 
+	dune build @doc
