@@ -3,7 +3,14 @@ open Board
 open Player
 open Utils
 
-(** This is the main description!!!*)
+(*                                                                        *)
+(*  Module: Main                                                          *)
+(*                                                                        *)
+(*  Description: T                       *)
+(*                                                                        *)
+(*  Authors: Ethan Baker, Bill Park, Ryan Park                            *)
+(*  Date: December 10th 2023                                              *)
+(**************************************************************************)
 
 type state = {
   board : board;
