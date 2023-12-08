@@ -17,4 +17,3 @@ val tile_action : tile -> player -> player list -> int -> player list
 (**[tile_action] defines the different effects each tile has when 
     a player lands on them. Returns the new player after everything has 
     changed*)
-

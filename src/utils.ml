@@ -1,5 +1,6 @@
 open Player
 open Board
+open Exceptions
 
 type chances =
   | ToStart
@@ -29,7 +30,8 @@ let pullChest () =
   List.nth lst n
 
 let rec tile_action tile player plist n : player list =
-  if player.in_jail > 0 then [ player ]
+  if check_broke player then mortgage_action player plist
+  else if player.in_jail > 0 then [ player ]
   else
     match tile with
     | Start ->
@@ -124,7 +126,7 @@ and calculated_rent (prop : property) (plist : player list) n : int =
 and tcat_rent tcat (plist : player list) : int =
   let rec find_owner tcat plist =
     match plist with
-    | [] -> failwith "no owners"
+    | [] -> raise (Unreachable "utils/tcat_rent received an empty player list")
     | h :: t ->
         if List.mem (Tcat_station tcat) h.properties then h
         else find_owner tcat t
@@ -140,7 +142,8 @@ and tcat_rent tcat (plist : player list) : int =
 and utility_rent util plist n =
   let rec find_owner util plist =
     match plist with
-    | [] -> failwith "no owners"
+    | [] ->
+        raise (Unreachable "utils/utility_rent received an empty player list")
     | h :: t ->
         if List.mem (Utility util) h.properties then h else find_owner util t
   in
@@ -151,3 +154,8 @@ and utility_rent util plist n =
     | _ :: t -> num_utils acc t
   in
   n * 4 * num_utils 0 (find_owner util plist).properties
+
+and check_broke (p : player) : bool = p.money <= 0
+
+let mortgage_action (p : player) (plst : player list) =
+  Printf.printf "You have no money. "
