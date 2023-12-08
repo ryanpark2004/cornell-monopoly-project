@@ -99,3 +99,6 @@ val sum_values : property list -> int
 val remove_props : property list -> property list -> property list
 (** Removes properties from the first list from the second list, and 
     returns the result.*)
+
+val rent_text : property -> string
+(** Returns the string representing how much rent is for the property.*)

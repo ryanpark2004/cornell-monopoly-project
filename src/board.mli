@@ -53,7 +53,7 @@ type property =
     properties, taxes, chance, community chest, free parking, or jail tiles. *)
 type tile =
   | Start of int
-      (** A start tile, where the players start and collect $200 when passing 
+      (** A start tile, where the players start and collect $100 when passing 
           through it each round.*)
   | Property of property  (** A standard property tile. *)
   | Tax of int  (** A tile which requires the player to pay a tax.*)
@@ -89,7 +89,10 @@ val property_to_string : property -> string
 (** Converts a property to a string by returning out the name of property. *)
 
 val property_selling_value : property -> int
-(** Returns the selling value of the property*)
+(** Returns the selling value of the property. *)
+
+val property_buying_value : property -> int
+(** Returns the price value of the property. *)
 
 val to_string : tile -> string
 (** Converts a tile to string, using ASCII codes to change the color of 

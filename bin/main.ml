@@ -6,7 +6,12 @@ open Utils
 (*                                                                        *)
 (*  Module: Main                                                          *)
 (*                                                                        *)
-(*  Description: T                       *)
+(*  Description: This module implments the main script of the Cornell     *)
+(*  Monopoly game. It keeps track of the game state, which is made up     *)
+(*  of the board, players, and game status. It also implements the logic  *)
+(*  for the main game loop, which is structured into rounds and turns for *)
+(*  players. Finally, it provides detailed print functionality for the    *)
+(*  game board and simple and detailed information.                       *)
 (*                                                                        *)
 (*  Authors: Ethan Baker, Bill Park, Ryan Park                            *)
 (*  Date: December 10th 2023                                              *)
@@ -15,12 +20,9 @@ open Utils
 type state = {
   board : board;
   mutable players : player list;
-  max_run : int;
-  current_run : int;
 }
 
-let new_state : state =
-  { board = Board.new_board; players = []; max_run = 20; current_run = 1 }
+let new_state : state = { board = Board.new_board; players = [] }
 
 (***************************Debug********************************************)
 
@@ -229,7 +231,13 @@ let rec turn (s : state) (p : player) : player =
 and win_game (s : state) : player =
   begin
     let winner = List.hd s.players in
-    Printf.printf "\n\nWINNER: %s \n\n" winner.name;
+    print_endline "\027[38;5;214m  _    _ _                       _";
+    print_endline " | |  | (_)                     | |";
+    print_endline " | |  | |_ _ __  _ __   ___ _ __| |";
+    print_endline " | |/\\| | | '_ \\| '_ \\ / _ \\ '__| |";
+    print_endline " | /  / | | | | | | | \| _/_| | |_|";
+    print_endline "  \\/  \\/|_|_| |_|_| |_|\\___||_| (_)";
+    Printf.printf "\n\n Congratulations %s, you won! \n\n\027[0m" winner.name;
     exit 0
   end
 
@@ -254,13 +262,8 @@ and jailed_turn (s : state) (p : player) : player =
 let round (s : state) : player list = List.map (turn s) s.players
 
 let rec loop (s : state) : unit =
-  if s.current_run > s.max_run then begin
-    print_state s;
-    Printf.printf "\n\n Thank you for playing!\n\n"
-  end
-  else begin
-    Printf.printf "\n\nRound #%i / %i\n" s.current_run s.max_run;
-    loop { s with players = round s; current_run = s.current_run + 1 }
+  begin
+    loop { s with players = round s }
   end
 
 (******************************************************************************)

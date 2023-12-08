@@ -17,3 +17,4 @@ exception Not_Enough_Money of string
     pays rent, or pays out of jail without suffient funds.*)
 
 exception Unreachable of string
+(** Raises an exception if a pattern match hits an unreachable branch.*)
