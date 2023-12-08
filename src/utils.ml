@@ -128,31 +128,44 @@ and property_action (prop : property) (player : player) (plist : player list) n
   | Some s -> pay_rent prop player s plist n
 
 and ask_buy (prop : property) player plist n =
-  Printf.printf
-    "You landed on %s. Press [B] to buy, or Press [ENTER] to skip > "
-    (property_to_string prop);
-  match read_line () with
-  | "B" | "b" -> (
-      print_endline
-        "\n\
-         You bought the property. Now you can start collecting rent!.\n\
-         Press anything to continue >";
-      match read_line () with
-      | _ ->
-          [
-            {
-              player with
-              properties = prop :: player.properties;
-              money =
-                (player.money
-                -
-                match prop with
-                | Location x -> x.price
-                | Tcat_station x -> x.price
-                | Utility x -> x.price);
-            };
-          ])
-  | _ -> [ player ]
+  let check =
+    match prop with
+    | Location l -> player.money >= l.price
+    | Tcat_station t -> player.money >= t.price
+    | Utility u -> player.money >= u.price
+  in
+  if check then (
+    Printf.printf
+      "You landed on %s. Press [B] to buy, or Press [ENTER] to skip > "
+      (property_to_string prop);
+    match read_line () with
+    | "B" | "b" -> (
+        print_endline
+          "\n\
+           You bought the property. Now you can start collecting rent!.\n\
+           Press anything to continue >";
+        match read_line () with
+        | _ ->
+            [
+              {
+                player with
+                properties = prop :: player.properties;
+                money =
+                  (player.money
+                  -
+                  match prop with
+                  | Location x -> x.price
+                  | Tcat_station x -> x.price
+                  | Utility x -> x.price);
+              };
+            ])
+    | _ -> [ player ])
+  else (
+    Printf.printf
+      "You landed on %s. You don't have enough money to buy it.\n\
+      \ Press anything to continue > " (property_to_string prop);
+    match read_line () with
+    | _ -> [ player ])
 
 and calculated_rent (prop : property) (plist : player list) n : int =
   match prop with
