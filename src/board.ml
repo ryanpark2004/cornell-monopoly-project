@@ -43,50 +43,50 @@ let locations =
       {
         name = "\027[38;5;137mHigh Rise 5 [!]\027[0m";
         price = 40;
-        rent = 2500;
-        mortgage = 20;
+        rent = 16;
+        mortgage = 10;
       };
       {
         name = "\027[38;5;137mThe Gothics [!]\027[0m";
         price = 50;
-        rent = 12;
-        mortgage = 25;
+        rent = 24;
+        mortgage = 15;
       };
       {
         name = "\027[38;5;22mOkenshields [!!]\027[0m";
         price = 120;
-        rent = 30;
-        mortgage = 60;
+        rent = 60;
+        mortgage = 30;
       };
       {
         name = "\027[38;5;22mMorrison [!!]\027[0m";
         price = 140;
-        rent = 40;
-        mortgage = 70;
+        rent = 80;
+        mortgage = 35;
       };
       {
         name = "\027[38;5;93mDuffield Hall [!!!]\027[0m";
         price = 280;
-        rent = 85;
-        mortgage = 140;
+        rent = 150;
+        mortgage = 70;
       };
       {
         name = "\027[38;5;93mStatler Hotel [!!!]\027[0m";
         price = 300;
-        rent = 100;
-        mortgage = 150;
+        rent = 190;
+        mortgage = 75;
       };
       {
         name = "\027[38;5;214mMann Library [!!!!]\027[0m";
         price = 400;
-        rent = 140;
-        mortgage = 200;
+        rent = 230;
+        mortgage = 100;
       };
       {
         name = "\027[38;5;214mThe Clocktower [!!!!]\027[0m";
         price = 450;
-        rent = 200;
-        mortgage = 200;
+        rent = 250;
+        mortgage = 100;
       };
     ]
 
@@ -182,6 +182,12 @@ let property_selling_value (p : property) : int =
   | Location l -> l.mortgage
   | Tcat_station t -> t.mortgage
   | Utility u -> u.mortgage
+
+let property_buying_value (p : property) : int =
+  match p with
+  | Location l -> l.price
+  | Tcat_station t -> t.price
+  | Utility u -> u.price
 
 let property_to_string (p : property) : string =
   match p with

@@ -24,11 +24,11 @@ open List
    only with player-related functions, such as get_name, receive_money,
    and move_player.). Test Cases were mainly designed using a glass-box testing
    approach: the functionality of each function was analyzed, and test cases
-   were made with the goal of having full coverage for each line of code
-   (Similar to Assignment 3). Furthermore, as mentioned above previously, we
-   adopted a testing strategy within the terminal similar to randomized testing
-   and the "devious player", in which inputs were intentionally misleading to
-   find bugs hidden within the system.
+   were made with the goal of testing as many execution paths for the functions
+   in each module as possible. Furthermore, as mentioned above previously,
+   we adopted a testing strategy within the terminal similar to randomized
+   testing and the "devious player", in which inputs were intentionally
+   misleading to find bugs hidden within the system.
 
    We believe the testing approach demonstrates the correctness of the system
    because it not only provides full coverage of the functionality of code
@@ -127,18 +127,25 @@ let board_suite =
       assert_raises exn (fun () ->
           try pos_of_tile (Jail 2) with exn -> raise exn) );
     (*Board Test Cases: title_of_pos *)
-    ( "title_of_pos Start" >:: fun _ ->
+    ( "tile_of_pos Start" >:: fun _ ->
       assert_equal (Start 1) (tile_of_pos test_board_2 0) );
-    ( "title_of_pos Tax" >:: fun _ ->
+    ( "tile_of_pos Tax" >:: fun _ ->
       assert_equal (Tax 100) (tile_of_pos test_board_2 1) );
-    ( "title_of_pos Chance" >:: fun _ ->
+    ( "tile_of_pos Chance" >:: fun _ ->
       assert_equal (Chance 1) (tile_of_pos test_board_2 2) );
-    ( "title_of_pos Chest" >:: fun _ ->
+    ( "tile_of_pos Chest" >:: fun _ ->
       assert_equal (Chest 1) (tile_of_pos test_board_2 3) );
-    ( "title_of_pos Parking" >:: fun _ ->
+    ( "tile_of_pos Parking" >:: fun _ ->
       assert_equal (Parking 1) (tile_of_pos test_board_2 4) );
-    ( "title_of_pos Jail" >:: fun _ ->
+    ( "tile_of_pos Jail" >:: fun _ ->
       assert_equal (Jail 1) (tile_of_pos test_board_2 5) );
+    (*Board Test Cases: property_selling_value *)
+    ( "property_selling_value Location" >:: fun _ ->
+      assert_equal 20 (property_selling_value (Location locations.(0))) );
+    ( "property_selling_value Station" >:: fun _ ->
+      assert_equal 100 (property_selling_value (Tcat_station stations.(0))) );
+    ( "property_selling_value Utility" >:: fun _ ->
+      assert_equal 50 (property_selling_value (Utility utilities.(0))) );
     (*Board Test Cases: property_to_string *)
     ( "property_to_string Location" >:: fun _ ->
       assert_equal
@@ -199,8 +206,6 @@ let board_suite =
 
 let p1 = create_player "p1"
 let p2 = create_player "p2"
-let p3 = create_player "p3"
-let p4 = create_player "p4"
 
 let move_player (player : player) (n : int) : player =
   { player with position = (player.position + n) mod length test_board_2 }
@@ -208,21 +213,19 @@ let move_player (player : player) (n : int) : player =
 let player_suite =
   [
     (*Player Test Cases: Player Attributes *)
-    ("create_player money check" >:: fun _ -> assert_equal 5000 p1.money);
+    ("create_player money check" >:: fun _ -> assert_equal 1000 p1.money);
     ("create_player jail check" >:: fun _ -> assert_equal 0 p1.in_jail);
     ("create_player properties check" >:: fun _ -> assert_equal [] p1.properties);
     ("create_player position check" >:: fun _ -> assert_equal 0 p1.position);
     (*Player Test Cases: get_name *)
     ("get_name player 1" >:: fun _ -> assert_equal "p1" (get_name p1));
     ("get_name player 2" >:: fun _ -> assert_equal "p2" (get_name p2));
-    ("get_name player 3" >:: fun _ -> assert_equal "p3" (get_name p3));
-    ("get_name player 4" >:: fun _ -> assert_equal "p4" (get_name p4));
     (*Player Test Cases: receive_money  *)
-    ("receie_money $0" >:: fun _ -> assert_equal 5000 (receive_money p1 0).money);
+    ("receie_money $0" >:: fun _ -> assert_equal 1000 (receive_money p1 0).money);
     ( "receie_money <$0" >:: fun _ ->
-      assert_equal 4900 (receive_money p1 (-100)).money );
+      assert_equal 900 (receive_money p1 (-100)).money );
     ( "receie_money >$0" >:: fun _ ->
-      assert_equal 5500 (receive_money p1 500).money );
+      assert_equal 1500 (receive_money p1 500).money );
     (*Player Test Cases: move_player  *)
     ( "move_player 0 spaces" >:: fun _ ->
       assert_equal 0 (move_player p1 0).position );
@@ -237,35 +240,29 @@ let player_suite =
 (********************************************************************
      (* Uitility Test Cases *)
  ********************************************************************)
-let dice_bound = 3
-let rollDice () : int = 1 + Random.int dice_bound
 
 let test_location : location =
+  { name = "test loc"; price = 100; rent = 0; mortgage = 100 }
+
+let test_location2 : location =
   { name = "test loc"; price = 100; rent = 0; mortgage = 100 }
 
 let test_mortgage_board =
   [ Start 0; Property (Location test_location); Tax 100 ]
 
-let test_mortgage_player =
+let jail_p1 =
+  { name = "Player1"; money = 500; position = 0; in_jail = 1; properties = [] }
+
+let new_p2 =
   {
-    name = "test_mort_player_in";
-    money = 100;
-    properties = [ Location test_location ];
-    position = 0;
+    name = "Player2";
+    money = 500;
+    position = 3;
     in_jail = 0;
+    properties = [ Location test_location ];
   }
 
-let test_mortgage_player_out =
-  {
-    name = "test_mort_player_out";
-    money = 0;
-    properties = [ Location test_location ];
-    position = 0;
-    in_jail = 0;
-  }
-
-let mortgage_test name out plyr plyrs =
-  name >:: fun _ -> assert_equal out (check_broke plyr plyrs)
+let players = [ jail_p1; new_p2 ]
 
 let utils_suite =
   [
@@ -273,11 +270,45 @@ let utils_suite =
     ( "roll_move test" >:: fun _ ->
       assert_bool "Error"
         (let x = rollDice () in
-         x >= 1 && x <= 4) );
-    (*Utility Test Cases: pullChance  *)
-    (*Utility Test Cases: pullChest  *)
-    (*Utility Test Cases: tileAction  *)
+         x >= 1 && x <= 7) );
+    (*Utility Test Cases: tile_Action  *)
+    ( "tile_Action: Jail" >:: fun _ ->
+      assert_equal [ jail_p1 ] (tile_action (Jail 1) jail_p1 players 0 true) );
+    ( "tile_Action: Start" >:: fun _ ->
+      assert_equal [ new_p2 ] (tile_action (Start 0) new_p2 players 0 true) );
+    ( "tile_Action: Tax" >:: fun _ ->
+      assert_equal
+        [
+          {
+            name = "Player2";
+            money = 400;
+            position = 3;
+            in_jail = 0;
+            properties = [];
+          };
+        ]
+        (tile_action (Tax 100) new_p2 players 0 true) );
+    ( "tile_Action: FreeParking" >:: fun _ ->
+      assert_equal [ new_p2 ] (tile_action (Parking 0) new_p2 players 0 true) );
+    ( "tile_Action: Jail" >:: fun _ ->
+      assert_equal
+        [
+          {
+            name = "Player2";
+            money = 500;
+            position = 3;
+            in_jail = 3;
+            properties = [];
+          };
+        ]
+        (tile_action (Jail 0) new_p2 players 0 true) );
+    (*Utility Test Cases: owner_opt  *)
+    ( "owner_opt Player has Property" >:: fun _ ->
+      assert_equal (Some new_p2) (owner_opt (Location test_location) players) );
+    ( "owner_opt No Player has property" >:: fun _ ->
+      assert_equal None (owner_opt (Location test_location2) players) );
   ]
+
 (********************************************************)
 
 let tests =

@@ -56,33 +56,37 @@ let pullChest () =
   let n = Random.int length in
   List.nth lst n
 
-let rec tile_action tile player plist n : player list =
+let rec tile_action tile player plist n debug : player list =
   if player.in_jail > 0 then [ player ]
   else
     match tile with
-    | Start _ -> (
-        print_endline "You landed back on Go!\nPress anything to continue > ";
-        match read_line () with
-        | _ -> [ player ])
-    | Tax x -> (
-        print_endline
-          ("Oh No! You were taxed $" ^ string_of_int x
-         ^ ".\nPress anything to continue > ");
-        match read_line () with
-        | _ -> [ { player with money = player.money - x } ])
+    | Start _ ->
+        if debug == false then (
+          print_endline "You landed back on Go!\nPress anything to continue > ";
+          match read_line () with
+          | _ -> [ player ])
+        else [ player ]
+    | Tax x ->
+        if debug == false then (
+          print_endline
+            ("Oh No! You were taxed $" ^ string_of_int x
+           ^ ".\nPress anything to continue > ");
+          match read_line () with
+          | _ -> [ { player with money = player.money - x } ])
+        else [ { player with money = player.money - x } ]
     | Chance _ -> (
         print_endline "You pulled a chance card!";
         let card = pullChance () in
         match card with
         | ToStart -> (
             print_endline
-              "CHANCE: Advance to Go, Collect $200.\n\
+              "CHANCE: Advance to Go, Collect $100.\n\
                Press anything to continue > ";
             match read_line () with
-            | _ -> [ { player with position = 0; money = player.money + 200 } ])
+            | _ -> [ { player with position = 0; money = player.money + 100 } ])
         | ToJail -> (
             print_endline
-              "CHANCE: Go directly to Jail. Do not collect $200\n\
+              "CHANCE: Go directly to Jail. Do not collect $100\n\
                Press anything to continue > ";
             match read_line () with
             | _ ->
@@ -116,15 +120,19 @@ let rec tile_action tile player plist n : player list =
              ^ ".\nPress anything to continue > ");
             [ { player with money = player.money - x } ]
         | _ -> [ player ])
-    | Parking _ -> (
-        print_endline
-          "You landed on Free Parking.\nPress anything to continue >";
-        match read_line () with
-        | _ -> [ player ])
-    | Jail _ -> (
-        print_endline "Go to Jail.\nPress anything to continue >";
-        match read_line () with
-        | _ -> [ { player with in_jail = 3 } ])
+    | Parking _ ->
+        if debug == false then (
+          print_endline
+            "You landed on Free Parking. \nPress anything to continue >";
+          match read_line () with
+          | _ -> [ player ])
+        else [ player ]
+    | Jail _ ->
+        if debug = false then (
+          print_endline "Go to Jail.\nPress anything to continue >";
+          match read_line () with
+          | _ -> [ { player with in_jail = 3 } ])
+        else [ { player with in_jail = 3 } ]
     | Property prop -> property_action prop player plist n
 
 and owner_opt (prop : property) (plist : player list) : player option =
@@ -136,7 +144,7 @@ and pay_rent prop buyer (seller : player) plist n =
   let rent = calculated_rent prop plist n in
   let new_buyer = { buyer with money = buyer.money - rent } in
   let new_seller = { seller with money = seller.money + rent } in
-  if buyer = seller then begin
+  if buyer.name = seller.name then begin
     print_endline
       "You landed on your own property!\nPress anything to continue > ";
     match read_line () with
@@ -145,7 +153,7 @@ and pay_rent prop buyer (seller : player) plist n =
   else begin
     Printf.printf
       "You landed on %s owned by %s. You paid $%i.\n\
-      \ Press anything to continue >" (property_to_string prop) seller.name rent;
+       Press anything to continue >" (property_to_string prop) seller.name rent;
     match read_line () with
     | _ -> [ new_buyer; new_seller ]
   end
@@ -165,8 +173,10 @@ and ask_buy (prop : property) player =
   in
   if check then (
     Printf.printf
-      "You landed on %s. Press [B] to buy, or Press [ENTER] to skip > "
-      (property_to_string prop);
+      "You landed on %s, which costs $%i and rents for %s.\n\
+       Press [B] to buy, or Press [ENTER] to skip > " (property_to_string prop)
+      (property_buying_value prop)
+      (rent_text prop);
     match read_line () with
     | "B" | "b" -> (
         print_endline
@@ -195,6 +205,12 @@ and ask_buy (prop : property) player =
        Press anything to continue > " (property_to_string prop);
     match read_line () with
     | _ -> [ player ])
+
+and rent_text prop =
+  match prop with
+  | Location x -> "$" ^ string_of_int x.rent
+  | Tcat_station _ -> "\n$50 * the # of TCAT stations you own"
+  | Utility _ -> "\n$4 * Value of Dice Roll * the # of Utilities you own"
 
 and calculated_rent (prop : property) (plist : player list) n : int =
   match prop with
@@ -229,7 +245,7 @@ and utility_rent util plist n =
   let rec num_utils acc props =
     match props with
     | [] -> acc
-    | Utility u :: t -> num_utils (acc + 1) t
+    | Utility _ :: t -> num_utils (acc + 1) t
     | _ :: t -> num_utils acc t
   in
   n * 4 * num_utils 0 (find_owner util plist).properties
@@ -242,8 +258,11 @@ and calculate_brokeness (p : player) : int = debug_brokenness p.money
 and mortgage_action (p : player) (plst : player list) =
   let deficit = calculate_brokeness p in
   Printf.printf
-    "\nYou (%s) are broke. You need %i to recover. Select properties to sell\n"
-    p.name deficit;
+    "\n\
+     Uh oh, %s, you are broke! \n\
+     You need $%i to recover. \n\
+     If you have any properties to mortgage, you can sell them now. \n"
+    p.name ~-deficit;
   let props = debug_selection p.properties (select_property p.properties []) in
   if deficit + sum_values props >= 0 then
     let new_p =
@@ -257,7 +276,7 @@ and mortgage_action (p : player) (plst : player list) =
   else kill_player p plst
 
 and kill_player p plst =
-  Printf.printf "%s could not recover from deficit. RIP" p.name;
+  Printf.printf "\n%s could not recover from their deficit. They lost!" p.name;
   List.filter (fun (e : player) -> e.name <> p.name) plst
 
 and select_property (props : property list) (acc : property list) :
@@ -265,7 +284,7 @@ and select_property (props : property list) (acc : property list) :
   match props with
   | [] -> acc
   | h :: t -> (
-      Printf.printf "\nSell %s for %i: [y] | [n]. Current sum: %i\n"
+      Printf.printf "\nSell %s for %i: [Y] | [N]. Current sum: %i > "
         (property_to_string h) (property_selling_value h) (sum_values acc);
       match read_line () with
       | "Y" | "y" -> select_property t (h :: acc)
