@@ -2,6 +2,26 @@ open Player
 open Board
 open Exceptions
 
+let debug = false
+
+(**************Debug functions****************)
+let debug_brokenness x : int =
+  if debug then (
+    Printf.printf "\ncalculate_brokenness returned: %i\n" x;
+    x)
+  else x
+
+let debug_selection before after =
+  if debug then (
+    List.iter (Printf.printf "|%s|")
+      ("\nBEFORE:" :: List.map property_to_string before);
+    List.iter (Printf.printf "|%s|")
+      ("\nAFTER: " :: List.map property_to_string after);
+    after)
+  else after
+
+(*********************************************)
+
 type chances =
   | ToStart
   | ToJail
@@ -17,7 +37,7 @@ let chest_list =
   (5, [ GainMoney 30; LoseMoney 100; GainMoney 150; LoseMoney 25; GainMoney 50 ])
 
 let dice_bound = 6
-let rollDice () : int = 1 + Random.int dice_bound + (1 + Random.int dice_bound)
+let rollDice () : int = 1 + Random.int dice_bound + Random.int dice_bound + 1
 
 let pullChance () =
   let length, lst = chance_list in
@@ -30,8 +50,7 @@ let pullChest () =
   List.nth lst n
 
 let rec tile_action tile player plist n : player list =
-  if check_broke player then mortgage_action player plist
-  else if player.in_jail > 0 then [ player ]
+  if player.in_jail > 0 then [ player ]
   else
     match tile with
     | Start _ -> (
@@ -205,26 +224,48 @@ and utility_rent util plist n =
   in
   n * 4 * num_utils 0 (find_owner util plist).properties
 
-and check_broke (p : player) : bool = p.money <= 0
-and calculate_brokeness (p : player) : int = p.money
+let rec check_broke (p : player) (players : player list) : player list =
+  if p.money < 0 then mortgage_action p players else players
+
+and calculate_brokeness (p : player) : int = debug_brokenness p.money
 
 and mortgage_action (p : player) (plst : player list) =
   let deficit = calculate_brokeness p in
   Printf.printf
-    "You (%s) are broke. You need %i to recover. Select properties to sell"
+    "\nYou (%s) are broke. You need %i to recover. Select properties to sell\n"
     p.name deficit;
-  let props = select_property p in
-  failwith "TODO"
+  let props = debug_selection p.properties (select_property p.properties []) in
+  if deficit + sum_values props >= 0 then
+    let new_p =
+      {
+        p with
+        properties = remove_props p.properties props;
+        money = p.money + sum_values props;
+      }
+    in
+    List.map (fun (e : player) -> if e.name = p.name then new_p else e) plst
+  else kill_player p plst
 
-and select_property (p : player) (acc : property list) : property list =
-  match p.properties with
-  | [] -> failwith "TODO"
-  | h :: t ->
-    let rec ask (prop) =
-      Printf.printf "Do you want to sell [%s] for %i? -- [Y] / [N]" (property_to_string prop) (property_selling_value prop);
+and kill_player p plst =
+  Printf.printf "%s could not recover from deficit. RIP" p.name;
+  List.filter (fun (e : player) -> e.name <> p.name) plst
+
+and select_property (props : property list) (acc : property list) :
+    property list =
+  match props with
+  | [] -> acc
+  | h :: t -> (
+      Printf.printf "\nSell %s for %i: [y] | [n]. Current sum: %i\n"
+        (property_to_string h) (property_selling_value h) (sum_values acc);
       match read_line () with
-      |"Y" | "y" ->
-      |"N" | "n" ->
-      | _ -> print_endline "\n invalid input\n"; ask prop
-    in ask h
+      | "Y" | "y" -> select_property t (h :: acc)
+      | "N" | "n" -> select_property t acc
+      | _ -> select_property (h :: t) acc)
 
+and sum_values (props : property list) : int =
+  List.fold_left ( + ) 0 (List.map property_selling_value props)
+
+and remove_props (props : property list) (target : property list) =
+  match props with
+  | [] -> target
+  | h :: t -> remove_props t (List.filter (fun p -> p <> h) target)

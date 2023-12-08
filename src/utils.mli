@@ -17,3 +17,8 @@ val tile_action : tile -> player -> player list -> int -> player list
 (**[tile_action] defines the different effects each tile has when 
     a player lands on them. Returns the new player after everything has 
     changed*)
+
+val check_broke : player -> player list -> player list
+(**[check_broke] checks if player is broke. Returns the same player list as
+    the argument if the player is not broke. Otherwise, it goes through
+    mortgage process.*)
