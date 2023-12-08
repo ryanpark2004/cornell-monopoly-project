@@ -17,7 +17,7 @@ let new_state : state =
 
 (***************************Debug********************************************)
 
-let debug = false
+let debug = true
 
 let print_player (p : player) : unit =
   Printf.printf "\nName: %s | Money: %i\n" p.name p.money
@@ -213,8 +213,10 @@ let rec turn (s : state) (p : player) : player =
     let tile = tile_of_pos new_board rolled.position in
     let plst = tile_action tile rolled s.players n in
     s.players <- replace_all s.players plst;
+    print_players s;
     let plst2 = check_broke (List.hd plst) s.players in
     s.players <- plst2;
+    print_players s;
     print_state s;
     if List.length s.players = 1 then win_game s else List.hd plst
   end

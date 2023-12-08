@@ -43,7 +43,7 @@ let locations =
       {
         name = "\027[38;5;137mHigh Rise 5 [!]\027[0m";
         price = 40;
-        rent = 8;
+        rent = 2500;
         mortgage = 20;
       };
       {
@@ -123,28 +123,28 @@ let tlist : tile list =
   [
     Start 1;
     Property (Location locations.(0));
-    Chance 1;
-    Property (Tcat_station stations.(0));
-    Property (Location locations.(1));
-    Chest 1;
-    Parking 1;
-    Property (Utility utilities.(0));
-    Tax 80;
-    Property (Tcat_station stations.(1));
-    Property (Location locations.(2));
-    Property (Location locations.(3));
-    Jail 1;
-    Chance 2;
-    Property (Location locations.(4));
-    Property (Tcat_station stations.(2));
-    Property (Location locations.(5));
-    Chest 2;
-    Parking 2;
-    Property (Utility utilities.(1));
-    Tax 150;
-    Property (Tcat_station stations.(3));
-    Property (Location locations.(6));
-    Property (Location locations.(7));
+    (* Chance 1;
+       Property (Tcat_station stations.(0));
+       Property (Location locations.(1));
+       Chest 1;
+       Parking 1;
+       Property (Utility utilities.(0));
+       Tax 80;
+       Property (Tcat_station stations.(1));
+       Property (Location locations.(2));
+       Property (Location locations.(3));
+       Jail 1;
+       Chance 2;
+       Property (Location locations.(4));
+       Property (Tcat_station stations.(2));
+       Property (Location locations.(5));
+       Chest 2;
+       Parking 2;
+       Property (Utility utilities.(1));
+       Tax 150;
+       Property (Tcat_station stations.(3));
+       Property (Location locations.(6));
+       Property (Location locations.(7)); *)
   ]
 
 let debug_board = [ Start 0; Property (Location locations.(1)); Tax 1000 ]
