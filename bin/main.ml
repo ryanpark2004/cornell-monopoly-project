@@ -217,14 +217,21 @@ let rec turn (s : state) (p : player) : player =
 
 and jailed_turn (s : state) (p : player) : player =
   Printf.printf "%s is in jail. Remaining turns: %i/%i\n" p.name p.in_jail 3;
-  Printf.printf
-    "Press [Y] to pay $200 and roll the dice, or press [N] to stay in jail> ";
-  match read_line () with
-  | "Y" | "y" -> turn s { p with money = p.money - 200; in_jail = 0 }
-  | "N" | "n" -> { p with in_jail = p.in_jail - 1 }
-  | _ ->
-      Printf.printf "Invalid input \n";
-      jailed_turn s p
+  if p.money >= 200 then (
+    Printf.printf
+      "Press [Y] to pay $200 and roll the dice, or press [N] to stay in jail> ";
+    match read_line () with
+    | "Y" | "y" -> turn s { p with money = p.money - 200; in_jail = 0 }
+    | "N" | "n" -> { p with in_jail = p.in_jail - 1 }
+    | _ ->
+        Printf.printf "Invalid input \n";
+        jailed_turn s p)
+  else (
+    Printf.printf
+      "You cannot afford your bail.\n\
+       Press anything to wait your turn in jail > ";
+    match read_line () with
+    | _ -> { p with in_jail = p.in_jail - 1 })
 
 let round (s : state) : player list = List.map (turn s) s.players
 
