@@ -100,3 +100,5 @@ val tile_of_pos : board -> int -> tile
 
 val property_to_string : property -> string
 (* Converts a property to a string. *)
+
+val property_selling_value : property -> int

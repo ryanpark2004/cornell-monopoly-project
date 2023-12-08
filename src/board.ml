@@ -169,6 +169,12 @@ let rec tile_of_pos (b : board) (n : int) : tile =
       raise (Invalid_argument (Printf.sprintf "%i is an invalid position" n))
   | (tile, n') :: t -> if n = n' then tile else tile_of_pos t n
 
+let property_selling_value (p : property) : int =
+  match p with
+  | Location l -> l.price
+  | Tcat_station t -> t.price
+  | Utility u -> u.price
+
 let property_to_string (p : property) : string =
   match p with
   | Location l -> l.name

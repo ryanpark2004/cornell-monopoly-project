@@ -193,6 +193,25 @@ and utility_rent util plist n =
   n * 4 * num_utils 0 (find_owner util plist).properties
 
 and check_broke (p : player) : bool = p.money <= 0
+and calculate_brokeness (p : player) : int = p.money
 
-let mortgage_action (p : player) (plst : player list) =
-  Printf.printf "You have no money. "
+and mortgage_action (p : player) (plst : player list) =
+  let deficit = calculate_brokeness p in
+  Printf.printf
+    "You (%s) are broke. You need %i to recover. Select properties to sell"
+    p.name deficit;
+  let props = select_property p in
+  failwith "TODO"
+
+and select_property (p : player) (acc : property list) : property list =
+  match p.properties with
+  | [] -> failwith "TODO"
+  | h :: t ->
+    let rec ask (prop) =
+      Printf.printf "Do you want to sell [%s] for %i? -- [Y] / [N]" (property_to_string prop) (property_selling_value prop);
+      match read_line () with
+      |"Y" | "y" ->
+      |"N" | "n" ->
+      | _ -> print_endline "\n invalid input\n"; ask prop
+    in ask h
+
