@@ -62,17 +62,18 @@ type property =
 (** Represents a tile on the game board. Tiles can either be start tiles, 
     properties, taxes, chance, community chest, free parking, or jail tiles. *)
 type tile =
-  | Start
+  | Start of int
       (** A start tile, where the players start and collect $200 when passing 
           through it each round.*)
   | Property of property  (** A standard property tile. *)
   | Tax of int  (** A tile which requires the player to pay a tax.*)
-  | Chance  (** A tile which allows the player to pick a chance card.*)
-  | Chest  (** A tile which allows the player to pick a community chest card.*)
-  | Parking
+  | Chance of int  (** A tile which allows the player to pick a chance card.*)
+  | Chest of int
+      (** A tile which allows the player to pick a community chest card.*)
+  | Parking of int
       (** The free parking tile, which does not do anything in particular. This 
           tile is also used when a player is 'just passing through' jail.*)
-  | Jail
+  | Jail of int
       (** A tile which sends players to jail, where they must wait or pay 
       their way out to continue playing.*)
 

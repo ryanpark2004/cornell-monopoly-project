@@ -26,13 +26,13 @@ type property =
   | Utility of utility
 
 type tile =
-  | Start
+  | Start of int
   | Property of property
   | Tax of int
-  | Chance
-  | Chest
-  | Parking
-  | Jail
+  | Chance of int
+  | Chest of int
+  | Parking of int
+  | Jail of int
 
 let locations =
   Array.of_list
@@ -116,25 +116,25 @@ type board = (tile * int) list
 
 let tlist : tile list =
   [
-    Start;
+    Start 1;
     Property (Location locations.(0));
-    Chance;
+    Chance 1;
     Property (Tcat_station stations.(0));
     Property (Location locations.(1));
-    Chest;
-    Parking;
+    Chest 1;
+    Parking 1;
     Property (Utility utilities.(0));
     Tax 80;
     Property (Tcat_station stations.(1));
     Property (Location locations.(2));
     Property (Location locations.(3));
-    Jail;
-    Chance;
+    Jail 1;
+    Chance 2;
     Property (Location locations.(4));
     Property (Tcat_station stations.(2));
     Property (Location locations.(5));
-    Chest;
-    Parking;
+    Chest 2;
+    Parking 2;
     Property (Utility utilities.(1));
     Tax 150;
     Property (Tcat_station stations.(3));
@@ -177,10 +177,10 @@ let property_to_string (p : property) : string =
 
 let to_string (t : tile) : string =
   match t with
-  | Start -> "\027[32mGo\027[0m"
+  | Start _ -> "\027[32mGo\027[0m"
   | Property p -> "\027[33m" ^ property_to_string p ^ "\027[0m"
   | Tax x -> "\027[38;5;202mTax ($" ^ string_of_int x ^ ")\027[0m"
-  | Chance -> "\027[35mChance\027[0m"
-  | Chest -> "\027[34mChest\027[0m"
-  | Parking -> "\027[36mFree Parking\027[0m"
-  | Jail -> "\027[31mJail\027[0m"
+  | Chance _ -> "\027[35mChance\027[0m"
+  | Chest _ -> "\027[34mChest\027[0m"
+  | Parking _ -> "\027[36mFree Parking\027[0m"
+  | Jail _ -> "\027[31mJail\027[0m"

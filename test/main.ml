@@ -197,9 +197,9 @@ let player_suite =
     ("create_player position check" >:: fun _ -> assert_equal 0 p1.position);
     (*Player Test Cases: get_name *)
     ("get_name player 1" >:: fun _ -> assert_equal "p1" (get_name p1));
-    ("get_name player 2" >:: fun _ -> assert_equal "p2" (get_name p1));
-    ("get_name player 3" >:: fun _ -> assert_equal "p3" (get_name p1));
-    ("get_name player 4" >:: fun _ -> assert_equal "p4" (get_name p1));
+    ("get_name player 2" >:: fun _ -> assert_equal "p2" (get_name p2));
+    ("get_name player 3" >:: fun _ -> assert_equal "p3" (get_name p3));
+    ("get_name player 4" >:: fun _ -> assert_equal "p4" (get_name p4));
     (*Player Test Cases: receive_money  *)
     ("receie_money $0" >:: fun _ -> assert_equal 5000 (receive_money p1 0).money);
     ( "receie_money <$0" >:: fun _ ->
