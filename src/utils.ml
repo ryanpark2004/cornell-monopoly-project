@@ -54,20 +54,24 @@ let pullChest () =
   let n = Random.int length in
   List.nth lst n
 
-let rec tile_action tile player plist n : player list =
+let rec tile_action tile player plist n debug : player list =
   if player.in_jail > 0 then [ player ]
   else
     match tile with
-    | Start _ -> (
-        print_endline "You landed back on Go!\nPress anything to continue > ";
-        match read_line () with
-        | _ -> [ player ])
-    | Tax x -> (
-        print_endline
-          ("Oh No! You were taxed $" ^ string_of_int x
-         ^ ".\nPress anything to continue > ");
-        match read_line () with
-        | _ -> [ { player with money = player.money - x } ])
+    | Start _ ->
+        if debug == false then (
+          print_endline "You landed back on Go!\nPress anything to continue > ";
+          match read_line () with
+          | _ -> [ player ])
+        else [ player ]
+    | Tax x ->
+        if debug == false then (
+          print_endline
+            ("Oh No! You were taxed $" ^ string_of_int x
+           ^ ".\nPress anything to continue > ");
+          match read_line () with
+          | _ -> [ { player with money = player.money - x } ])
+        else [ { player with money = player.money - x } ]
     | Chance _ -> (
         print_endline "You pulled a chance card!";
         let card = pullChance () in
@@ -114,15 +118,19 @@ let rec tile_action tile player plist n : player list =
              ^ ".\nPress anything to continue > ");
             [ { player with money = player.money - x } ]
         | _ -> [ player ])
-    | Parking _ -> (
-        print_endline
-          "You landed on Free Parking.\nPress anything to continue >";
-        match read_line () with
-        | _ -> [ player ])
-    | Jail _ -> (
-        print_endline "Go to Jail.\nPress anything to continue >";
-        match read_line () with
-        | _ -> [ { player with in_jail = 3 } ])
+    | Parking _ ->
+        if debug == false then (
+          print_endline
+            "You landed on Free Parking. \nPress anything to continue >";
+          match read_line () with
+          | _ -> [ player ])
+        else [ player ]
+    | Jail _ ->
+        if debug = false then (
+          print_endline "Go to Jail.\nPress anything to continue >";
+          match read_line () with
+          | _ -> [ { player with in_jail = 3 } ])
+        else [ { player with in_jail = 3 } ]
     | Property prop -> property_action prop player plist n
 
 and owner_opt (prop : property) (plist : player list) : player option =
@@ -134,16 +142,19 @@ and pay_rent prop buyer (seller : player) plist n =
   let rent = calculated_rent prop plist n in
   let new_buyer = { buyer with money = buyer.money - rent } in
   let new_seller = { seller with money = seller.money + rent } in
-  if buyer = seller then
+  if buyer = seller then begin
     print_endline
-      "You landed on your own property!\nPress anything to continue > "
-  else
+      "You landed on your own property!\nPress anything to continue > ";
+    match read_line () with
+    | _ -> [ buyer; seller ]
+  end
+  else begin
     Printf.printf
       "You landed on %s owned by %s. You paid $%i.\n\
       \ Press anything to continue >" (property_to_string prop) seller.name rent;
-
-  match read_line () with
-  | _ -> [ new_buyer; new_seller ]
+    match read_line () with
+    | _ -> [ new_buyer; new_seller ]
+  end
 
 and property_action (prop : property) (player : player) (plist : player list) n
     : player list =

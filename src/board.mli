@@ -89,7 +89,7 @@ val property_to_string : property -> string
 (* Converts a property to a string. *)
 
 val property_selling_value : property -> int
-(* Converts a property to a string by returning out the name of property. *)
+(* Returns the properties' mortgage value. *)
 
 val to_string : tile -> string
 (** Converts a tile to string, using ASCII codes to change the color of 

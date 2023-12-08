@@ -218,7 +218,7 @@ let rec turn (s : state) (p : player) : player =
     let n = rollDice () in
     let rolled = roll s p n in
     let tile = tile_of_pos new_board rolled.position in
-    let plst = tile_action tile rolled s.players n in
+    let plst = tile_action tile rolled s.players n false in
     s.players <- replace_all s.players plst;
     let plst2 = check_broke (List.hd plst) s.players in
     s.players <- plst2;
