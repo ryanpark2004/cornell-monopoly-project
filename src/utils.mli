@@ -41,3 +41,11 @@ val tile_action : tile -> player -> player list -> int -> player list
     instructions of the community chest card that is selected.
     Parking: Nothing. Retuns the player as it is.
     Jail: Sets the player's in_jail status to 3, and returns.*)
+
+val owner_opt : property -> player list -> player option
+(** Returns [Some player] if player owns the input property. Else [None].*)
+
+val pay_rent : property -> player -> player -> player list -> int -> player list
+(** [pay_rent] orchestrates the transaction between the owner and renter on 
+    when a rented lands on the owned property. Returns a list of the owner with 
+    the added rent money, and the rented without the rent money.*)
