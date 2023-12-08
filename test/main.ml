@@ -10,12 +10,37 @@ open List
      (* Test Plan   *)
  ********************************************************************)
 (* This is the test suite for our board game: Cornell Monopoly.
-   TO DOOOO *)
+
+   The parts of the system that were automatically tested by OUnit were through
+   unit tests for all modules excluding main, which mainly dealt with player
+   inputs in the terminal. For manual testing, we tested the main module by
+   playing the game multiple times: each time, we attempted to "break" the game
+   by inputting purposely weird inputs to see if the program did not crash.
+   If the game did, edits to the code were made to adjust for such issues.
+
+   The modules that were tested in this test suite were modules Board,
+   Player, and Util. Each module possesses specific functions pertaining to
+   the name of their module (Example: Module Player has functions that deal
+   only with player-related functions, such as get_name, receive_money,
+   and move_player.). Test Cases were mainly designed using a glass-box testing
+   approach: the functionality of each function was analyzed, and test cases
+   were made with the goal of having full coverage for each line of code
+   (Similar to Assignment 3). Furthermore, as mentioned above previously, we
+   adopted a testing strategy within the terminal similar to randomized testing
+   and the "devious player", in which inputs were intentionally misleading to
+   find bugs hidden within the system.
+
+   We believe the testing approach demonstrates the correctness of the system
+   because it not only provides full coverage of the functionality of code
+   through unit test, but it also covers edge cases within user inputs through
+   our rigorous testing of the terminal. By pairing both OUnit tests with our
+   manual testing, we believe that our testing has proven the functionality of
+   our system and guarentees that there are minimal to no errors.
+*)
 
 (********************************************************************
      (* Board Test Cases *)
  ********************************************************************)
-
 let locations =
   Array.of_list
     [ { name = "LocationTest"; price = 40; rent = 8; mortgage = 20 } ]
@@ -27,7 +52,7 @@ let utilities =
   Array.of_list [ { util_name = "UtilityTest"; price = 150; mortgage = 50 } ]
 
 let test_board_0 = []
-let test_board_1_help = [ Start ]
+let test_board_1_help = [ Start 1 ]
 
 let test_board_1 =
   let rec indices (n : int) (lst : tile list) : int list =
@@ -39,12 +64,12 @@ let test_board_1 =
 
 let test_board_2_help =
   [
-    Start;
+    Start 1;
     Tax 100;
-    Chance;
-    Chest;
-    Parking;
-    Jail;
+    Chance 1;
+    Chest 1;
+    Parking 1;
+    Jail 1;
     Property (Location locations.(0));
   ]
 
@@ -64,14 +89,6 @@ let pos_of_tile (t : tile) : int =
   in
   helper test_board_2 t
 
-let pos_of_tile2 (t : tile) : int =
-  let rec helper (lst : board) (t : tile) : int =
-    match lst with
-    | [] -> raise No_Such_Tile
-    | (tile, idx) :: tl -> if tile = t then idx else helper tl t
-  in
-  helper test_board_1 t
-
 (*Helper Function: Testing if board length is valid.*)
 let test_length name out in1 = name >:: fun _ -> assert_equal out (length in1)
 
@@ -82,46 +99,46 @@ let board_suite =
     test_length "length of 1" 1 test_board_1;
     test_length "length of >1" 7 test_board_2;
     (*Board Test Cases: pos_of_tile *)
-    ("pos_of_tile Start" >:: fun _ -> assert_equal 0 (pos_of_tile Start));
+    ("pos_of_tile Start" >:: fun _ -> assert_equal 0 (pos_of_tile (Start 1)));
     ("pos_of_tile Tax" >:: fun _ -> assert_equal 1 (pos_of_tile (Tax 100)));
-    ("pos_of_tile Chance" >:: fun _ -> assert_equal 2 (pos_of_tile Chance));
-    ("pos_of_tile Chest" >:: fun _ -> assert_equal 3 (pos_of_tile Chest));
-    ("pos_of_tile Parking" >:: fun _ -> assert_equal 4 (pos_of_tile Parking));
-    ("pos_of_tile Jail" >:: fun _ -> assert_equal 5 (pos_of_tile Jail));
+    ("pos_of_tile Chance" >:: fun _ -> assert_equal 2 (pos_of_tile (Chance 1)));
+    ("pos_of_tile Chest" >:: fun _ -> assert_equal 3 (pos_of_tile (Chest 1)));
+    ("pos_of_tile Parking" >:: fun _ -> assert_equal 4 (pos_of_tile (Parking 1)));
+    ("pos_of_tile Jail" >:: fun _ -> assert_equal 5 (pos_of_tile (Jail 1)));
     (*Board Test Cases: pos_of_tile_fail *)
     ( "pos_of_tile Fail: No Tax" >:: fun _ ->
       let exn = No_Such_Tile in
       assert_raises exn (fun () ->
-          try pos_of_tile2 (Tax 100) with exn -> raise exn) );
+          try pos_of_tile (Tax 50) with exn -> raise exn) );
     ( "pos_of_tile Fail: No Chance" >:: fun _ ->
       let exn = No_Such_Tile in
       assert_raises exn (fun () ->
-          try pos_of_tile2 Chance with exn -> raise exn) );
+          try pos_of_tile (Chance 3) with exn -> raise exn) );
     ( "pos_of_tile Fail: No Chest" >:: fun _ ->
       let exn = No_Such_Tile in
       assert_raises exn (fun () ->
-          try pos_of_tile2 Chest with exn -> raise exn) );
+          try pos_of_tile (Chest 2) with exn -> raise exn) );
     ( "pos_of_tile Fail: No Parking" >:: fun _ ->
       let exn = No_Such_Tile in
       assert_raises exn (fun () ->
-          try pos_of_tile2 Parking with exn -> raise exn) );
+          try pos_of_tile (Parking 3) with exn -> raise exn) );
     ( "pos_of_tile Fail: No Jail" >:: fun _ ->
       let exn = No_Such_Tile in
       assert_raises exn (fun () ->
-          try pos_of_tile2 Jail with exn -> raise exn) );
+          try pos_of_tile (Jail 2) with exn -> raise exn) );
     (*Board Test Cases: title_of_pos *)
     ( "title_of_pos Start" >:: fun _ ->
-      assert_equal Start (tile_of_pos test_board_2 0) );
+      assert_equal (Start 1) (tile_of_pos test_board_2 0) );
     ( "title_of_pos Tax" >:: fun _ ->
       assert_equal (Tax 100) (tile_of_pos test_board_2 1) );
     ( "title_of_pos Chance" >:: fun _ ->
-      assert_equal Chance (tile_of_pos test_board_2 2) );
+      assert_equal (Chance 1) (tile_of_pos test_board_2 2) );
     ( "title_of_pos Chest" >:: fun _ ->
-      assert_equal Chest (tile_of_pos test_board_2 3) );
+      assert_equal (Chest 1) (tile_of_pos test_board_2 3) );
     ( "title_of_pos Parking" >:: fun _ ->
-      assert_equal Parking (tile_of_pos test_board_2 4) );
+      assert_equal (Parking 1) (tile_of_pos test_board_2 4) );
     ( "title_of_pos Jail" >:: fun _ ->
-      assert_equal Jail (tile_of_pos test_board_2 5) );
+      assert_equal (Jail 1) (tile_of_pos test_board_2 5) );
     (*Board Test Cases: property_to_string *)
     ( "property_to_string Location" >:: fun _ ->
       assert_equal
