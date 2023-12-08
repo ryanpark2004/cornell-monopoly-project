@@ -134,16 +134,19 @@ and pay_rent prop buyer (seller : player) plist n =
   let rent = calculated_rent prop plist n in
   let new_buyer = { buyer with money = buyer.money - rent } in
   let new_seller = { seller with money = seller.money + rent } in
-  if buyer = seller then
+  if buyer = seller then begin
     print_endline
-      "You landed on your own property!\nPress anything to continue > "
-  else
+      "You landed on your own property!\nPress anything to continue > ";
+    match read_line () with
+    | _ -> [ buyer; seller ]
+  end
+  else begin
     Printf.printf
       "You landed on %s owned by %s. You paid $%i.\n\
       \ Press anything to continue >" (property_to_string prop) seller.name rent;
-
-  match read_line () with
-  | _ -> [ new_buyer; new_seller ]
+    match read_line () with
+    | _ -> [ new_buyer; new_seller ]
+  end
 
 and property_action (prop : property) (player : player) (plist : player list) n
     : player list =
