@@ -1,6 +1,6 @@
 open Board
 
-let debug = true
+let debug = false
 
 type player = {
   name : string;
