@@ -133,7 +133,7 @@ let print_state (s : state) : unit =
     the updated player, displays information, or quits the game. [roll] is 
     recursively called after displaying information or recieving an invalid 
     input.*)
-let rec roll s (p : player) n =
+let rec roll s (p : player) n : player =
   Printf.printf
     "\n\
      %s's turn: Press [Enter] to roll the dice, Press [I] for more information,\n\
@@ -141,7 +141,7 @@ let rec roll s (p : player) n =
   match read_line () with
   | "" ->
       Printf.printf "\n\n%s rolled a %i!\n" p.name n;
-      move_player p n
+      move_player p n false
   | "I" | "i" ->
       print_endline (get_detailed_information s);
       roll s p n
@@ -233,7 +233,7 @@ let rec turn (s : state) (p : player) : state =
     let tile = tile_of_pos new_board rolled.position in
     let plst = tile_action tile rolled s.players n false in
     s.players <- replace_all s.players plst;
-    let plst2 = check_broke (List.hd plst) s.players in
+    let plst2 = check_broke (List.hd plst) s.players false in
     s.players <- plst2;
     print_state s;
     if List.length s.players = 1 then win_game s else s
