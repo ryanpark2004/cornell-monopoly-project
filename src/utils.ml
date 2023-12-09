@@ -148,7 +148,7 @@ and pay_rent prop buyer (seller : player) plist n =
     print_endline
       "You landed on your own property!\nPress anything to continue > ";
     match read_line () with
-    | _ -> [ buyer; seller ]
+    | _ -> [ buyer ]
   end
   else begin
     Printf.printf
