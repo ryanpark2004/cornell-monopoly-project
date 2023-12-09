@@ -74,6 +74,9 @@ type board = (tile * int) list
 val new_board : board
 (** Creates a new board using a list of tiles.*)
 
+val indices : int -> tile list -> int list
+(** Returns a list of indices from the tile list. *)
+
 val length : board -> int
 (** Calculates the length of the current game board. 
     An empty board has length 0.*)

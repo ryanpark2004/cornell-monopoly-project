@@ -36,7 +36,7 @@ val pullChest : int * chances list -> chances
 val tile_action : tile -> player -> player list -> int -> bool -> player list
 (** [tile_action] defines the different effects each tile has when 
     a player lands on them. Returns the new player after everything has 
- changed. The actions for each type of tile are defined below:
+    changed. The actions for each type of tile are defined below:
     Start: Nothing. Retuns the player as it is
     Tax x: Returns the player with x-less money.
     Chance: Returns the player after adjusting money and positon, based off 
@@ -44,7 +44,8 @@ val tile_action : tile -> player -> player list -> int -> bool -> player list
     Chest: Returns the player after adjusting money, based off of the 
     instructions of the community chest card that is selected.
     Parking: Nothing. Retuns the player as it is.
-    Jail: Sets the player's in_jail status to 3, and returns.*)
+    Jail: Sets the player's in_jail status to 3, and returns.
+    Property: Depends on property and player status. See [property_action].*)
 
 val owner_opt : property -> player list -> player option
 (** Returns [Some player] if player owns the input property. Else [None].*)
@@ -52,7 +53,7 @@ val owner_opt : property -> player list -> player option
 val pay_rent :
   property -> player -> player -> player list -> int -> bool -> player list
 (** [pay_rent] orchestrates the transaction between the owner and renter on 
-    when a rented lands on the owned property. Returns a list of the owner with 
+    when a renter lands on the owned property. Returns a list of the owner with 
     the added rent money, and the rented without the rent money.*)
 
 val property_action : property -> player -> player list -> int -> player list
