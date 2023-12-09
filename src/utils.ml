@@ -41,10 +41,8 @@ let chest_list =
   (5, [ GainMoney 30; LoseMoney 100; GainMoney 150; LoseMoney 25; GainMoney 50 ])
 
 (* *)
-let dice_bound = 1
-
-let rollDice () : int =
-  1 + Random.int dice_bound (* + Random.int dice_bound + 1 *)
+let dice_bound = 6
+let rollDice () : int = 1 + Random.int dice_bound + Random.int dice_bound + 1
 
 let pullChance () =
   let length, lst = chance_list in
