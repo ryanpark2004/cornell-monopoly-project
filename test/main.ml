@@ -374,25 +374,7 @@ let utils_suite =
           };
         ]
         (ask_buy util_location2 new_p2 true) );
-    (*Utility Test Cases: calculated_rent  *)
-
-    (*Utility Test Cases: tcat_rent  *)
-
-    (*Utility Test Cases: utility_rent  *)
-
-    (*Utility Test Cases: check_broke  *)
-
-    (*Utility Test Cases: calculate_brokeness  *)
-
-    (*Utility Test Cases: mortgage_action  *)
-
-    (*Utility Test Cases: kill_player  *)
-
-    (*Utility Test Cases: select_property  *)
-
-    (*Utility Test Cases: sum_values  *)
-
-    (*Utility Test Cases: rent_text  *)
+    (*Utility Test Cases: pullChance  *)
     ( "pullChance GainMoney" >:: fun _ ->
       assert_equal (GainMoney 20) (pullChance (1, [ GainMoney 20 ])) );
     ( "pullChance LoseMoney" >:: fun _ ->
@@ -421,6 +403,7 @@ let utils_suite =
                GainMoney 20;
                GainMoney 20;
              ] )) );
+    (*Utility Test Cases: rent_text  *)
     ( "rent_text location" >:: fun _ ->
       assert_equal "$8" (rent_text (Location locations.(0))) );
     ( "rent_text tcat_station" >:: fun _ ->
@@ -454,6 +437,7 @@ let utils_suite =
              };
            ]
            0) );
+    (*Utility Test Cases: calculated_rent  *)
     ( "calculated_rent utility player owns 1, dice roll = 1" >:: fun _ ->
       assert_equal 4
         (calculated_rent
@@ -488,6 +472,21 @@ let utils_suite =
              };
            ]
            12) );
+    (*Utility Test Cases: tcat_rent  *)
+
+    (*Utility Test Cases: utility_rent  *)
+
+    (*Utility Test Cases: check_broke  *)
+
+    (*Utility Test Cases: calculate_brokeness  *)
+
+    (*Utility Test Cases: mortgage_action  *)
+
+    (*Utility Test Cases: kill_player  *)
+
+    (*Utility Test Cases: select_property  *)
+
+    (*Utility Test Cases: sum_values  *)
   ]
 
 (********************************************************)
