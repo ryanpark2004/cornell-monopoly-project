@@ -282,8 +282,8 @@ and kill_player p plst =
   match read_line () with
   | _ -> List.filter (fun (e : player) -> e.name <> p.name) plst
 
-and select_property (props : proprty list) (acc : property list) : property list
-    =
+and select_property (props : property list) (acc : property list) :
+    property list =
   match props with
   | [] -> acc
   | h :: t -> (
