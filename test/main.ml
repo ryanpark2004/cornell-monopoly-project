@@ -235,13 +235,13 @@ let player_suite =
       assert_equal 1500 (receive_money p1 500).money );
     (*Player Test Cases: move_player  *)
     ( "move_player 0 spaces" >:: fun _ ->
-      assert_equal 0 (move_player p1 0).position );
+      assert_equal 0 (move_player p1 0 true).position );
     ( "move_player 1 spaces" >:: fun _ ->
-      assert_equal 1 (move_player p1 1).position );
+      assert_equal 1 (move_player p1 1 true).position );
     ( "move_player >1 spaces" >:: fun _ ->
-      assert_equal 3 (move_player p1 3).position );
+      assert_equal 3 (move_player p1 3 true).position );
     ( "move_player > board.length spaces" >:: fun _ ->
-      assert_equal 2 (move_player p1 26).position );
+      assert_equal 2 (move_player p1 26 true).position );
   ]
 
 (********************************************************************
@@ -257,11 +257,14 @@ let util_location : property =
 let util_location2 : property =
   Utility { util_name = "test util2"; price = 1000; mortgage = 100 }
 
-let tcat_location : property =
-  Tcat_station { name = "test tcat"; price = 100; mortgage = 100 }
-
 let jail_p1 =
-  { name = "Player1"; money = 500; position = 0; in_jail = 1; properties = [] }
+  {
+    name = "Player1";
+    money = 500;
+    position = 0;
+    in_jail = 1;
+    properties = [ util_location ];
+  }
 
 let new_p2 =
   {
@@ -272,7 +275,10 @@ let new_p2 =
     properties = [ loc_location ];
   }
 
-let players = [ jail_p1; new_p2 ]
+let broke_p3 =
+  { name = "Player3"; money = -5; position = 3; in_jail = 0; properties = [] }
+
+let players = [ jail_p1; new_p2; broke_p3 ]
 
 let utils_suite =
   [
@@ -316,7 +322,7 @@ let utils_suite =
     ( "owner_opt Player has Property" >:: fun _ ->
       assert_equal (Some new_p2) (owner_opt loc_location players) );
     ( "owner_opt No Player has property" >:: fun _ ->
-      assert_equal None (owner_opt util_location players) );
+      assert_equal None (owner_opt util_location2 players) );
     (*Utility Test Cases: pay_rent  *)
     ( "pay_rent: player owns the property " >:: fun _ ->
       assert_equal
@@ -338,7 +344,7 @@ let utils_suite =
             money = 490;
             position = 0;
             in_jail = 1;
-            properties = [];
+            properties = [ util_location ];
           };
           {
             name = "Player2";
@@ -472,20 +478,14 @@ let utils_suite =
              };
            ]
            12) );
-    (*Utility Test Cases: tcat_rent  *)
-
-    (*Utility Test Cases: utility_rent  *)
-
     (*Utility Test Cases: check_broke  *)
-
+    ( "check_broke player not broke" >:: fun _ ->
+      assert_equal players (check_broke jail_p1 players true) );
+    ( "check_broke player broke with no properties" >:: fun _ ->
+      assert_equal [ jail_p1; new_p2 ] (check_broke broke_p3 players true) );
     (*Utility Test Cases: calculate_brokeness  *)
-
-    (*Utility Test Cases: mortgage_action  *)
-
-    (*Utility Test Cases: kill_player  *)
-
-    (*Utility Test Cases: select_property  *)
-
+    ( "calculate brokeness" >:: fun _ ->
+      assert_equal 500 (calculate_brokeness new_p2) );
     (*Utility Test Cases: sum_values  *)
     ("sum_values 0 properties" >:: fun _ -> assert_equal 0 (sum_values []));
     ( "sum_values 1 property" >:: fun _ ->

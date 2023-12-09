@@ -32,7 +32,7 @@ val receive_money : player -> int -> player
 (** The function receive_money adds any amount of money earned or subtracted
        from their account. *)
 
-val move_player : player -> int -> player
+val move_player : player -> int -> bool -> player
 (** Takes in a [player] and an integer [n] and returns a new player with the new
     position [n] + old position. If the new position is greater than the length 
     of the board, [move_player] returns the modulus of the calculated position 
