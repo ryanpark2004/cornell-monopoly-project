@@ -28,7 +28,9 @@ open List
    in each module as possible. Furthermore, as mentioned above previously,
    we adopted a testing strategy within the terminal similar to randomized
    testing and the "devious player", in which inputs were intentionally
-   misleading to find bugs hidden within the system.
+   misleading to find bugs hidden within the system. Some functions were not
+   tested, mainly functions in utils that utilized nested user inputs or
+   functions that required information directly from other functions.
 
    We believe the testing approach demonstrates the correctness of the system
    because it not only provides full coverage of the functionality of code
