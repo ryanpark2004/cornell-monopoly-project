@@ -28,7 +28,10 @@ open List
    in each module as possible. Furthermore, as mentioned above previously,
    we adopted a testing strategy within the terminal similar to randomized
    testing and the "devious player", in which inputs were intentionally
-   misleading to find bugs hidden within the system.
+   misleading to find bugs hidden within the system. Certain functions were
+   not tested due to their randomness or functions that pattern-matched
+   to other functions. Examples of these include pullChance(), rollDice(), and
+   property_action.
 
    We believe the testing approach demonstrates the correctness of the system
    because it not only provides full coverage of the functionality of code
@@ -146,6 +149,13 @@ let board_suite =
       assert_equal 100 (property_selling_value (Tcat_station stations.(0))) );
     ( "property_selling_value Utility" >:: fun _ ->
       assert_equal 50 (property_selling_value (Utility utilities.(0))) );
+    (*Board Test Cases: property_buying_value *)
+    ( "property_buying_value Location" >:: fun _ ->
+      assert_equal 40 (property_buying_value (Location locations.(0))) );
+    ( "property_buying_value Station" >:: fun _ ->
+      assert_equal 200 (property_buying_value (Tcat_station stations.(0))) );
+    ( "property_buying_value Utility" >:: fun _ ->
+      assert_equal 150 (property_buying_value (Utility utilities.(0))) );
     (*Board Test Cases: property_to_string *)
     ( "property_to_string Location" >:: fun _ ->
       assert_equal
@@ -221,10 +231,11 @@ let player_suite =
     ("get_name player 1" >:: fun _ -> assert_equal "p1" (get_name p1));
     ("get_name player 2" >:: fun _ -> assert_equal "p2" (get_name p2));
     (*Player Test Cases: receive_money  *)
-    ("receie_money $0" >:: fun _ -> assert_equal 1000 (receive_money p1 0).money);
-    ( "receie_money <$0" >:: fun _ ->
+    ( "receive_money $0" >:: fun _ ->
+      assert_equal 1000 (receive_money p1 0).money );
+    ( "receive_money <$0" >:: fun _ ->
       assert_equal 900 (receive_money p1 (-100)).money );
-    ( "receie_money >$0" >:: fun _ ->
+    ( "receive_money >$0" >:: fun _ ->
       assert_equal 1500 (receive_money p1 500).money );
     (*Player Test Cases: move_player  *)
     ( "move_player 0 spaces" >:: fun _ ->
@@ -241,14 +252,17 @@ let player_suite =
      (* Uitility Test Cases *)
  ********************************************************************)
 
-let test_location : location =
-  { name = "test loc"; price = 100; rent = 0; mortgage = 100 }
+let loc_location : property =
+  Location { name = "test loc"; price = 100; rent = 10; mortgage = 100 }
 
-let test_location2 : location =
-  { name = "test loc"; price = 100; rent = 0; mortgage = 100 }
+let util_location : property =
+  Utility { util_name = "test util"; price = 100; mortgage = 100 }
 
-let test_mortgage_board =
-  [ Start 0; Property (Location test_location); Tax 100 ]
+let util_location2 : property =
+  Utility { util_name = "test util2"; price = 1000; mortgage = 100 }
+
+let tcat_location : property =
+  Tcat_station { name = "test tcat"; price = 100; mortgage = 100 }
 
 let jail_p1 =
   { name = "Player1"; money = 500; position = 0; in_jail = 1; properties = [] }
@@ -259,7 +273,7 @@ let new_p2 =
     money = 500;
     position = 3;
     in_jail = 0;
-    properties = [ Location test_location ];
+    properties = [ loc_location ];
   }
 
 let players = [ jail_p1; new_p2 ]
@@ -284,7 +298,7 @@ let utils_suite =
             money = 400;
             position = 3;
             in_jail = 0;
-            properties = [];
+            properties = [ loc_location ];
           };
         ]
         (tile_action (Tax 100) new_p2 players 0 true) );
@@ -298,15 +312,91 @@ let utils_suite =
             money = 500;
             position = 3;
             in_jail = 3;
-            properties = [];
+            properties = [ loc_location ];
           };
         ]
         (tile_action (Jail 0) new_p2 players 0 true) );
     (*Utility Test Cases: owner_opt  *)
     ( "owner_opt Player has Property" >:: fun _ ->
-      assert_equal (Some new_p2) (owner_opt (Location test_location) players) );
+      assert_equal (Some new_p2) (owner_opt loc_location players) );
     ( "owner_opt No Player has property" >:: fun _ ->
-      assert_equal None (owner_opt (Location test_location2) players) );
+      assert_equal None (owner_opt util_location players) );
+    (*Utility Test Cases: pay_rent  *)
+    ( "pay_rent: player owns the property " >:: fun _ ->
+      assert_equal
+        [
+          {
+            name = "Player2";
+            money = 500;
+            position = 3;
+            in_jail = 0;
+            properties = [ loc_location ];
+          };
+        ]
+        (pay_rent loc_location new_p2 new_p2 players 0 true) );
+    ( "pay_rent: player pays rent " >:: fun _ ->
+      assert_equal
+        [
+          {
+            name = "Player1";
+            money = 490;
+            position = 0;
+            in_jail = 1;
+            properties = [];
+          };
+          {
+            name = "Player2";
+            money = 510;
+            position = 3;
+            in_jail = 0;
+            properties = [ loc_location ];
+          };
+        ]
+        (pay_rent loc_location jail_p1 new_p2 players 0 true) );
+    (*Utility Test Cases: ask_buy  *)
+    ( "ask_buy: Player has enough money to buy" >:: fun _ ->
+      assert_equal
+        [
+          {
+            name = "Player2";
+            money = 400;
+            position = 3;
+            in_jail = 0;
+            properties = [ util_location; loc_location ];
+          };
+        ]
+        (ask_buy util_location new_p2 true) );
+    ( "ask_buy: Player does not have enough money to buy" >:: fun _ ->
+      assert_equal
+        [
+          {
+            name = "Player2";
+            money = 500;
+            position = 3;
+            in_jail = 0;
+            properties = [ loc_location ];
+          };
+        ]
+        (ask_buy util_location2 new_p2 true) );
+    (*Utility Test Cases: calculated_rent  *)
+
+    (*Utility Test Cases: tcat_rent  *)
+
+    (*Utility Test Cases: utility_rent  *)
+
+    (*Utility Test Cases: check_broke  *)
+
+    (*Utility Test Cases: calculate_brokeness  *)
+
+    (*Utility Test Cases: mortgage_action  *)
+
+    (*Utility Test Cases: kill_player  *)
+
+    (*Utility Test Cases: select_property  *)
+
+    (*Utility Test Cases: sum_values  *)
+
+    (*Utility Test Cases: rent_text  *)
   ]
 
 (********************************************************)

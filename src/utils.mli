@@ -45,7 +45,8 @@ val tile_action : tile -> player -> player list -> int -> bool -> player list
 val owner_opt : property -> player list -> player option
 (** Returns [Some player] if player owns the input property. Else [None].*)
 
-val pay_rent : property -> player -> player -> player list -> int -> player list
+val pay_rent :
+  property -> player -> player -> player list -> int -> bool -> player list
 (** [pay_rent] orchestrates the transaction between the owner and renter on 
     when a rented lands on the owned property. Returns a list of the owner with 
     the added rent money, and the rented without the rent money.*)
@@ -54,7 +55,7 @@ val property_action : property -> player -> player list -> int -> player list
 (** Checks if a property is owned. If not, asks a player if they would like to 
     buy it. If so, charges rent to the player.*)
 
-val ask_buy : property -> player -> player list
+val ask_buy : property -> player -> bool -> player list
 (** Allows the player to choose to buy a property. If so, it returns a new 
     player list with the updated player with less the money it cost and 
     with the property in its properties inventory. If no, it returns
