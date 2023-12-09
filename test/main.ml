@@ -487,6 +487,40 @@ let utils_suite =
     (*Utility Test Cases: select_property  *)
 
     (*Utility Test Cases: sum_values  *)
+    ("sum_values 0 properties" >:: fun _ -> assert_equal 0 (sum_values []));
+    ( "sum_values 1 property" >:: fun _ ->
+      assert_equal 50 (sum_values [ Utility utilities.(0) ]) );
+    ( "sum_values many properties" >:: fun _ ->
+      assert_equal 170
+        (sum_values
+           [
+             Utility utilities.(0);
+             Tcat_station stations.(0);
+             Location locations.(0);
+           ]) );
+    (* Utility Test Cases: remove_props*)
+    ("remove_props both empty" >:: fun _ -> assert_equal [] (remove_props [] []));
+    ( "remove_props first empty" >:: fun _ ->
+      assert_equal
+        [ Utility utilities.(0) ]
+        (remove_props [] [ Utility utilities.(0) ]) );
+    ( "remove_props second empty" >:: fun _ ->
+      assert_equal [] (remove_props [ Utility utilities.(0) ] []) );
+    ( "remove_props diff properties" >:: fun _ ->
+      assert_equal
+        [ Utility utilities.(0) ]
+        (remove_props [ Location locations.(0) ] [ Utility utilities.(0) ]) );
+    ( "remove_props remove some" >:: fun _ ->
+      assert_equal
+        [ Utility utilities.(0) ]
+        (remove_props
+           [ Tcat_station stations.(0) ]
+           [ Tcat_station stations.(0); Utility utilities.(0) ]) );
+    ( "remove_props remove all" >:: fun _ ->
+      assert_equal []
+        (remove_props
+           [ Tcat_station stations.(0); Utility utilities.(0) ]
+           [ Tcat_station stations.(0); Utility utilities.(0) ]) );
   ]
 
 (********************************************************)
