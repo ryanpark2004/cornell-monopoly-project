@@ -1,4 +1,4 @@
-# Cornell Monopoly: CS 3110 Group Project
+# 🎲 Cornell Monopoly: CS 3110 Group Project
 
 
 
