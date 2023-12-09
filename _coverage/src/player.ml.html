@@ -114,23 +114,23 @@ let debug_player =
   { name = "DEBUG"; money = 100; properties = []; position = 0; in_jail = 0 }
 
 let create_player (name : string) : player =
-  <span data-count="66">i</span>f debug then <span data-count="0">{</span> debug_player with name = debug_player.name ^ ": " ^ name }
-  else <span data-count="66">{</span> name; money = 1000; properties = []; position = 0; in_jail = 0 }
+  <span data-count="121">i</span>f debug then <span data-count="0">{</span> debug_player with name = debug_player.name ^ ": " ^ name }
+  else <span data-count="121">{</span> name; money = 1000; properties = []; position = 0; in_jail = 0 }
 
-let get_name player = <span data-count="22">p</span>layer.name
+let get_name player = <span data-count="40">p</span>layer.name
 
 let receive_money player (bonus : int) : player =
-  <span data-count="33">{</span> player with money = player.money + bonus }
+  <span data-count="60">{</span> player with money = player.money + bonus }
 
 let move_player (player : player) (n : int) : player =
-  <span data-count="44">l</span>et new_pos = player.position + n in
-  if new_pos &lt; lengt<span data-count="44">h</span> new_board then
-    <span data-count="33">{</span> player with position = (player.position + n) mod lengt<span data-count="33">h</span> new_board }
-  else <span data-count="11">(</span>
+  <span data-count="81">l</span>et new_pos = player.position + n in
+  if new_pos &lt; lengt<span data-count="81">h</span> new_board then
+    <span data-count="61">{</span> player with position = (player.position + n) mod lengt<span data-count="61">h</span> new_board }
+  else <span data-count="20">(</span>
     print_endline "You passed Go, collect $100!";
-    <span data-count="11">{</span>
+    <span data-count="20">{</span>
       player with
-      position = (player.position + n) mod lengt<span data-count="11">h</span> new_board;
+      position = (player.position + n) mod lengt<span data-count="20">h</span> new_board;
       money = player.money + 100;
     })
 </code></pre>

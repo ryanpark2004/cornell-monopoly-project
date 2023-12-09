@@ -480,7 +480,7 @@ type tile =
 
 (* A list of normal location properties on the board.*)
 let locations =
-  Array.of_lis<span data-count="33">t</span>
+  Array.of_lis<span data-count="61">t</span>
     [
       {
         name = "\027[38;5;137mHigh Rise 5 [!]\027[0m";
@@ -534,7 +534,7 @@ let locations =
 
 (* A list of TCAT station properties on the board*)
 let stations =
-  Array.of_lis<span data-count="33">t</span>
+  Array.of_lis<span data-count="61">t</span>
     [
       { name = "Commons Station [🚌]"; price = 200; mortgage = 50 };
       { name = "Collegetown Station [🚌]"; price = 200; mortgage = 50 };
@@ -544,7 +544,7 @@ let stations =
 
 (* A list of utility properties on the board. *)
 let utilities =
-  Array.of_lis<span data-count="33">t</span>
+  Array.of_lis<span data-count="61">t</span>
     [
       {
         util_name = "\027[38;5;250mCornell Hydroelectric [🚰]\027[0m";
@@ -592,60 +592,60 @@ let tlist : tile list =
 let debug_board = [ Start 0; Property (Location locations.(1)); Tax 1000 ]
 
 let rec indices (n : int) (lst : tile list) : int list =
-  <span data-count="825">m</span>atch lst with
-  | <span data-count="33">[</span>] -&gt; []
-  | <span data-count="792">_</span> :: t -&gt; n :: indice<span data-count="792">s</span> (n + 1) t
+  <span data-count="1525">m</span>atch lst with
+  | <span data-count="61">[</span>] -&gt; []
+  | <span data-count="1464">_</span> :: t -&gt; n :: indice<span data-count="1464">s</span> (n + 1) t
 
 let new_board : board =
   if debug then <span data-count="0">L</span>ist.combin<span data-count="0">e</span> debug_board (indice<span data-count="0">s</span> 0 debug_board)
-  else <span data-count="33">L</span>ist.combin<span data-count="33">e</span> tlist (indice<span data-count="33">s</span> 0 tlist)
+  else <span data-count="61">L</span>ist.combin<span data-count="61">e</span> tlist (indice<span data-count="61">s</span> 0 tlist)
 
 let rec length (b : board) : int =
-  <span data-count="2200">m</span>atch b with
-  | <span data-count="88">[</span>] -&gt; 0
-  | <span data-count="2112">_</span> :: t -&gt; 1 + lengt<span data-count="2112">h</span> t
+  <span data-count="4050">m</span>atch b with
+  | <span data-count="162">[</span>] -&gt; 0
+  | <span data-count="3888">_</span> :: t -&gt; 1 + lengt<span data-count="3888">h</span> t
 
 let pos_of_tile (t : tile) : int =
-  <span data-count="89">l</span>et rec helper (lst : board) (t : tile) : int =
-    <span data-count="1298">m</span>atch lst with
-    | <span data-count="40">[</span>] -&gt; raise No_Such_Tile
-    | <span data-count="1258">(</span>tile, idx) :: tl -&gt; if tile = t then <span data-count="49">i</span>dx else <span data-count="1209">h</span>elper tl t
+  <span data-count="236">l</span>et rec helper (lst : board) (t : tile) : int =
+    <span data-count="3374">m</span>atch lst with
+    | <span data-count="85">[</span>] -&gt; raise No_Such_Tile
+    | <span data-count="3289">(</span>tile, idx) :: tl -&gt; if tile = t then <span data-count="151">i</span>dx else <span data-count="3138">h</span>elper tl t
   in
   helper new_board t
 
 let rec tile_of_pos (b : board) (n : int) : tile =
-  <span data-count="235">m</span>atch b with
-  | <span data-count="2">[</span>] -&gt;
-      raise (Invalid_argument (Printf.sprint<span data-count="2">f</span> "%i is an invalid position" n))
-  | <span data-count="233">(</span>tile, n') :: t -&gt; if n = n' then <span data-count="66">t</span>ile else <span data-count="167">t</span>ile_of_pos t n
+  <span data-count="453">m</span>atch b with
+  | <span data-count="11">[</span>] -&gt;
+      raise (Invalid_argument (Printf.sprint<span data-count="11">f</span> "%i is an invalid position" n))
+  | <span data-count="442">(</span>tile, n') :: t -&gt; if n = n' then <span data-count="121">t</span>ile else <span data-count="321">t</span>ile_of_pos t n
 
 let property_selling_value (p : property) : int =
-  <span data-count="33">m</span>atch p with
-  | <span data-count="11">L</span>ocation l -&gt; l.mortgage
-  | <span data-count="11">T</span>cat_station t -&gt; t.mortgage
-  | <span data-count="11">U</span>tility u -&gt; u.mortgage
+  <span data-count="60">m</span>atch p with
+  | <span data-count="20">L</span>ocation l -&gt; l.mortgage
+  | <span data-count="20">T</span>cat_station t -&gt; t.mortgage
+  | <span data-count="20">U</span>tility u -&gt; u.mortgage
 
 let property_buying_value (p : property) : int =
-  <span data-count="3">m</span>atch p with
-  | <span data-count="1">L</span>ocation l -&gt; l.price
-  | <span data-count="1">T</span>cat_station t -&gt; t.price
-  | <span data-count="1">U</span>tility u -&gt; u.price
+  <span data-count="31">m</span>atch p with
+  | <span data-count="11">L</span>ocation l -&gt; l.price
+  | <span data-count="10">T</span>cat_station t -&gt; t.price
+  | <span data-count="10">U</span>tility u -&gt; u.price
 
 let property_to_string (p : property) : string =
-  <span data-count="55">m</span>atch p with
-  | <span data-count="33">L</span>ocation l -&gt; l.name
-  | <span data-count="11">T</span>cat_station t -&gt; t.name
-  | <span data-count="11">U</span>tility u -&gt; u.util_name
+  <span data-count="130">m</span>atch p with
+  | <span data-count="78">L</span>ocation l -&gt; l.name
+  | <span data-count="28">T</span>cat_station t -&gt; t.name
+  | <span data-count="24">U</span>tility u -&gt; u.util_name
 
 let to_string (t : tile) : string =
-  <span data-count="77">m</span>atch t with
-  | <span data-count="11">S</span>tart _ -&gt; "\027[32mGo\027[0m"
-  | <span data-count="11">P</span>roperty p -&gt; "\027[33m" ^ property_to_strin<span data-count="11">g</span> p ^ "\027[0m"
-  | <span data-count="11">T</span>ax x -&gt; "\027[38;5;202mTax ($" ^ string_of_in<span data-count="11">t</span> x ^ ")\027[0m"
-  | <span data-count="11">C</span>hance _ -&gt; "\027[35mChance\027[0m"
-  | <span data-count="11">C</span>hest _ -&gt; "\027[34mChest\027[0m"
-  | <span data-count="11">P</span>arking _ -&gt; "\027[36mFree Parking\027[0m"
-  | <span data-count="11">J</span>ail _ -&gt; "\027[31mJail\027[0m"
+  <span data-count="188">m</span>atch t with
+  | <span data-count="22">S</span>tart _ -&gt; "\027[32mGo\027[0m"
+  | <span data-count="48">P</span>roperty p -&gt; "\027[33m" ^ property_to_strin<span data-count="48">g</span> p ^ "\027[0m"
+  | <span data-count="24">T</span>ax x -&gt; "\027[38;5;202mTax ($" ^ string_of_in<span data-count="24">t</span> x ^ ")\027[0m"
+  | <span data-count="24">C</span>hance _ -&gt; "\027[35mChance\027[0m"
+  | <span data-count="24">C</span>hest _ -&gt; "\027[34mChest\027[0m"
+  | <span data-count="24">P</span>arking _ -&gt; "\027[36mFree Parking\027[0m"
+  | <span data-count="22">J</span>ail _ -&gt; "\027[31mJail\027[0m"
 </code></pre>
       </div>
     </div>
