@@ -94,10 +94,10 @@ let locations =
 let stations =
   Array.of_list
     [
-      { name = "Commons Station [🚌]"; price = 200; mortgage = 100 };
-      { name = "Collegetown Station [🚌]"; price = 200; mortgage = 100 };
-      { name = "North Campus Station [🚌]"; price = 200; mortgage = 100 };
-      { name = "Central Station [🚌]"; price = 200; mortgage = 100 };
+      { name = "Commons Station [🚌]"; price = 200; mortgage = 50 };
+      { name = "Collegetown Station [🚌]"; price = 200; mortgage = 50 };
+      { name = "North Campus Station [🚌]"; price = 200; mortgage = 50 };
+      { name = "Central Station [🚌]"; price = 200; mortgage = 50 };
     ]
 
 (* A list of utility properties on the board. *)
@@ -112,7 +112,7 @@ let utilities =
       {
         util_name = "\027[38;5;250mEduroam Station [🚰]\027[0m";
         price = 170;
-        mortgage = 85;
+        mortgage = 60;
       };
     ]
 

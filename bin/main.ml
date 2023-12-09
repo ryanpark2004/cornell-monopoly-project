@@ -265,8 +265,9 @@ and jailed_turn (s : state) (p : player) : state =
 
 let rec round (s : state) : state =
   let st = ref s in
-  let arr = Array.of_list !st.players in
-  for i = 0 to List.length !st.players - 1 do
+  let n = List.length !st.players in
+  for i = 0 to n - 1 do
+    let arr = Array.of_list !st.players in
     let new_s = turn !st arr.(i) in
     st := new_s
   done;
