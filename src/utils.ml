@@ -41,8 +41,10 @@ let chest_list =
   (5, [ GainMoney 30; LoseMoney 100; GainMoney 150; LoseMoney 25; GainMoney 50 ])
 
 (* *)
-let dice_bound = 6
-let rollDice () : int = 1 + Random.int dice_bound + Random.int dice_bound + 1
+let dice_bound = 1
+
+let rollDice () : int =
+  1 + Random.int dice_bound (* + Random.int dice_bound + 1 *)
 
 let pullChance () =
   let length, lst = chance_list in
@@ -147,7 +149,7 @@ and pay_rent prop buyer (seller : player) plist n =
     print_endline
       "You landed on your own property!\nPress anything to continue > ";
     match read_line () with
-    | _ -> [ buyer; seller ]
+    | _ -> [ buyer ]
   end
   else begin
     Printf.printf
