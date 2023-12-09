@@ -21,26 +21,35 @@ type state = {
   board : board;
   mutable players : player list;
 }
+(** State holds all of the current game information, notably the board and its 
+    tiles, and the players with their current attributes.*)
 
+(** [new_state] is the initial state at the beginning of the game*)
 let new_state : state = { board = Board.new_board; players = [] }
 
 (***************************Debug********************************************)
 
-let debug = true
+(* Used to swtich modes into normal and debug. *)
+let debug = false
 
+(* Prints out player name and money to use when debugging. *)
 let print_player (p : player) : unit =
   Printf.printf "\nName: %s | Money: %i\n" p.name p.money
 
+(* Iterates over print player to print all player status. *)
 let print_players (s : state) : unit =
   if debug = true then List.iter print_player s.players else ()
 
 (****************************************************************************)
 
 (*******************************Helpers**************************************)
+
+(** Maps the player names that are inputted to the user to players
+      1, 2, 3, and 4, in that order. *)
 let name_to_players (nlst : string list) : player list =
   List.map (fun n -> create_player n) nlst
 
-(**[add_players] is a new state with new players added. 
+(**[initialize_players] is a new state with new players added. 
     The number of players must be less than or equal to 4,
      or invalid argument exception is raised. The name of each 
      player must be nonempty and 10 character long or less*)
@@ -71,10 +80,11 @@ let rec initialize_players (s : state) : state =
 
 (******************************** PRINTS **************************************)
 
-(*Takes out the contents of the reference lists*)
+(** Takes out the contents of lists containing reference types. *)
 let deref lst = List.map (fun p -> !p) lst
 
-(**[occupants] is a list of players occupying tile [t] on current state [s]. Returns [None] is no player on [t]*)
+(**[occupants] is a list of players occupying tile [t] on current state [s].
+    Returns [None] is no player on [t]*)
 let occupants (s : state) (t : tile) : player list option =
   match List.filter (fun p -> p.position = pos_of_tile t) s.players with
   | [] -> None
@@ -85,8 +95,10 @@ type pretty_tile = {
   pos : int;
   plst : player list option;
 }
+(** Representa a tile element, with extra information like position, 
+     and current occupants on it.*)
 
-(**[pretty_board] is a list of pretty_tile in given state [s]*)
+(**[pretty_board] is a list of [pretty_tile]s in given state [s]. *)
 let pretty_board (s : state) : pretty_tile list =
   List.map (fun (t, n) -> { tile = t; pos = n; plst = occupants s t }) s.board
 
@@ -116,7 +128,7 @@ let rec print_board (s : state) : unit =
   List.iter iter_helper (pretty_board s)
 
 (**[print_status] prints the current status of the players. It displays
-  * their money and properties.*)
+   their money and properties.*)
 let print_status (s : state) : unit =
   print_endline "\n-----------STATUS-----------";
   let iter_helper (p : player) : unit =
@@ -134,6 +146,12 @@ let print_state (s : state) : unit =
 
 (******************************************************************************)
 (*********************************THE LOOP*************************************)
+
+(** Roll controls the flow of the game when it is a players turn to roll. 
+    It prompts the player for an input, then either rolls the dice and returns 
+    the updated player, displays information, or quits the game. [roll] is 
+    recursively called after displaying information or recieving an invalid 
+    input.*)
 let rec roll s (p : player) n =
   Printf.printf
     "\n\
@@ -154,6 +172,10 @@ let rec roll s (p : player) n =
       print_endline "Invalid Input";
       roll s p n
 
+(** [get_detailed_information] returns a structured string containing a 
+          list of players current information using the game state. 
+          It shows the players' names, their balances, their in jail status, 
+          and the properties that they currently own.*)
 and get_detailed_information state =
   let intro =
     "\n------------------------DETAILED INFORMATION------------------------"
@@ -176,6 +198,8 @@ and get_detailed_information state =
   in
   intro ^ "\n" ^ player_info "" state.players state.players
 
+(** [list_props] returns a string representation of the list of properties a 
+    current player [p] owns.*)
 and list_props p acc =
   match p with
   | [] -> if acc = "" then "None" else acc
@@ -188,24 +212,30 @@ and list_props p acc =
       in
       list_props t (if acc = "" then name else acc ^ ", " ^ name)
 
+(** Returns a string with [n] spaces. Used to format detailed 
+    information print statements.*)
 and n_spaces n acc =
   match n with
   | 0 -> acc
   | _ -> n_spaces (n - 1) (acc ^ " ")
 
+(** Returns the length of the longest player's name. Used in conjunction with 
+    [n_spaces] to format the detailed information string.*)
 and longest_name plist acc =
   match plist with
   | [] -> acc
   | h :: t ->
       if String.length h.name > acc then longest_name t (String.length h.name)
       else longest_name t acc
-(*Before each turn, the state is printed. After each turn, state is updated*)
 
-(**[replace] replaces the instance of [p] in [lst] with [p]
+(**[replace_once] replaces the instance of [p] in [lst] with [p]
   This is used to update the state of the game each turn as opposed to each round.*)
 let replace_once (lst : player list) (p : player) =
   List.map (fun e -> if e.name = p.name then p else e) lst
 
+(** Replaces all players in the current list [lst] with new players of 
+      the same name in [pl]. Players in the initial list that are not in 
+      [pl] remain the same. *)
 let rec replace_all (lst : player list) (pl : player list) =
   match pl with
   | [] -> lst
@@ -228,6 +258,8 @@ let rec turn (s : state) (p : player) : state =
     if List.length s.players = 1 then win_game s else s
   end
 
+(** Displays a Winner message after a player has won the game, 
+    and exits the program.*)
 and win_game (s : state) : state =
   begin
     let winner = List.hd s.players in
@@ -241,6 +273,11 @@ and win_game (s : state) : state =
     exit 0
   end
 
+(** Asks a player [p] if they would like to pay their way out of jail, if they 
+    can afford it. If the player pays their way out of jail, they lose $200 and 
+    reset their in_jail status, while playing their next turn normally. If they 
+    do not, the player's in_jail status is reduced by one, and their turn is 
+    over. Invalid inputs recursively call the function to ask the player again.*)
 and jailed_turn (s : state) (p : player) : state =
   Printf.printf "%s is in jail. Remaining turns: %i/%i\n" p.name p.in_jail 3;
   if p.money >= 200 then (
@@ -263,6 +300,8 @@ and jailed_turn (s : state) (p : player) : state =
         s.players <- replace_once s.players { p with in_jail = p.in_jail - 1 };
         s)
 
+(** Iterates over the players in the game, asking them to each play a turn. 
+    State is updated in between every turn.*)
 let rec round (s : state) : state =
   let st = ref s in
   let n = List.length !st.players in
@@ -273,6 +312,8 @@ let rec round (s : state) : state =
   done;
   !st
 
+(** Calls round recursively until the game ends by the players quitting 
+    or winning. Updates the state in between each round.*)
 let rec loop (s : state) : unit =
   begin
     loop (round s)
@@ -281,6 +322,8 @@ let rec loop (s : state) : unit =
 (******************************************************************************)
 (********************************MAIN APP**************************************)
 
+(** The main script for the Cornell Monopoly game. It first displays an ASCII
+     art welcome message, then prompts the player to begin the game.*)
 let () =
   print_endline
     "\n\n\n\027[32m         ___                      _ _               ";
