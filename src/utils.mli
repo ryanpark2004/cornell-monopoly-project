@@ -36,7 +36,7 @@ val pullChest : int * chances list -> chances
 val tile_action : tile -> player -> player list -> int -> bool -> player list
 (** [tile_action] defines the different effects each tile has when 
     a player lands on them. Returns the new player after everything has 
-    changed. The actions for each type of tile are defined below:
+ changed. The actions for each type of tile are defined below:
     Start: Nothing. Retuns the player as it is
     Tax x: Returns the player with x-less money.
     Chance: Returns the player after adjusting money and positon, based off 
@@ -44,8 +44,7 @@ val tile_action : tile -> player -> player list -> int -> bool -> player list
     Chest: Returns the player after adjusting money, based off of the 
     instructions of the community chest card that is selected.
     Parking: Nothing. Retuns the player as it is.
-    Jail: Sets the player's in_jail status to 3, and returns.
-    Property: Depends on property and player status. See [property_action].*)
+    Jail: Sets the player's in_jail status to 3, and returns.*)
 
 val owner_opt : property -> player list -> player option
 (** Returns [Some player] if player owns the input property. Else [None].*)
@@ -53,7 +52,7 @@ val owner_opt : property -> player list -> player option
 val pay_rent :
   property -> player -> player -> player list -> int -> bool -> player list
 (** [pay_rent] orchestrates the transaction between the owner and renter on 
-    when a renter lands on the owned property. Returns a list of the owner with 
+    when a rented lands on the owned property. Returns a list of the owner with 
     the added rent money, and the rented without the rent money.*)
 
 val property_action : property -> player -> player list -> int -> player list
@@ -78,7 +77,7 @@ val utility_rent : utility -> player list -> int -> int
 (** Returns the current rent of the utility property, which is equal to the
     dice roll value * the number of utilities owned by the owner * 4. *)
 
-val check_broke : player -> player list -> player list
+val check_broke : player -> player list -> bool -> player list
 (**[check_broke] checks if player is broke. Returns the same player list as
     the argument if the player is not broke. Otherwise, it goes through
     mortgage process.*)
@@ -86,12 +85,12 @@ val check_broke : player -> player list -> player list
 val calculate_brokeness : player -> int
 (** Used to debug broke player conditions. Returns player.money *)
 
-val mortgage_action : player -> player list -> player list
+val mortgage_action : player -> player list -> bool -> player list
 (** Prompts players to mortgage thier propeties when they run out of money. 
     Gives players the option to sell off any properties they may own, then 'kills'
     them if they still do not have enough money. *)
 
-val kill_player : player -> player list -> player list
+val kill_player : player -> player list -> bool -> player list
 (** Displays a game over message for the player who ran out of money, then 
     removes them from the player list and returns the updated list.*)
 

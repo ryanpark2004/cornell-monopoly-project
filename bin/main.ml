@@ -27,21 +27,6 @@ type state = {
 (** [new_state] is the initial state at the beginning of the game*)
 let new_state : state = { board = Board.new_board; players = [] }
 
-(***************************Debug********************************************)
-
-(* Used to swtich modes into normal and debug. *)
-let debug = false
-
-(* Prints out player name and money to use when debugging. *)
-let print_player (p : player) : unit =
-  Printf.printf "\nName: %s | Money: %i\n" p.name p.money
-
-(* Iterates over print player to print all player status. *)
-let print_players (s : state) : unit =
-  if debug = true then List.iter print_player s.players else ()
-
-(****************************************************************************)
-
 (*******************************Helpers**************************************)
 
 (** Maps the player names that are inputted to the user to players
@@ -80,9 +65,6 @@ let rec initialize_players (s : state) : state =
 
 (******************************** PRINTS **************************************)
 
-(** Takes out the contents of lists containing reference types. *)
-let deref lst = List.map (fun p -> !p) lst
-
 (**[occupants] is a list of players occupying tile [t] on current state [s].
     Returns [None] is no player on [t]*)
 let occupants (s : state) (t : tile) : player list option =
@@ -92,21 +74,20 @@ let occupants (s : state) (t : tile) : player list option =
 
 type pretty_tile = {
   tile : tile;
-  pos : int;
   plst : player list option;
 }
-(** Representa a tile element, with extra information like position, 
-     and current occupants on it.*)
+(** Representa a tile element, with extra information about the , 
+     current occupants on it.*)
 
 (**[pretty_board] is a list of [pretty_tile]s in given state [s]. *)
 let pretty_board (s : state) : pretty_tile list =
-  List.map (fun (t, n) -> { tile = t; pos = n; plst = occupants s t }) s.board
+  List.map (fun (t, _) -> { tile = t; plst = occupants s t }) s.board
 
 (**[print_board] prints the board in these steps:
   * 1. generate pretty_board
   * 2. iterate through pretty board and convert occupants into string
   * 3. for each iteration, print |tile --- names*)
-let rec print_board (s : state) : unit =
+let print_board (s : state) : unit =
   let concat (plst : player list option) : string =
     match plst with
     | None -> ""
@@ -152,7 +133,7 @@ let print_state (s : state) : unit =
     the updated player, displays information, or quits the game. [roll] is 
     recursively called after displaying information or recieving an invalid 
     input.*)
-let rec roll s (p : player) n =
+let rec roll s (p : player) n : player =
   Printf.printf
     "\n\
      %s's turn: Press [Enter] to roll the dice, Press [I] for more information,\n\
@@ -160,7 +141,7 @@ let rec roll s (p : player) n =
   match read_line () with
   | "" ->
       Printf.printf "\n\n%s rolled a %i!\n" p.name n;
-      move_player p n
+      move_player p n false
   | "I" | "i" ->
       print_endline (get_detailed_information s);
       roll s p n
@@ -252,7 +233,7 @@ let rec turn (s : state) (p : player) : state =
     let tile = tile_of_pos new_board rolled.position in
     let plst = tile_action tile rolled s.players n false in
     s.players <- replace_all s.players plst;
-    let plst2 = check_broke (List.hd plst) s.players in
+    let plst2 = check_broke (List.hd plst) s.players false in
     s.players <- plst2;
     print_state s;
     if List.length s.players = 1 then win_game s else s
@@ -267,7 +248,7 @@ and win_game (s : state) : state =
     print_endline " | |  | (_)                     | |";
     print_endline " | |  | |_ _ __  _ __   ___ _ __| |";
     print_endline " | |/\\| | | '_ \\| '_ \\ / _ \\ '__| |";
-    print_endline " | /  / | | | | | | | \| _/_| | |_|";
+    print_endline " | /  / | | | | | | | \\| _/_| | |_|";
     print_endline "  \\/  \\/|_|_| |_|_| |_|\\___||_| (_)";
     Printf.printf "\n\n Congratulations %s, you won! \n\n\027[0m" winner.name;
     exit 0
@@ -302,7 +283,7 @@ and jailed_turn (s : state) (p : player) : state =
 
 (** Iterates over the players in the game, asking them to each play a turn. 
     State is updated in between every turn.*)
-let rec round (s : state) : state =
+let round (s : state) : state =
   let st = ref s in
   let n = List.length !st.players in
   for i = 0 to n - 1 do

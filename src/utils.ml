@@ -269,38 +269,58 @@ and utility_rent util plist n =
   in
   n * 4 * num_utils 0 (find_owner util plist).properties
 
-let rec check_broke (p : player) (players : player list) : player list =
-  if p.money < 0 then mortgage_action p players else players
+let rec check_broke (p : player) (players : player list) debug : player list =
+  if p.money < 0 then mortgage_action p players debug else players
 
 and calculate_brokeness (p : player) : int = debug_brokenness p.money
 
-and mortgage_action (p : player) (plst : player list) =
-  let deficit = calculate_brokeness p in
-  Printf.printf
-    "\n\
-     Uh oh, %s, you are broke! \n\
-     You need $%i to recover. \n\
-     If you have any properties to mortgage, you can sell them now. \n"
-    p.name ~-deficit;
-  let props = debug_selection p.properties (select_property p.properties []) in
-  if deficit + sum_values props >= 0 then
-    let new_p =
-      {
-        p with
-        properties = remove_props p.properties props;
-        money = p.money + sum_values props;
-      }
+and mortgage_action (p : player) (plst : player list) debug =
+  if debug = false then (
+    let deficit = calculate_brokeness p in
+    Printf.printf
+      "\n\
+       Uh oh, %s, you are broke! \n\
+       You need $%i to recover. \n\
+       If you have any properties to mortgage, you can sell them now. \n"
+      p.name ~-deficit;
+    let props =
+      debug_selection p.properties (select_property p.properties [])
     in
-    List.map (fun (e : player) -> if e.name = p.name then new_p else e) plst
-  else kill_player p plst
+    if deficit + sum_values props >= 0 then
+      let new_p =
+        {
+          p with
+          properties = remove_props p.properties props;
+          money = p.money + sum_values props;
+        }
+      in
+      List.map (fun (e : player) -> if e.name = p.name then new_p else e) plst
+    else kill_player p plst debug)
+  else
+    let deficit = calculate_brokeness p in
+    let props =
+      debug_selection p.properties (select_property p.properties [])
+    in
+    if deficit + sum_values props >= 0 then
+      let new_p =
+        {
+          p with
+          properties = remove_props p.properties props;
+          money = p.money + sum_values props;
+        }
+      in
+      List.map (fun (e : player) -> if e.name = p.name then new_p else e) plst
+    else kill_player p plst debug
 
-and kill_player p plst =
-  Printf.printf
-    "\n\
-     %s could not recover from their deficit. They lost!\n\
-     Press anything to continue > " p.name;
-  match read_line () with
-  | _ -> List.filter (fun (e : player) -> e.name <> p.name) plst
+and kill_player p plst debug =
+  if debug = false then (
+    Printf.printf
+      "\n\
+       %s could not recover from their deficit. They lost!\n\
+       Press anything to continue > " p.name;
+    match read_line () with
+    | _ -> List.filter (fun (e : player) -> e.name <> p.name) plst)
+  else List.filter (fun (e : player) -> e.name <> p.name) plst
 
 and select_property (props : property list) (acc : property list) :
     property list =

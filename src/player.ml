@@ -22,14 +22,20 @@ let get_name player = player.name
 let receive_money player (bonus : int) : player =
   { player with money = player.money + bonus }
 
-let move_player (player : player) (n : int) : player =
+let move_player (player : player) (n : int) debug : player =
   let new_pos = player.position + n in
   if new_pos < length new_board then
     { player with position = (player.position + n) mod length new_board }
-  else (
+  else if debug = false then (
     print_endline "You passed Go, collect $100!";
     {
       player with
       position = (player.position + n) mod length new_board;
       money = player.money + 100;
     })
+  else
+    {
+      player with
+      position = (player.position + n) mod length new_board;
+      money = player.money + 100;
+    }
