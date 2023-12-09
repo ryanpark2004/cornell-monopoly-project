@@ -112,11 +112,12 @@ let rec tile_action tile player plist n debug : player list =
              ^ ".\nPress anything to continue > ");
             match read_line () with
             | _ -> [ { player with money = player.money + x } ])
-        | LoseMoney x ->
+        | LoseMoney x -> (
             print_endline
               ("COMMUNITY CHEST: Unlucky! Pay $" ^ string_of_int x
              ^ ".\nPress anything to continue > ");
-            [ { player with money = player.money - x } ]
+            match read_line () with
+            | _ -> [ { player with money = player.money - x } ])
         | _ -> [ player ])
     | Parking _ ->
         if debug == false then (

@@ -259,7 +259,8 @@ and jailed_turn (s : state) (p : player) : player =
     match read_line () with
     | _ -> { p with in_jail = p.in_jail - 1 })
 
-let round (s : state) : player list = List.map (turn s) s.players
+(** List.map (turn s) s.players *)
+let rec round (s : state) : player list = List.map (turn s) s.players
 
 let rec loop (s : state) : unit =
   begin
