@@ -41,10 +41,8 @@ let chest_list =
   (5, [ GainMoney 30; LoseMoney 100; GainMoney 150; LoseMoney 25; GainMoney 50 ])
 
 (* *)
-let dice_bound = 1
-
-let rollDice () : int =
-  1 + Random.int dice_bound (* + Random.int dice_bound + 1 *)
+let dice_bound = 6
+let rollDice () : int = 1 + Random.int dice_bound + Random.int dice_bound + 1
 
 let pullChance () =
   let length, lst = chance_list in
@@ -277,8 +275,12 @@ and mortgage_action (p : player) (plst : player list) =
   else kill_player p plst
 
 and kill_player p plst =
-  Printf.printf "\n%s could not recover from their deficit. They lost!" p.name;
-  List.filter (fun (e : player) -> e.name <> p.name) plst
+  Printf.printf
+    "\n\
+     %s could not recover from their deficit. They lost!\n\
+     Press anything to continue > " p.name;
+  match read_line () with
+  | _ -> List.filter (fun (e : player) -> e.name <> p.name) plst
 
 and select_property (props : property list) (acc : property list) :
     property list =
