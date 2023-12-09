@@ -1,6 +1,8 @@
 (test
  (name main)
- (libraries Monopoly ounit2))
+ (libraries Monopoly ounit2)
+ (preprocess
+  (pps bisect_ppx)))
 
 (env
  (dev

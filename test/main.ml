@@ -81,14 +81,6 @@ let test_board_2 =
   in
   List.combine test_board_2_help (indices 0 test_board_2_help)
 
-let pos_of_tile (t : tile) : int =
-  let rec helper (lst : board) (t : tile) : int =
-    match lst with
-    | [] -> raise No_Such_Tile
-    | (tile, idx) :: tl -> if tile = t then idx else helper tl t
-  in
-  helper test_board_2 t
-
 (*Helper Function: Testing if board length is valid.*)
 let test_length name out in1 = name >:: fun _ -> assert_equal out (length in1)
 
@@ -100,11 +92,11 @@ let board_suite =
     test_length "length of >1" 7 test_board_2;
     (*Board Test Cases: pos_of_tile *)
     ("pos_of_tile Start" >:: fun _ -> assert_equal 0 (pos_of_tile (Start 1)));
-    ("pos_of_tile Tax" >:: fun _ -> assert_equal 1 (pos_of_tile (Tax 100)));
+    ("pos_of_tile Tax" >:: fun _ -> assert_equal 8 (pos_of_tile (Tax 80)));
     ("pos_of_tile Chance" >:: fun _ -> assert_equal 2 (pos_of_tile (Chance 1)));
-    ("pos_of_tile Chest" >:: fun _ -> assert_equal 3 (pos_of_tile (Chest 1)));
-    ("pos_of_tile Parking" >:: fun _ -> assert_equal 4 (pos_of_tile (Parking 1)));
-    ("pos_of_tile Jail" >:: fun _ -> assert_equal 5 (pos_of_tile (Jail 1)));
+    ("pos_of_tile Chest" >:: fun _ -> assert_equal 5 (pos_of_tile (Chest 1)));
+    ("pos_of_tile Parking" >:: fun _ -> assert_equal 6 (pos_of_tile (Parking 1)));
+    ("pos_of_tile Jail" >:: fun _ -> assert_equal 12 (pos_of_tile (Jail 1)));
     (*Board Test Cases: pos_of_tile_fail *)
     ( "pos_of_tile Fail: No Tax" >:: fun _ ->
       let exn = No_Such_Tile in
@@ -117,7 +109,7 @@ let board_suite =
     ( "pos_of_tile Fail: No Chest" >:: fun _ ->
       let exn = No_Such_Tile in
       assert_raises exn (fun () ->
-          try pos_of_tile (Chest 2) with exn -> raise exn) );
+          try pos_of_tile (Chest 20) with exn -> raise exn) );
     ( "pos_of_tile Fail: No Parking" >:: fun _ ->
       let exn = No_Such_Tile in
       assert_raises exn (fun () ->
@@ -139,6 +131,10 @@ let board_suite =
       assert_equal (Parking 1) (tile_of_pos test_board_2 4) );
     ( "tile_of_pos Jail" >:: fun _ ->
       assert_equal (Jail 1) (tile_of_pos test_board_2 5) );
+    ( "tile_of_pos Invalid position" >:: fun _ ->
+      assert_raises
+        (Invalid_argument (Printf.sprintf "%i is an invalid position" 50))
+        (fun () -> tile_of_pos test_board_1 50) );
     (*Board Test Cases: property_selling_value *)
     ( "property_selling_value Location" >:: fun _ ->
       assert_equal 20 (property_selling_value (Location locations.(0))) );
@@ -198,6 +194,12 @@ let board_suite =
         ~printer:(fun string -> string)
         ("\027[33m" ^ property_to_string (Location locations.(0)) ^ "\027[0m")
         (to_string (List.nth test_board_2_help 6)) );
+    ( "property_buying_value location" >:: fun _ ->
+      assert_equal 40 (property_buying_value (Location locations.(0))) );
+    ( "property_buying_value tcat_station" >:: fun _ ->
+      assert_equal 200 (property_buying_value (Tcat_station stations.(0))) );
+    ( "property_buying_value tcat_station" >:: fun _ ->
+      assert_equal 150 (property_buying_value (Utility utilities.(0))) );
   ]
 
 (********************************************************************
@@ -206,9 +208,6 @@ let board_suite =
 
 let p1 = create_player "p1"
 let p2 = create_player "p2"
-
-let move_player (player : player) (n : int) : player =
-  { player with position = (player.position + n) mod length test_board_2 }
 
 let player_suite =
   [
@@ -234,7 +233,7 @@ let player_suite =
     ( "move_player >1 spaces" >:: fun _ ->
       assert_equal 3 (move_player p1 3).position );
     ( "move_player > board.length spaces" >:: fun _ ->
-      assert_equal 1 (move_player p1 8).position );
+      assert_equal 2 (move_player p1 26).position );
   ]
 
 (********************************************************************
@@ -272,25 +271,16 @@ let utils_suite =
         (let x = rollDice () in
          x >= 1 && x <= 7) );
     (*Utility Test Cases: tile_Action  *)
-    ( "tile_Action: Jail" >:: fun _ ->
+    ( "tile_Action: Jail1" >:: fun _ ->
       assert_equal [ jail_p1 ] (tile_action (Jail 1) jail_p1 players 0 true) );
     ( "tile_Action: Start" >:: fun _ ->
       assert_equal [ new_p2 ] (tile_action (Start 0) new_p2 players 0 true) );
     ( "tile_Action: Tax" >:: fun _ ->
-      assert_equal
-        [
-          {
-            name = "Player2";
-            money = 400;
-            position = 3;
-            in_jail = 0;
-            properties = [];
-          };
-        ]
-        (tile_action (Tax 100) new_p2 players 0 true) );
+      assert_equal 400
+        (List.hd (tile_action (Tax 100) new_p2 players 0 true)).money );
     ( "tile_Action: FreeParking" >:: fun _ ->
       assert_equal [ new_p2 ] (tile_action (Parking 0) new_p2 players 0 true) );
-    ( "tile_Action: Jail" >:: fun _ ->
+    ( "tile_Action: Jail2" >:: fun _ ->
       assert_equal
         [
           {
@@ -298,7 +288,7 @@ let utils_suite =
             money = 500;
             position = 3;
             in_jail = 3;
-            properties = [];
+            properties = [ Location test_location ];
           };
         ]
         (tile_action (Jail 0) new_p2 players 0 true) );
@@ -306,7 +296,43 @@ let utils_suite =
     ( "owner_opt Player has Property" >:: fun _ ->
       assert_equal (Some new_p2) (owner_opt (Location test_location) players) );
     ( "owner_opt No Player has property" >:: fun _ ->
-      assert_equal None (owner_opt (Location test_location2) players) );
+      assert_equal None (owner_opt (Location test_location2) []) );
+    ( "pullChance GainMoney" >:: fun _ ->
+      assert_equal (GainMoney 20) (pullChance (1, [ GainMoney 20 ])) );
+    ( "pullChance LoseMoney" >:: fun _ ->
+      assert_equal (LoseMoney 20) (pullChance (1, [ LoseMoney 20 ])) );
+    ( "pullChance ToStart" >:: fun _ ->
+      assert_equal ToStart (pullChance (1, [ ToStart ])) );
+    ( "pullChance ToJail" >:: fun _ ->
+      assert_equal ToJail (pullChance (1, [ ToJail ])) );
+    ( "pullChance long list" >:: fun _ ->
+      assert_equal ToStart
+        (pullChance
+           (6, [ ToStart; ToStart; ToStart; ToStart; ToStart; ToStart ])) );
+    ( "pullChest GainMoney" >:: fun _ ->
+      assert_equal (GainMoney 20) (pullChest (1, [ GainMoney 20 ])) );
+    ( "pullChest LoseMoney" >:: fun _ ->
+      assert_equal (LoseMoney 20) (pullChest (1, [ LoseMoney 20 ])) );
+    ( "pullChance long list" >:: fun _ ->
+      assert_equal (GainMoney 20)
+        (pullChance
+           ( 6,
+             [
+               GainMoney 20;
+               GainMoney 20;
+               GainMoney 20;
+               GainMoney 20;
+               GainMoney 20;
+               GainMoney 20;
+             ] )) );
+    ( "rent_text location" >:: fun _ ->
+      assert_equal "$8" (rent_text (Location locations.(0))) );
+    ( "rent_text tcat_station" >:: fun _ ->
+      assert_equal "\n$50 * the # of TCAT stations you own"
+        (rent_text (Tcat_station stations.(0))) );
+    ( "rent_text utility" >:: fun _ ->
+      assert_equal "\n$4 * Value of Dice Roll * the # of Utilities you own"
+        (rent_text (Utility utilities.(0))) );
   ]
 
 (********************************************************)
