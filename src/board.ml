@@ -1,6 +1,6 @@
 open Exceptions
 
-let debug = false
+let debug = true
 
 (* board.ml *)
 type location = {

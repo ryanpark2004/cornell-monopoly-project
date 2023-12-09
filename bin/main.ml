@@ -211,10 +211,10 @@ let rec replace_all (lst : player list) (pl : player list) =
   | [] -> lst
   | h :: t -> replace_all (replace_once lst h) t
 
-(**[turn] returns a player after rolling dice and performing an action.
+(**[turn] returns a player and the new state after rolling dice and performing an action.
     It also mutates the state to reflect the change.
     a jailed player goes through [jailed_turn] instead.*)
-let rec turn (s : state) (p : player) : player =
+let rec turn (s : state) (p : player) : state =
   if p.in_jail > 0 then jailed_turn s p
   else begin
     let n = rollDice () in
@@ -222,15 +222,13 @@ let rec turn (s : state) (p : player) : player =
     let tile = tile_of_pos new_board rolled.position in
     let plst = tile_action tile rolled s.players n false in
     s.players <- replace_all s.players plst;
-    print_players s;
     let plst2 = check_broke (List.hd plst) s.players in
     s.players <- plst2;
-    print_players s;
     print_state s;
-    if List.length s.players = 1 then win_game s else List.hd plst
+    if List.length s.players = 1 then win_game s else s
   end
 
-and win_game (s : state) : player =
+and win_game (s : state) : state =
   begin
     let winner = List.hd s.players in
     print_endline "\027[38;5;214m  _    _ _                       _";
@@ -243,14 +241,16 @@ and win_game (s : state) : player =
     exit 0
   end
 
-and jailed_turn (s : state) (p : player) : player =
+and jailed_turn (s : state) (p : player) : state =
   Printf.printf "%s is in jail. Remaining turns: %i/%i\n" p.name p.in_jail 3;
   if p.money >= 200 then (
     Printf.printf
       "Press [Y] to pay $200 and roll the dice, or press [N] to stay in jail> ";
     match read_line () with
     | "Y" | "y" -> turn s { p with money = p.money - 200; in_jail = 0 }
-    | "N" | "n" -> { p with in_jail = p.in_jail - 1 }
+    | "N" | "n" ->
+        s.players <- replace_once s.players { p with in_jail = p.in_jail - 1 };
+        s
     | _ ->
         Printf.printf "Invalid input \n";
         jailed_turn s p)
@@ -259,13 +259,22 @@ and jailed_turn (s : state) (p : player) : player =
       "You cannot afford your bail.\n\
        Press anything to wait your turn in jail > ";
     match read_line () with
-    | _ -> { p with in_jail = p.in_jail - 1 })
+    | _ ->
+        s.players <- replace_once s.players { p with in_jail = p.in_jail - 1 };
+        s)
 
-let round (s : state) : player list = List.map (turn s) s.players
+let rec round (s : state) : state =
+  let st = ref s in
+  let arr = Array.of_list !st.players in
+  for i = 0 to List.length !st.players - 1 do
+    let new_s = turn !st arr.(i) in
+    st := new_s
+  done;
+  !st
 
 let rec loop (s : state) : unit =
   begin
-    loop { s with players = round s }
+    loop (round s)
   end
 
 (******************************************************************************)
