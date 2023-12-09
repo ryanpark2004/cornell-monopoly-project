@@ -3,6 +3,6 @@
  (libraries Monopoly))
 
 (env
- (dev
+ (_
   (flags
    (:standard -warn-error -A))))

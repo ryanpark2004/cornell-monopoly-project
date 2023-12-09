@@ -12,8 +12,12 @@
 open Board
 open Player
 
-type chances
-(** [chances] is a variant representing different chance cards. ToStart cards 
+type chances =
+  | ToStart
+  | ToJail
+  | GainMoney of int
+  | LoseMoney of int
+      (** [chances] is a variant representing different chance cards. ToStart cards 
     transport the player to the Go tile, ToJail cards place the player in jail, 
     GainMoney awards the player a monetary prize, and LoseMoney penalizes the 
     player by removing some of their money. *)
@@ -23,10 +27,10 @@ val rollDice : unit -> int
     conditions, the probability of getting an value by calling [rollDice] is 
     the same as getting that output when rolling two physical dice.  *)
 
-val pullChance : unit -> chances
+val pullChance : int * chances list -> chances
 (**[pullChance] is a uniformly randomly selected chance variant.*)
 
-val pullChest : unit -> chances
+val pullChest : int * chances list -> chances
 (**[pullChance] is a uniformly randomly selected community chest variant.*)
 
 val tile_action : tile -> player -> player list -> int -> bool -> player list

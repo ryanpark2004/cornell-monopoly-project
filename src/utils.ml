@@ -44,12 +44,12 @@ let chest_list =
 let dice_bound = 6
 let rollDice () : int = 1 + Random.int dice_bound + Random.int dice_bound + 1
 
-let pullChance () =
+let pullChance chance_list =
   let length, lst = chance_list in
   let n = Random.int length in
   List.nth lst n
 
-let pullChest () =
+let pullChest chest_list =
   let length, lst = chest_list in
   let n = Random.int length in
   List.nth lst n
@@ -74,7 +74,7 @@ let rec tile_action tile player plist n debug : player list =
         else [ { player with money = player.money - x } ]
     | Chance _ -> (
         print_endline "You pulled a chance card!";
-        let card = pullChance () in
+        let card = pullChance chance_list in
         match card with
         | ToStart -> (
             print_endline
@@ -104,7 +104,7 @@ let rec tile_action tile player plist n debug : player list =
             | _ -> [ { player with money = player.money - x } ]))
     | Chest _ -> (
         print_endline "You pulled a Community Chest card!";
-        let card = pullChest () in
+        let card = pullChest chest_list in
         match card with
         | GainMoney x -> (
             print_endline
@@ -307,7 +307,7 @@ and select_property (props : property list) (acc : property list) :
   match props with
   | [] -> acc
   | h :: t -> (
-      Printf.printf "\nSell %s for %i: [Y] | [N]. Current sum: %i > "
+      Printf.printf "\nSell %s for $%i: [Y] | [N]. Current sum: %i > "
         (property_to_string h) (property_selling_value h) (sum_values acc);
       match read_line () with
       | "Y" | "y" -> select_property t (h :: acc)
