@@ -429,6 +429,65 @@ let utils_suite =
     ( "rent_text utility" >:: fun _ ->
       assert_equal "\n$4 * Value of Dice Roll * the # of Utilities you own"
         (rent_text (Utility utilities.(0))) );
+    ( "calculated_rent location" >:: fun _ ->
+      assert_equal 8 (calculated_rent (Location locations.(0)) [] 0) );
+    ( "calculated_rent tcat_station player owns 1" >:: fun _ ->
+      assert_equal 50
+        (calculated_rent
+           (Tcat_station stations.(0))
+           [ { p1 with properties = [ Tcat_station stations.(0) ] } ]
+           0) );
+    ( "calculated_rent tcat_station player owns 4" >:: fun _ ->
+      assert_equal 200
+        (calculated_rent
+           (Tcat_station stations.(0))
+           [
+             {
+               p1 with
+               properties =
+                 [
+                   Tcat_station stations.(0);
+                   Tcat_station stations.(0);
+                   Tcat_station stations.(0);
+                   Tcat_station stations.(0);
+                 ];
+             };
+           ]
+           0) );
+    ( "calculated_rent utility player owns 1, dice roll = 1" >:: fun _ ->
+      assert_equal 4
+        (calculated_rent
+           (Utility utilities.(0))
+           [ { p1 with properties = [ Utility utilities.(0) ] } ]
+           1) );
+    ( "calculated_rent utility player owns 2, dice roll = 1" >:: fun _ ->
+      assert_equal 8
+        (calculated_rent
+           (Utility utilities.(0))
+           [
+             {
+               p1 with
+               properties = [ Utility utilities.(0); Utility utilities.(0) ];
+             };
+           ]
+           1) );
+    ( "calculated_rent utility player owns 1, dice roll = 12" >:: fun _ ->
+      assert_equal 48
+        (calculated_rent
+           (Utility utilities.(0))
+           [ { p1 with properties = [ Utility utilities.(0) ] } ]
+           12) );
+    ( "calculated_rent utility player owns 2, dice roll = 12" >:: fun _ ->
+      assert_equal 96
+        (calculated_rent
+           (Utility utilities.(0))
+           [
+             {
+               p1 with
+               properties = [ Utility utilities.(0); Utility utilities.(0) ];
+             };
+           ]
+           12) );
   ]
 
 (********************************************************)
