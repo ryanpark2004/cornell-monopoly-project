@@ -24,12 +24,14 @@ Despite being a command-line interface program, users can easily see their locat
 ### Easy to Learn
 Players can follow prompts to get started, and should have no trouble controlling the game as they begin to play.
 
+# 📀 Technologies
+![Static Badge](https://img.shields.io/badge/OCAML-orange?style=for-the-badge)
+
 # 🛠️ Installation
 ### Prerequisites:
  1.  Ocaml compiler (version 4.07.0 or higher)
 
-
-### Installation:
+### Installation Steps:
  1. Install Ocaml if not already installed on your system. Instructions can be found at: https://ocaml.org/docs/installing-ocaml
 
  2. Download and unzip the project source code.
