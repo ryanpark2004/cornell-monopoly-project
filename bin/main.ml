@@ -16,6 +16,7 @@ open Utils
 (*  Authors: Ethan Baker, Bill Park, Ryan Park                            *)
 (*  Date: December 10th 2023                                              *)
 (**************************************************************************)
+let debug = false
 
 type state = {
   board : board;
@@ -233,7 +234,7 @@ let rec turn (s : state) (p : player) : state =
     let tile = tile_of_pos new_board rolled.position in
     let plst = tile_action tile rolled s.players n false in
     s.players <- replace_all s.players plst;
-    let plst2 = check_broke (List.hd plst) s.players false in
+    let plst2 = check_broke (List.hd plst) s.players debug in
     s.players <- plst2;
     print_state s;
     if List.length s.players = 1 then win_game s else s
